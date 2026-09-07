@@ -44,7 +44,6 @@
       right: 20px;
       top: 20px;
       height: 100px;
-      /* Dark steel-blue to grey gradient */
       background: linear-gradient(135deg, #2c3e50 0%, #636e72 100%);
       border-radius: 8px;
       border: 2px solid rgba(255, 255, 255, 0.25);
@@ -231,11 +230,11 @@
   <div class="targets-wrapper">
     <div class="target-row">
       <span class="target-label">Like Target</span>
-      <span class="target-value">25</span>
+      <span class="target-value" id="like-target-display">25</span>
     </div>
     <div class="target-row">
       <span class="target-label">Sub Target</span>
-      <span class="target-value">900</span>
+      <span class="target-value" id="sub-target-display">900</span>
     </div>
   </div>
 
@@ -272,14 +271,21 @@
     <button class="ctrl-btn" onclick="resetClock(0)">Reset (0')</button>
     <button class="ctrl-btn" onclick="resetClock(2700)">Set 45'</button>
     <button class="ctrl-btn" onclick="setManualTime()">Set Custom Time</button>
+    <button class="ctrl-btn" onclick="setTarget('like')">Set Like Target</button>
+    <button class="ctrl-btn" onclick="setTarget('sub')">Set Sub Target</button>
     <button class="ctrl-btn" onclick="toggleControls()">Hide Buttons</button>
   </div>
 
   <script>
     let hScore = 0, aScore = 0, secs = 0, timerId = null, running = false;
+    let likeTargetVal = "25";
+    let subTargetVal = "900";
+    
     const hEl = document.getElementById('home-score');
     const aEl = document.getElementById('away-score');
     const tEl = document.getElementById('timer');
+    const likeEl = document.getElementById('like-target-display');
+    const subEl = document.getElementById('sub-target-display');
 
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('view') === 'overlay') {
@@ -301,9 +307,16 @@
         aScore = data.aScore;
         secs = data.secs;
         running = data.running;
+        
+        // Sync targets if they exist in the payload
+        if (data.likeTargetVal !== undefined) likeTargetVal = data.likeTargetVal;
+        if (data.subTargetVal !== undefined) subTargetVal = data.subTargetVal;
 
         hEl.textContent = hScore;
         aEl.textContent = aScore;
+        likeEl.textContent = likeTargetVal;
+        subEl.textContent = subTargetVal;
+        
         renderTime();
 
         clearInterval(timerId);
@@ -319,7 +332,14 @@
     function broadcastState() {
       pubnub.publish({
         channel: 'kolkata_derby_live_stream_channel',
-        message: { hScore, aScore, secs, running }
+        message: { 
+          hScore, 
+          aScore, 
+          secs, 
+          running,
+          likeTargetVal,
+          subTargetVal
+        }
       });
     }
 
@@ -355,7 +375,6 @@
       broadcastState();
     }
 
-    // New Function for Custom Manual Time
     function setManualTime() {
       const input = prompt("Enter time in MM:SS format (e.g., 45:00):", "00:00");
       if (input) {
@@ -372,6 +391,25 @@
           }
         } else {
           alert("Invalid format. Please use MM:SS.");
+        }
+      }
+    }
+
+    // New Function for Setting Targets
+    function setTarget(type) {
+      if (type === 'like') {
+        const input = prompt("Enter new Like Target:", likeTargetVal);
+        if (input !== null && input.trim() !== "") {
+          likeTargetVal = input.trim();
+          likeEl.textContent = likeTargetVal;
+          broadcastState();
+        }
+      } else if (type === 'sub') {
+        const input = prompt("Enter new Sub Target:", subTargetVal);
+        if (input !== null && input.trim() !== "") {
+          subTargetVal = input.trim();
+          subEl.textContent = subTargetVal;
+          broadcastState();
         }
       }
     }
