@@ -17,13 +17,13 @@
       position: relative;
     }
 
-    /* Subscriber Count Widget - Width increased to 380px */
+    /* Subscriber Count Widget (Left) */
     .sub-count-wrapper {
       position: absolute;
       left: 20px;
       top: 20px;
       height: 100px; 
-      width: 380px;  /* Increased so the full channel name fits comfortably */
+      width: 380px; 
       background: rgba(12, 14, 18, 0.95);
       border-radius: 8px;
       border: 2px solid rgba(255, 255, 255, 0.18);
@@ -36,6 +36,55 @@
       height: 100%;
       border: none;
       overflow: hidden;
+    }
+
+    /* Target Widget (Right) */
+    .targets-wrapper {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      height: 100px;
+      /* NEW BACKGROUND: Dark steel-blue gradient */
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      border-radius: 8px;
+      border: 2px solid rgba(255, 255, 255, 0.25);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.85);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 24px;
+      gap: 12px;
+      min-width: 260px;
+    }
+
+    .target-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 4px;
+    }
+    
+    .target-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .target-label {
+      color: #e2e8f0;
+      font-size: 13px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .target-value {
+      color: #ffd700;
+      font-family: 'Teko', sans-serif;
+      font-size: 30px;
+      line-height: 0.8;
+      font-weight: 700;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
     }
 
     /* Scoreboard Container - Centered */
@@ -177,6 +226,17 @@
 
   <div class="sub-count-wrapper">
     <iframe src="https://socialcounts.org/youtube-live-subscriber-count/UC6HP5_0MxNjZddNg9_t47gg/embed" allowtransparency="true" frameborder="0" scrolling="no"></iframe>
+  </div>
+
+  <div class="targets-wrapper">
+    <div class="target-row">
+      <span class="target-label">Like Target</span>
+      <span class="target-value">25</span>
+    </div>
+    <div class="target-row">
+      <span class="target-label">Sub Target</span>
+      <span class="target-value">900</span>
+    </div>
   </div>
 
   <div class="scoreboard-wrap">
