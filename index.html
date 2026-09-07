@@ -44,8 +44,8 @@
       right: 20px;
       top: 20px;
       height: 100px;
-      /* NEW BACKGROUND: Dark steel-blue gradient */
-      background: linear-gradient(135deg, #1e293b, #0f172a);
+      /* Dark steel-blue to grey gradient */
+      background: linear-gradient(135deg, #2c3e50 0%, #636e72 100%);
       border-radius: 8px;
       border: 2px solid rgba(255, 255, 255, 0.25);
       box-shadow: 0 8px 24px rgba(0,0,0,0.85);
@@ -271,6 +271,7 @@
     <button class="ctrl-btn" onclick="toggleClock()">Play/Pause</button>
     <button class="ctrl-btn" onclick="resetClock(0)">Reset (0')</button>
     <button class="ctrl-btn" onclick="resetClock(2700)">Set 45'</button>
+    <button class="ctrl-btn" onclick="setManualTime()">Set Custom Time</button>
     <button class="ctrl-btn" onclick="toggleControls()">Hide Buttons</button>
   </div>
 
@@ -352,6 +353,27 @@
       secs = startSec;
       renderTime();
       broadcastState();
+    }
+
+    // New Function for Custom Manual Time
+    function setManualTime() {
+      const input = prompt("Enter time in MM:SS format (e.g., 45:00):", "00:00");
+      if (input) {
+        const parts = input.split(':');
+        if (parts.length === 2) {
+          const m = parseInt(parts[0], 10);
+          const s = parseInt(parts[1], 10);
+          if (!isNaN(m) && !isNaN(s)) {
+            secs = (m * 60) + s;
+            renderTime();
+            broadcastState();
+          } else {
+            alert("Invalid numbers. Please use MM:SS format.");
+          }
+        } else {
+          alert("Invalid format. Please use MM:SS.");
+        }
+      }
     }
 
     function toggleControls() {
