@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>CFL 2026-27 | Kolkata Derby Scoreboard</title>
+  <title>Sports Unplugged India | Combined Overlay</title>
   <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
   <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.7.2.2.min.js"></script>
   <style>
@@ -11,13 +11,39 @@
       background-color: transparent !important;
       background-image: none !important;
       font-family: 'Montserrat', sans-serif;
-      padding: 16px;
       overflow: hidden;
       width: 100vw;
       height: 100vh;
+      position: relative;
     }
 
+    /* Subscriber Count Widget - Width increased to 380px */
+    .sub-count-wrapper {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      height: 100px; 
+      width: 380px;  /* Increased so the full channel name fits comfortably */
+      background: rgba(12, 14, 18, 0.95);
+      border-radius: 8px;
+      border: 2px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.85);
+      overflow: hidden;
+    }
+
+    .sub-count-wrapper iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      overflow: hidden;
+    }
+
+    /* Scoreboard Container - Centered */
     .scoreboard-wrap {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: 20px;
       display: inline-flex;
       align-items: center;
       background: rgba(12, 14, 18, 0.95);
@@ -55,7 +81,6 @@
       color: #fff;
     }
 
-    /* Fixed Logo Styling */
     .team-logo {
       width: 55px;
       height: 55px;
@@ -123,11 +148,16 @@
       text-align: center;
     }
 
+    /* Positioned underneath the scoreboard for easy access */
     .controller-panel {
-      margin-top: 14px;
+      position: absolute;
+      top: 130px;
+      left: 50%;
+      transform: translateX(-50%);
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
+      justify-content: center;
     }
 
     .ctrl-btn {
@@ -144,6 +174,10 @@
   </style>
 </head>
 <body>
+
+  <div class="sub-count-wrapper">
+    <iframe src="https://socialcounts.org/youtube-live-subscriber-count/UC6HP5_0MxNjZddNg9_t47gg/embed" allowtransparency="true" frameborder="0" scrolling="no"></iframe>
+  </div>
 
   <div class="scoreboard-wrap">
     <div class="tournament-tag">
