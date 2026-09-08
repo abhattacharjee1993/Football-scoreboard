@@ -17,7 +17,7 @@
       position: relative;
     }
 
-    /* Subscriber Count Widget (Left) */
+    /* Subscriber Count Widget */
     .sub-count-wrapper {
       position: absolute;
       left: 20px;
@@ -30,15 +30,9 @@
       box-shadow: 0 8px 24px rgba(0,0,0,0.85);
       overflow: hidden;
     }
+    .sub-count-wrapper iframe { width: 100%; height: 100%; border: none; overflow: hidden; }
 
-    .sub-count-wrapper iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      overflow: hidden;
-    }
-
-    /* Target Widget (Right) */
+    /* Target Widget */
     .targets-wrapper {
       position: absolute;
       right: 20px;
@@ -55,7 +49,6 @@
       gap: 12px;
       min-width: 260px;
     }
-
     .target-row {
       display: flex;
       justify-content: space-between;
@@ -63,35 +56,46 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       padding-bottom: 4px;
     }
-    
-    .target-row:last-child {
-      border-bottom: none;
-      padding-bottom: 0;
-    }
-
+    .target-row:last-child { border-bottom: none; padding-bottom: 0; }
     .target-label {
-      color: #e2e8f0;
-      font-size: 13px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      font-weight: 800;
+      color: #e2e8f0; font-size: 13px; letter-spacing: 1.5px;
+      text-transform: uppercase; font-weight: 800;
     }
-
     .target-value {
-      color: #ffd700;
-      font-family: 'Teko', sans-serif;
-      font-size: 30px;
-      line-height: 0.8;
-      font-weight: 700;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
+      color: #ffd700; font-family: 'Teko', sans-serif; font-size: 30px;
+      line-height: 0.8; font-weight: 700; text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
     }
 
-    /* Scoreboard Container - Centered */
-    .scoreboard-wrap {
+    /* Scoreboard Master Container */
+    .scoreboard-master {
       position: absolute;
       left: 50%;
       transform: translateX(-50%);
       top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* New Tournament Top Bar */
+    .tournament-top-bar {
+      background: #111;
+      color: #ffd700;
+      padding: 4px 40px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border: 2px solid rgba(255, 255, 255, 0.18);
+      border-bottom: none;
+      border-radius: 8px 8px 0 0;
+      box-shadow: 0 -4px 12px rgba(0,0,0,0.6);
+      z-index: 10;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+    }
+
+    /* Scoreboard Container */
+    .scoreboard-wrap {
       display: inline-flex;
       align-items: center;
       background: rgba(12, 14, 18, 0.95);
@@ -103,122 +107,71 @@
       width: fit-content;
       white-space: nowrap;
     }
-
-    .tournament-tag {
-      background: #111;
-      color: #ffd700;
-      padding: 0 16px;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 1px;
-      border-right: 1px solid rgba(255, 255, 255, 0.12);
-      text-transform: uppercase;
-      text-align: center;
-    }
-
     .team-cell {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 0 16px;
-      height: 100%;
-      color: #fff;
+      display: flex; align-items: center; gap: 10px; padding: 0 20px;
+      height: 100%; color: #fff; transition: background 0.3s;
     }
-
     .team-logo {
-      width: 55px;
-      height: 55px;
-      object-fit: contain;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
-      border-radius: 50%;
+      width: 55px; height: 55px; object-fit: contain;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6)); border-radius: 50%;
     }
-
-    .team-cell.mbsg {
-      background: linear-gradient(135deg, #7c1830 50%, #005a36 50%);
-    }
-
-    .team-cell.ebfc {
-      background: linear-gradient(135deg, #d31122 50%, #f6b200 50%);
-    }
-
     .team-abbr {
-      font-size: 17px;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-      white-space: nowrap;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
+      font-size: 17px; letter-spacing: 0.8px; text-transform: uppercase;
+      white-space: nowrap; text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
     }
-
     .score-digit {
-      font-family: 'Teko', sans-serif;
-      font-size: 44px;
-      line-height: 1;
-      width: 52px;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #080a0d;
-      color: #fff;
-      font-weight: 700;
+      font-family: 'Teko', sans-serif; font-size: 44px; line-height: 1;
+      width: 52px; height: 100%; display: flex; align-items: center;
+      justify-content: center; background: #080a0d; color: #fff; font-weight: 700;
     }
-
     .timer-cell {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 0 18px;
-      background: #14171d;
-      height: 100%;
-      border-left: 1px solid rgba(255, 255, 255, 0.12);
+      display: flex; align-items: center; gap: 8px; padding: 0 18px;
+      background: #14171d; height: 100%; border-left: 1px solid rgba(255, 255, 255, 0.12);
     }
-
     .live-indicator {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #ff3344;
+      width: 8px; height: 8px; border-radius: 50%; background: #ff3344;
       animation: pulse 1s infinite alternate;
     }
-
     @keyframes pulse { from { opacity: 0.3; } to { opacity: 1; } }
-
     .clock-display {
-      font-family: 'Teko', sans-serif;
-      font-size: 34px;
-      color: #f1f1f1;
-      letter-spacing: 1px;
-      min-width: 58px;
-      text-align: center;
+      font-family: 'Teko', sans-serif; font-size: 34px; color: #f1f1f1;
+      letter-spacing: 1px; min-width: 58px; text-align: center; white-space: nowrap;
     }
 
-    /* Positioned underneath the scoreboard for easy access */
+    /* Advanced Controller Panel */
     .controller-panel {
-      position: absolute;
-      top: 130px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: center;
+      position: absolute; top: 150px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; gap: 12px;
+      background: rgba(20, 24, 30, 0.95); padding: 16px;
+      border-radius: 8px; border: 1px solid #444; width: 800px;
+      color: #fff;
     }
-
+    .ctrl-row {
+      display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+      padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .ctrl-row:last-child { border-bottom: none; padding-bottom: 0; }
     .ctrl-btn {
-      background: #252a33;
-      color: #eee;
-      border: 1px solid #444;
-      padding: 6px 12px;
-      font-size: 12px;
-      font-weight: bold;
-      border-radius: 4px;
-      cursor: pointer;
+      background: #252a33; color: #eee; border: 1px solid #444;
+      padding: 6px 12px; font-size: 12px; font-weight: bold;
+      border-radius: 4px; cursor: pointer; transition: background 0.2s;
     }
     .ctrl-btn:hover { background: #333a46; }
+    .ctrl-btn.highlight { background: #1a4d2e; border-color: #277144; }
+    .ctrl-btn.warning { background: #8a2b2b; border-color: #a63a3a; }
+    
+    .team-setup {
+      display: flex; gap: 16px; justify-content: space-between; align-items: center;
+      background: #111; padding: 10px; border-radius: 6px; width: 100%;
+    }
+    .team-setup input[type="text"] {
+      padding: 6px; border-radius: 4px; border: 1px solid #555;
+      background: #222; color: #fff; font-family: 'Montserrat', sans-serif; font-weight: bold;
+    }
+    .team-setup input[type="color"] {
+      border: none; width: 32px; height: 32px; cursor: pointer; background: transparent;
+    }
+    .team-setup input[type="file"] { font-size: 11px; max-width: 180px; }
   </style>
 </head>
 <body>
@@ -238,60 +191,113 @@
     </div>
   </div>
 
-  <div class="scoreboard-wrap">
-    <div class="tournament-tag">
-      <span>CFL</span>
-      <span>26-27</span>
-    </div>
+  <div class="scoreboard-master">
+    <div class="tournament-top-bar" id="tournament-name-display">CFL 26-27</div>
+    
+    <div class="scoreboard-wrap">
+      <div class="team-cell" id="home-bg" style="background: linear-gradient(135deg, #7c1830 50%, #005a36 50%);">
+        <img class="team-logo" id="home-logo-display" src="mbsg.webp" alt="Home">
+        <span class="team-abbr" id="home-name-display">Mohun Bagan SG</span>
+      </div>
+      <div class="score-digit" id="home-score">0</div>
 
-    <div class="team-cell mbsg">
-      <img class="team-logo" src="mbsg.webp" alt="MBSG">
-      <span class="team-abbr">Mohun Bagan SG</span>
-    </div>
-    <div class="score-digit" id="home-score">0</div>
+      <div class="score-digit" id="away-score">0</div>
+      <div class="team-cell" id="away-bg" style="background: linear-gradient(135deg, #d31122 50%, #f6b200 50%);">
+        <span class="team-abbr" id="away-name-display">East Bengal</span>
+        <img class="team-logo" id="away-logo-display" src="ebfc.png" alt="Away">
+      </div>
 
-    <div class="score-digit" id="away-score">0</div>
-    <div class="team-cell ebfc">
-      <span class="team-abbr">East Bengal</span>
-      <img class="team-logo" src="ebfc.png" alt="EBFC">
-    </div>
-
-    <div class="timer-cell">
-      <div class="live-indicator"></div>
-      <div class="clock-display" id="timer">00:00</div>
+      <div class="timer-cell">
+        <div class="live-indicator"></div>
+        <div class="clock-display" id="timer">00:00</div>
+      </div>
     </div>
   </div>
 
   <div class="controller-panel" id="controls">
-    <button class="ctrl-btn" onclick="adjScore('home', 1)">+1 MBSG</button>
-    <button class="ctrl-btn" onclick="adjScore('home', -1)">-1 MBSG</button>
-    <button class="ctrl-btn" onclick="adjScore('away', 1)">+1 EB</button>
-    <button class="ctrl-btn" onclick="adjScore('away', -1)">-1 EB</button>
-    <button class="ctrl-btn" onclick="toggleClock()">Play/Pause</button>
-    <button class="ctrl-btn" onclick="resetClock(0)">Reset (0')</button>
-    <button class="ctrl-btn" onclick="resetClock(2700)">Set 45'</button>
-    <button class="ctrl-btn" onclick="setManualTime()">Set Custom Time</button>
-    <button class="ctrl-btn" onclick="setTarget('like')">Set Like Target</button>
-    <button class="ctrl-btn" onclick="setTarget('sub')">Set Sub Target</button>
-    <button class="ctrl-btn" onclick="toggleControls()">Hide Buttons</button>
+    
+    <div class="ctrl-row">
+      <button class="ctrl-btn" onclick="adjScore('home', 1)">+1 Home</button>
+      <button class="ctrl-btn" onclick="adjScore('home', -1)">-1 Home</button>
+      <button class="ctrl-btn" onclick="adjScore('away', 1)">+1 Away</button>
+      <button class="ctrl-btn" onclick="adjScore('away', -1)">-1 Away</button>
+      <button class="ctrl-btn highlight" onclick="toggleClock()">Play/Pause Clock</button>
+      <button class="ctrl-btn" onclick="resetClock(0)">Reset (0')</button>
+      <button class="ctrl-btn" onclick="resetClock(2700)">Set 45'</button>
+      <button class="ctrl-btn" onclick="setManualTime()">Set Custom Time</button>
+    </div>
+
+    <div class="ctrl-row">
+      <button class="ctrl-btn warning" onclick="setMatchPhase('HT')">Half Time (HT)</button>
+      <button class="ctrl-btn warning" onclick="setMatchPhase('FT')">Full Time (FT)</button>
+      <button class="ctrl-btn highlight" onclick="addInjuryTime()">+ Injury Time</button>
+      <button class="ctrl-btn" onclick="clearMatchPhase()">Clear Status (Resume Clock)</button>
+    </div>
+
+    <div class="ctrl-row">
+      <input type="text" id="ctrl-tournament-name" value="CFL 26-27" placeholder="Tournament Name" style="padding: 6px; border-radius: 4px; border: 1px solid #555; background: #222; color: #fff; font-family: 'Montserrat', sans-serif; font-weight: bold;">
+      <button class="ctrl-btn highlight" onclick="setTournamentName()">Update Tournament</button>
+      <button class="ctrl-btn" onclick="setTarget('like')">Set Like Target</button>
+      <button class="ctrl-btn" onclick="setTarget('sub')">Set Sub Target</button>
+      <button class="ctrl-btn" onclick="toggleControls()">Hide Control Panel</button>
+    </div>
+
+    <div class="team-setup">
+      <strong>HOME:</strong>
+      <input type="text" id="ctrl-h-name" value="Mohun Bagan SG" placeholder="Team Name">
+      <input type="color" id="ctrl-h-c1" value="#7c1830" title="Primary Color">
+      <input type="color" id="ctrl-h-c2" value="#005a36" title="Secondary Color">
+      <input type="file" accept="image/*" id="ctrl-h-logo" onchange="processLogo(event, 'home')">
+      <button class="ctrl-btn highlight" onclick="applyTeamConfigs()">Update Teams</button>
+    </div>
+
+    <div class="team-setup">
+      <strong>AWAY:</strong>
+      <input type="text" id="ctrl-a-name" value="East Bengal" placeholder="Team Name">
+      <input type="color" id="ctrl-a-c1" value="#d31122" title="Primary Color">
+      <input type="color" id="ctrl-a-c2" value="#f6b200" title="Secondary Color">
+      <input type="file" accept="image/*" id="ctrl-a-logo" onchange="processLogo(event, 'away')">
+      <button class="ctrl-btn highlight" onclick="applyTeamConfigs()">Update Teams</button>
+    </div>
+
   </div>
 
   <script>
+    // State Variables
     let hScore = 0, aScore = 0, secs = 0, timerId = null, running = false;
-    let likeTargetVal = "25";
-    let subTargetVal = "900";
+    let tournamentName = "CFL 26-27";
+    let likeTargetVal = "25", subTargetVal = "900";
     
+    // Match Phase Variables
+    let matchStatus = ""; // "" (empty), "HT", or "FT"
+    let injuryTime = "";  // "3", "4", etc.
+
+    // Team Customization State
+    let hName = "Mohun Bagan SG", aName = "East Bengal";
+    let hC1 = "#7c1830", hC2 = "#005a36", aC1 = "#d31122", aC2 = "#f6b200";
+    let hLogo = "mbsg.webp", aLogo = "ebfc.png";
+
+    // DOM Elements
     const hEl = document.getElementById('home-score');
     const aEl = document.getElementById('away-score');
     const tEl = document.getElementById('timer');
+    const tNameEl = document.getElementById('tournament-name-display');
     const likeEl = document.getElementById('like-target-display');
     const subEl = document.getElementById('sub-target-display');
+    const hNameDisplay = document.getElementById('home-name-display');
+    const aNameDisplay = document.getElementById('away-name-display');
+    const hBg = document.getElementById('home-bg');
+    const aBg = document.getElementById('away-bg');
+    const hLogoDisplay = document.getElementById('home-logo-display');
+    const aLogoDisplay = document.getElementById('away-logo-display');
 
+    // Hide controls if embedded in OBS/Restream
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('view') === 'overlay') {
       document.getElementById('controls').style.display = 'none';
     }
 
+    // PubNub Engine
     const pubnub = new PubNub({
       publishKey: 'demo',
       subscribeKey: 'demo',
@@ -303,28 +309,53 @@
     pubnub.addListener({
       message: function(event) {
         const data = event.message;
-        hScore = data.hScore;
-        aScore = data.aScore;
-        secs = data.secs;
-        running = data.running;
         
-        // Sync targets if they exist in the payload
-        if (data.likeTargetVal !== undefined) likeTargetVal = data.likeTargetVal;
-        if (data.subTargetVal !== undefined) subTargetVal = data.subTargetVal;
+        // Update Variables from Cloud
+        hScore = data.hScore !== undefined ? data.hScore : hScore;
+        aScore = data.aScore !== undefined ? data.aScore : aScore;
+        secs = data.secs !== undefined ? data.secs : secs;
+        running = data.running !== undefined ? data.running : running;
+        
+        matchStatus = data.matchStatus !== undefined ? data.matchStatus : matchStatus;
+        injuryTime = data.injuryTime !== undefined ? data.injuryTime : injuryTime;
+        tournamentName = data.tournamentName || tournamentName;
 
+        likeTargetVal = data.likeTargetVal || likeTargetVal;
+        subTargetVal = data.subTargetVal || subTargetVal;
+        hName = data.hName || hName;
+        aName = data.aName || aName;
+        hC1 = data.hC1 || hC1; hC2 = data.hC2 || hC2;
+        aC1 = data.aC1 || aC1; aC2 = data.aC2 || aC2;
+        hLogo = data.hLogo || hLogo;
+        aLogo = data.aLogo || aLogo;
+
+        // Apply to DOM
         hEl.textContent = hScore;
         aEl.textContent = aScore;
         likeEl.textContent = likeTargetVal;
         subEl.textContent = subTargetVal;
+        tNameEl.textContent = tournamentName;
         
-        renderTime();
+        hNameDisplay.textContent = hName;
+        aNameDisplay.textContent = aName;
+        hBg.style.background = `linear-gradient(135deg, ${hC1} 50%, ${hC2} 50%)`;
+        aBg.style.background = `linear-gradient(135deg, ${aC1} 50%, ${aC2} 50%)`;
+        hLogoDisplay.src = hLogo;
+        aLogoDisplay.src = aLogo;
 
+        // Sync inputs in control panel to match external changes
+        document.getElementById('ctrl-tournament-name').value = tournamentName;
+        document.getElementById('ctrl-h-name').value = hName;
+        document.getElementById('ctrl-a-name').value = aName;
+        document.getElementById('ctrl-h-c1').value = hC1;
+        document.getElementById('ctrl-h-c2').value = hC2;
+        document.getElementById('ctrl-a-c1').value = aC1;
+        document.getElementById('ctrl-a-c2').value = aC2;
+
+        renderTime();
         clearInterval(timerId);
         if (running) {
-          timerId = setInterval(() => {
-            secs++;
-            renderTime();
-          }, 1000);
+          timerId = setInterval(() => { secs++; renderTime(); }, 1000);
         }
       }
     });
@@ -333,46 +364,49 @@
       pubnub.publish({
         channel: 'kolkata_derby_live_stream_channel',
         message: { 
-          hScore, 
-          aScore, 
-          secs, 
-          running,
-          likeTargetVal,
-          subTargetVal
+          hScore, aScore, secs, running,
+          matchStatus, injuryTime, tournamentName,
+          likeTargetVal, subTargetVal,
+          hName, aName, hC1, hC2, aC1, aC2, hLogo, aLogo
         }
       });
     }
 
     function renderTime() {
-      const m = Math.floor(secs / 60).toString().padStart(2, '0');
-      const s = (secs % 60).toString().padStart(2, '0');
-      tEl.textContent = `${m}:${s}`;
+      if (matchStatus === 'HT') {
+        tEl.textContent = 'HT';
+      } else if (matchStatus === 'FT') {
+        tEl.textContent = 'FT';
+      } else {
+        const m = Math.floor(secs / 60).toString().padStart(2, '0');
+        const s = (secs % 60).toString().padStart(2, '0');
+        let displayTxt = `${m}:${s}`;
+        
+        // Append injury time if active
+        if (injuryTime) {
+          displayTxt += ` +${injuryTime}`;
+        }
+        tEl.textContent = displayTxt;
+      }
     }
+
+    // --- Control Functions ---
 
     function adjScore(team, val) {
       if (team === 'home') hScore = Math.max(0, hScore + val);
       else aScore = Math.max(0, aScore + val);
-      hEl.textContent = hScore;
-      aEl.textContent = aScore;
       broadcastState();
     }
 
     function toggleClock() {
       running = !running;
       clearInterval(timerId);
-      if (running) {
-        timerId = setInterval(() => {
-          secs++;
-          renderTime();
-        }, 1000);
-      }
+      if (running) { timerId = setInterval(() => { secs++; renderTime(); }, 1000); }
       broadcastState();
     }
 
     function resetClock(startSec) {
-      secs = startSec;
-      renderTime();
-      broadcastState();
+      secs = startSec; renderTime(); broadcastState();
     }
 
     function setManualTime() {
@@ -384,39 +418,110 @@
           const s = parseInt(parts[1], 10);
           if (!isNaN(m) && !isNaN(s)) {
             secs = (m * 60) + s;
-            renderTime();
-            broadcastState();
-          } else {
-            alert("Invalid numbers. Please use MM:SS format.");
-          }
-        } else {
-          alert("Invalid format. Please use MM:SS.");
-        }
+            matchStatus = ""; // Clear HT/FT overrides
+            renderTime(); broadcastState();
+          } else alert("Invalid numbers. Please use MM:SS.");
+        } else alert("Invalid format. Please use MM:SS.");
+      }
+    }
+    
+    // --- Phase & Injury Time Functions ---
+    
+    function setMatchPhase(phase) {
+      matchStatus = phase;
+      injuryTime = ""; 
+      running = false; // Pause the live clock automatically
+      clearInterval(timerId);
+      renderTime();
+      broadcastState();
+    }
+
+    function addInjuryTime() {
+      const input = prompt("Enter injury time minutes (e.g., 3):", "3");
+      if (input !== null && input.trim() !== "") {
+        injuryTime = input.trim();
+        matchStatus = ""; // Clear HT/FT if applying injury time
+        renderTime();
+        broadcastState();
       }
     }
 
-    // New Function for Setting Targets
+    function clearMatchPhase() {
+      matchStatus = "";
+      injuryTime = "";
+      renderTime();
+      broadcastState();
+    }
+
+    // --- Target, Tournament & Customization Functions ---
+    
+    function setTournamentName() {
+      const input = document.getElementById('ctrl-tournament-name').value;
+      if (input.trim() !== "") {
+        tournamentName = input.trim();
+        broadcastState();
+      }
+    }
+
     function setTarget(type) {
       if (type === 'like') {
         const input = prompt("Enter new Like Target:", likeTargetVal);
-        if (input !== null && input.trim() !== "") {
-          likeTargetVal = input.trim();
-          likeEl.textContent = likeTargetVal;
-          broadcastState();
-        }
+        if (input !== null && input.trim() !== "") { likeTargetVal = input.trim(); broadcastState(); }
       } else if (type === 'sub') {
         const input = prompt("Enter new Sub Target:", subTargetVal);
-        if (input !== null && input.trim() !== "") {
-          subTargetVal = input.trim();
-          subEl.textContent = subTargetVal;
-          broadcastState();
-        }
+        if (input !== null && input.trim() !== "") { subTargetVal = input.trim(); broadcastState(); }
       }
     }
 
-    function toggleControls() {
-      document.getElementById('controls').style.display = 'none';
+    function applyTeamConfigs() {
+      hName = document.getElementById('ctrl-h-name').value || "Home";
+      aName = document.getElementById('ctrl-a-name').value || "Away";
+      hC1 = document.getElementById('ctrl-h-c1').value;
+      hC2 = document.getElementById('ctrl-h-c2').value;
+      aC1 = document.getElementById('ctrl-a-c1').value;
+      aC2 = document.getElementById('ctrl-a-c2').value;
+      broadcastState();
     }
+
+    // Image Resizer/Compressor (Prevents PubNub Payload Crashes)
+    function processLogo(event, team) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          
+          // Shrink to max 100x100px so Base64 string is tiny
+          const MAX_SIZE = 100;
+          let width = img.width;
+          let height = img.height;
+          if (width > height) {
+            if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
+          } else {
+            if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
+          }
+          
+          canvas.width = width; canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          // Compress to webp for ultra-small broadcast size
+          const compressedDataUrl = canvas.toDataURL('image/webp', 0.8);
+          
+          if (team === 'home') hLogo = compressedDataUrl;
+          else aLogo = compressedDataUrl;
+          
+          broadcastState(); // Sync it immediately
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function toggleControls() { document.getElementById('controls').style.display = 'none'; }
   </script>
 </body>
 </html>
