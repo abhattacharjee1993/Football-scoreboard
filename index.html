@@ -2,10 +2,38 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Sports Unplugged India | Combined Overlay</title>
+  <title>Sports Unplugged India | Ultimate Broadcast Overlay</title>
   <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
   <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.7.2.2.min.js"></script>
   <style>
+    /* CSS Variables for Real-Time Scaling & Colors */
+    :root {
+      --sb-scale: 1;
+      --target-scale: 1;
+      --logo-size: 55px;
+      
+      --f-team: 17px;
+      --f-score: 44px;
+      --f-time: 34px;
+      --f-tourney: 12px;
+      --f-tgt-label: 13px;
+      --f-tgt-val: 30px;
+      
+      --sb-txt: #ffffff;
+      --lu-txt: #ffffff;
+      
+      --lu-w: 260px;
+      --lu-f: 16px;
+      --lu-bg-op: 0.85;
+      --lu-logo-size: 30px;
+
+      /* Ticker Variables */
+      --tk-h: 40px;
+      --tk-f: 22px;
+      --tk-op: 0.9;
+      --tk-txt-c: #ffffff;
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
     html, body {
       background-color: transparent !important;
@@ -19,159 +47,204 @@
 
     /* Subscriber Count Widget */
     .sub-count-wrapper {
-      position: absolute;
-      left: 20px;
-      top: 20px;
-      height: 100px; 
-      width: 380px; 
-      background: rgba(12, 14, 18, 0.95);
-      border-radius: 8px;
-      border: 2px solid rgba(255, 255, 255, 0.18);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.85);
-      overflow: hidden;
+      position: absolute; left: 20px; top: 20px; height: 100px; width: 380px; 
+      background: rgba(12, 14, 18, 0.95); border-radius: 8px; border: 2px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.85); overflow: hidden;
     }
     .sub-count-wrapper iframe { width: 100%; height: 100%; border: none; overflow: hidden; }
 
     /* Target Widget */
     .targets-wrapper {
-      position: absolute;
-      right: 20px;
-      top: 20px;
-      height: 100px;
+      position: absolute; right: 20px; top: 20px; height: 100px;
       background: linear-gradient(135deg, #2c3e50 0%, #636e72 100%);
-      border-radius: 8px;
-      border: 2px solid rgba(255, 255, 255, 0.25);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.85);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 0 24px;
-      gap: 12px;
-      min-width: 260px;
+      border-radius: 8px; border: 2px solid rgba(255, 255, 255, 0.25);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.85); display: flex; flex-direction: column;
+      justify-content: center; padding: 0 24px; gap: 12px; min-width: 260px;
+      transform: scale(var(--target-scale)); transform-origin: top right; transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
     .target-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      padding-bottom: 4px;
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 4px;
     }
     .target-row:last-child { border-bottom: none; padding-bottom: 0; }
-    .target-label {
-      color: #e2e8f0; font-size: 13px; letter-spacing: 1.5px;
-      text-transform: uppercase; font-weight: 800;
+    .target-label { color: #e2e8f0; font-size: var(--f-tgt-label); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 800; transition: font-size 0.2s; }
+    .target-value { color: #ffd700; font-family: 'Teko', sans-serif; font-size: var(--f-tgt-val); line-height: 0.8; font-weight: 700; text-shadow: 1px 1px 3px rgba(0,0,0,0.9); transition: font-size 0.2s; }
+
+    /* Lineup Graphics (Playing 11) */
+    .lineup-wrapper {
+      position: absolute; top: 140px; width: var(--lu-w);
+      display: flex; flex-direction: column; border-radius: 8px; overflow: hidden;
+      border: 2px solid rgba(255, 255, 255, 0.25); box-shadow: 0 8px 24px rgba(0,0,0,0.85);
+      transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.3s;
     }
-    .target-value {
-      color: #ffd700; font-family: 'Teko', sans-serif; font-size: 30px;
-      line-height: 0.8; font-weight: 700; text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
+    .lineup-wrapper.left { left: 20px; }
+    .lineup-wrapper.right { right: 20px; }
+    
+    .lineup-bg {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      opacity: var(--lu-bg-op); z-index: 1; transition: opacity 0.2s, background 0.3s;
     }
+    .lineup-content {
+      position: relative; z-index: 2; display: flex; flex-direction: column; height: 100%;
+    }
+    .lineup-header {
+      background: rgba(0,0,0,0.6); color: var(--lu-txt); padding: 12px;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      font-size: calc(var(--lu-f) + 4px); font-weight: 800; text-align: center;
+      text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid rgba(255,255,255,0.2);
+    }
+    .lineup-logo {
+      width: var(--lu-logo-size); height: var(--lu-logo-size); object-fit: contain;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6)); border-radius: 50%;
+      transition: width 0.2s, height 0.2s;
+    }
+    .lineup-list {
+      display: flex; flex-direction: column; padding: 12px 20px; gap: 8px;
+    }
+    .lineup-player {
+      color: var(--lu-txt); font-size: var(--lu-f); font-weight: 700;
+      text-transform: uppercase; text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
+      border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px;
+    }
+    .lineup-player:last-child { border-bottom: none; }
 
     /* Scoreboard Master Container */
     .scoreboard-master {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      top: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      position: absolute; left: 50%; top: 20px; display: flex; flex-direction: column; align-items: stretch; 
+      transform: translateX(-50%) scale(var(--sb-scale)); transform-origin: top center;
+      transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.3s;
     }
-
-    /* New Tournament Top Bar */
     .tournament-top-bar {
-      background: #111;
-      color: #ffd700;
-      padding: 4px 40px;
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      border: 2px solid rgba(255, 255, 255, 0.18);
-      border-bottom: none;
-      border-radius: 8px 8px 0 0;
-      box-shadow: 0 -4px 12px rgba(0,0,0,0.6);
-      z-index: 10;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+      background: #111; color: var(--sb-txt); padding: 4px 10px; font-size: var(--f-tourney);
+      font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
+      border: 2px solid rgba(255, 255, 255, 0.18); border-bottom: none; border-radius: 8px 8px 0 0;
+      box-shadow: 0 -4px 12px rgba(0,0,0,0.6); z-index: 10; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+      text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: font-size 0.2s, color 0.2s;
     }
-
-    /* Scoreboard Container */
     .scoreboard-wrap {
-      display: inline-flex;
-      align-items: center;
-      background: rgba(12, 14, 18, 0.95);
-      border-radius: 8px;
-      border: 2px solid rgba(255, 255, 255, 0.18);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.85);
-      overflow: hidden;
-      height: 64px;
-      width: fit-content;
-      white-space: nowrap;
+      display: inline-flex; align-items: center; background: rgba(12, 14, 18, 0.95);
+      border-radius: 0 0 8px 8px; border: 2px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.85); overflow: hidden; height: 64px; width: fit-content; white-space: nowrap;
     }
     .team-cell {
-      display: flex; align-items: center; gap: 10px; padding: 0 20px;
-      height: 100%; color: #fff; transition: background 0.3s;
+      display: flex; align-items: center; gap: 10px; padding: 0 20px; height: 100%; transition: background 0.3s;
     }
     .team-logo {
-      width: 55px; height: 55px; object-fit: contain;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6)); border-radius: 50%;
+      width: var(--logo-size); height: var(--logo-size); object-fit: contain;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6)); border-radius: 50%; transition: width 0.2s, height 0.2s;
     }
     .team-abbr {
-      font-size: 17px; letter-spacing: 0.8px; text-transform: uppercase;
-      white-space: nowrap; text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
+      color: var(--sb-txt); font-size: var(--f-team); letter-spacing: 0.8px; text-transform: uppercase;
+      white-space: nowrap; text-shadow: 1px 1px 3px rgba(0,0,0,0.9); transition: font-size 0.2s, color 0.2s;
     }
     .score-digit {
-      font-family: 'Teko', sans-serif; font-size: 44px; line-height: 1;
-      width: 52px; height: 100%; display: flex; align-items: center;
-      justify-content: center; background: #080a0d; color: #fff; font-weight: 700;
+      color: var(--sb-txt); font-family: 'Teko', sans-serif; font-size: var(--f-score); line-height: 1;
+      width: 60px; height: 100%; display: flex; align-items: center; justify-content: center; 
+      background: #080a0d; font-weight: 700; transition: font-size 0.2s, color 0.2s;
     }
     .timer-cell {
       display: flex; align-items: center; gap: 8px; padding: 0 18px;
       background: #14171d; height: 100%; border-left: 1px solid rgba(255, 255, 255, 0.12);
     }
-    .live-indicator {
-      width: 8px; height: 8px; border-radius: 50%; background: #ff3344;
-      animation: pulse 1s infinite alternate;
-    }
+    .live-indicator { width: 8px; height: 8px; border-radius: 50%; background: #ff3344; animation: pulse 1s infinite alternate; }
     @keyframes pulse { from { opacity: 0.3; } to { opacity: 1; } }
     .clock-display {
-      font-family: 'Teko', sans-serif; font-size: 34px; color: #f1f1f1;
-      letter-spacing: 1px; min-width: 58px; text-align: center; white-space: nowrap;
+      color: var(--sb-txt); font-family: 'Teko', sans-serif; font-size: var(--f-time);
+      letter-spacing: 1px; min-width: 58px; text-align: center; white-space: nowrap; transition: font-size 0.2s, color 0.2s;
     }
 
-    /* Advanced Controller Panel */
+    /* Ticker Widget */
+    .ticker-wrapper {
+      position: absolute; bottom: 0; left: 0; width: 100vw; height: var(--tk-h);
+      display: flex; align-items: center; overflow: hidden; z-index: 50;
+      box-shadow: 0 -4px 12px rgba(0,0,0,0.6); transition: height 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.3s;
+    }
+    .ticker-bg {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      opacity: var(--tk-op); z-index: 1; transition: opacity 0.2s, background 0.3s;
+    }
+    .ticker-content { position: relative; z-index: 2; width: 100%; }
+    .ticker-text {
+      color: var(--tk-txt-c); font-size: var(--tk-f); font-weight: 800;
+      text-transform: uppercase; letter-spacing: 1.5px; text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
+      transition: font-size 0.2s, color 0.2s; white-space: nowrap;
+    }
+    .ticker-text.scrolling { display: inline-block; padding-left: 100vw; animation: ticker-scroll 25s linear infinite; }
+    .ticker-text.static { display: block; width: 100%; text-align: center; padding-left: 0; animation: none; }
+    @keyframes ticker-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+
+    /* --- BROADCAST CONTROLLER SUITE GUI --- */
     .controller-panel {
-      position: absolute; top: 150px; left: 50%; transform: translateX(-50%);
-      display: flex; flex-direction: column; gap: 12px;
-      background: rgba(20, 24, 30, 0.95); padding: 16px;
-      border-radius: 8px; border: 1px solid #444; width: 800px;
-      color: #fff;
+      position: absolute; top: 120px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column;
+      background: rgba(16, 20, 26, 0.95); padding: 20px; border-radius: 12px; border: 2px solid #333; width: 950px;
+      color: #fff; max-height: calc(100vh - 140px); overflow-y: auto; z-index: 100; box-shadow: 0 20px 50px rgba(0,0,0,0.9);
     }
+    
+    /* Top Sticky Header */
+    .ctrl-master-header {
+      display: flex; justify-content: space-between; align-items: center; 
+      padding-bottom: 16px; border-bottom: 2px solid #333; margin-bottom: 16px; position: sticky; top: -20px; background: rgba(16, 20, 26, 0.95); z-index: 10;
+    }
+    
+    /* Accordion Panels */
+    .collapsible-header {
+      background: #1e242d; color: #fff; padding: 14px 18px; cursor: pointer;
+      font-weight: 800; font-family: 'Montserrat', sans-serif; letter-spacing: 1px;
+      border: 1px solid #444; border-radius: 6px; display: flex;
+      justify-content: space-between; align-items: center; text-transform: uppercase; margin-bottom: 4px;
+      transition: background 0.2s;
+    }
+    .collapsible-header:hover { background: #2a323d; }
+    .collapsible-content {
+      display: none; padding: 20px; background: rgba(0, 0, 0, 0.2);
+      border: 1px solid #444; border-top: none; border-radius: 0 0 6px 6px;
+      flex-direction: column; gap: 16px; margin-top: -8px; margin-bottom: 12px;
+    }
+    .collapsible-content.active { display: flex; }
+
     .ctrl-row {
-      display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
-      padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);
+      display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; align-items: center;
     }
-    .ctrl-row:last-child { border-bottom: none; padding-bottom: 0; }
     .ctrl-btn {
-      background: #252a33; color: #eee; border: 1px solid #444;
-      padding: 6px 12px; font-size: 12px; font-weight: bold;
-      border-radius: 4px; cursor: pointer; transition: background 0.2s;
+      background: #2b323c; color: #eee; border: 1px solid #555; padding: 8px 16px; font-size: 13px; 
+      font-weight: bold; border-radius: 6px; cursor: pointer; transition: background 0.2s, transform 0.1s;
     }
-    .ctrl-btn:hover { background: #333a46; }
-    .ctrl-btn.highlight { background: #1a4d2e; border-color: #277144; }
-    .ctrl-btn.warning { background: #8a2b2b; border-color: #a63a3a; }
+    .ctrl-btn:hover { background: #3b4451; }
+    .ctrl-btn:active { transform: scale(0.97); }
+    .ctrl-btn.highlight { background: #1a4d2e; border-color: #277144; color: #fff; }
+    .ctrl-btn.warning { background: #8a2b2b; border-color: #a63a3a; color: #fff; }
+    .ctrl-btn.special { background: #2563eb; border-color: #1d4ed8; color: #fff; }
+    .ctrl-btn.sync-btn { background: #eab308; border-color: #ca8a04; color: #000; font-size: 15px; padding: 10px 24px; box-shadow: 0 4px 10px rgba(234, 179, 8, 0.3); }
+
+    /* Visual Settings Groups */
+    .slider-group { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; background: rgba(0,0,0,0.4); padding: 16px; border-radius: 8px; border: 1px solid #333; }
+    .slider-container { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 11px; color: #ccc; font-weight: bold; text-transform: uppercase; }
+    .slider-container input[type="range"] { width: 90px; cursor: pointer; accent-color: #eab308; }
+    .slider-container input[type="color"] { border: 1px solid #555; border-radius: 4px; width: 34px; height: 34px; cursor: pointer; background: #222; }
     
     .team-setup {
-      display: flex; gap: 16px; justify-content: space-between; align-items: center;
-      background: #111; padding: 10px; border-radius: 6px; width: 100%;
+      display: flex; gap: 16px; justify-content: space-between; align-items: flex-start;
+      background: #111; padding: 16px; border-radius: 8px; width: 100%; border: 1px solid #333;
     }
-    .team-setup input[type="text"] {
-      padding: 6px; border-radius: 4px; border: 1px solid #555;
-      background: #222; color: #fff; font-family: 'Montserrat', sans-serif; font-weight: bold;
+    .team-details { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+    .team-details input[type="text"] { padding: 8px; border-radius: 4px; border: 1px solid #555; background: #222; color: #fff; font-family: 'Montserrat', sans-serif; font-weight: bold; width: 100%; font-size: 14px; }
+    .team-details input[type="file"] { font-size: 11px; color: #aaa; }
+    .color-row { display: flex; gap: 12px; align-items: center; }
+    .color-row input[type="color"] { border: none; width: 32px; height: 32px; cursor: pointer; background: transparent; }
+    
+    textarea.lineup-input {
+      width: 100%; height: 140px; padding: 10px; border-radius: 4px; border: 1px solid #555;
+      background: #222; color: #fff; font-family: 'Montserrat', sans-serif; font-size: 13px; resize: none; line-height: 1.4;
     }
-    .team-setup input[type="color"] {
-      border: none; width: 32px; height: 32px; cursor: pointer; background: transparent;
+    
+    .section-title { font-size: 13px; color: #ffd700; font-weight: 800; text-transform: uppercase; width: 100%; text-align: left; margin-bottom: 4px; letter-spacing: 1px; }
+    
+    /* Text Input Base Styling */
+    input.auto-text {
+      padding: 8px 12px; border-radius: 4px; border: 1px solid #555; background: #222; 
+      color: #fff; font-family: 'Montserrat', sans-serif; font-weight: bold; font-size: 14px;
     }
-    .team-setup input[type="file"] { font-size: 11px; max-width: 180px; }
+    input.auto-text:focus, textarea.lineup-input:focus { outline: 2px solid #eab308; border-color: transparent; }
   </style>
 </head>
 <body>
@@ -191,22 +264,41 @@
     </div>
   </div>
 
-  <div class="scoreboard-master">
+  <div class="lineup-wrapper left" id="lineup-left" style="display: none;">
+    <div class="lineup-bg" id="home-lineup-bg"></div>
+    <div class="lineup-content">
+      <div class="lineup-header">
+        <img class="lineup-logo" id="home-lu-logo" src="mbsg.webp" alt="Home Logo">
+        <span id="home-lineup-header-text">Mohun Bagan SG</span>
+      </div>
+      <div class="lineup-list" id="home-lineup-list"></div>
+    </div>
+  </div>
+
+  <div class="lineup-wrapper right" id="lineup-right" style="display: none;">
+    <div class="lineup-bg" id="away-lineup-bg"></div>
+    <div class="lineup-content">
+      <div class="lineup-header">
+        <span id="away-lineup-header-text">East Bengal</span>
+        <img class="lineup-logo" id="away-lu-logo" src="ebfc.png" alt="Away Logo">
+      </div>
+      <div class="lineup-list" id="away-lineup-list"></div>
+    </div>
+  </div>
+
+  <div class="scoreboard-master" id="scoreboard-master">
     <div class="tournament-top-bar" id="tournament-name-display">CFL 26-27</div>
-    
     <div class="scoreboard-wrap">
-      <div class="team-cell" id="home-bg" style="background: linear-gradient(135deg, #7c1830 50%, #005a36 50%);">
+      <div class="team-cell" id="home-bg">
         <img class="team-logo" id="home-logo-display" src="mbsg.webp" alt="Home">
         <span class="team-abbr" id="home-name-display">Mohun Bagan SG</span>
       </div>
       <div class="score-digit" id="home-score">0</div>
-
       <div class="score-digit" id="away-score">0</div>
-      <div class="team-cell" id="away-bg" style="background: linear-gradient(135deg, #d31122 50%, #f6b200 50%);">
+      <div class="team-cell" id="away-bg">
         <span class="team-abbr" id="away-name-display">East Bengal</span>
         <img class="team-logo" id="away-logo-display" src="ebfc.png" alt="Away">
       </div>
-
       <div class="timer-cell">
         <div class="live-indicator"></div>
         <div class="clock-display" id="timer">00:00</div>
@@ -214,82 +306,239 @@
     </div>
   </div>
 
+  <div class="ticker-wrapper" id="ticker-wrapper">
+    <div class="ticker-bg" id="ticker-bg"></div>
+    <div class="ticker-content">
+      <span class="ticker-text scrolling" id="ticker-text">Welcome to Sports Unplugged India! Please Like and Subscribe to the channel.</span>
+    </div>
+  </div>
+
   <div class="controller-panel" id="controls">
     
-    <div class="ctrl-row">
-      <button class="ctrl-btn" onclick="adjScore('home', 1)">+1 Home</button>
-      <button class="ctrl-btn" onclick="adjScore('home', -1)">-1 Home</button>
-      <button class="ctrl-btn" onclick="adjScore('away', 1)">+1 Away</button>
-      <button class="ctrl-btn" onclick="adjScore('away', -1)">-1 Away</button>
-      <button class="ctrl-btn highlight" onclick="toggleClock()">Play/Pause Clock</button>
-      <button class="ctrl-btn" onclick="resetClock(0)">Reset (0')</button>
-      <button class="ctrl-btn" onclick="resetClock(2700)">Set 45'</button>
-      <button class="ctrl-btn" onclick="setManualTime()">Set Custom Time</button>
+    <div class="ctrl-master-header">
+      <span style="font-weight: 800; font-size: 18px; color: #fff; letter-spacing: 1px;">MASTER CONTROL SUITE</span>
+      <div style="display: flex; gap: 12px;">
+        <button class="ctrl-btn sync-btn" onclick="syncVisuals()">SYNC LAYOUT TO STREAM</button>
+        <button class="ctrl-btn" onclick="toggleControls()">Hide Panel</button>
+      </div>
     </div>
 
-    <div class="ctrl-row">
-      <button class="ctrl-btn warning" onclick="setMatchPhase('HT')">Half Time (HT)</button>
-      <button class="ctrl-btn warning" onclick="setMatchPhase('FT')">Full Time (FT)</button>
-      <button class="ctrl-btn highlight" onclick="addInjuryTime()">+ Injury Time</button>
-      <button class="ctrl-btn" onclick="clearMatchPhase()">Clear Status (Resume Clock)</button>
+    <div class="collapsible-header" onclick="togglePanel('panel-sb')">
+      1. Scoreboard Controls <span id="panel-sb-icon">▲</span>
+    </div>
+    <div class="collapsible-content active" id="panel-sb">
+      
+      <div class="ctrl-row" style="justify-content: space-between; padding: 0 10px;">
+        <div style="display: flex; gap: 8px;">
+          <button class="ctrl-btn special" onclick="toggleScoreboardVisibility()" id="btn-toggle-sb">Hide Scoreboard</button>
+          <label style="font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 6px; margin-left: 10px;">
+            <input type="checkbox" id="ctrl-gradient" checked onchange="applyVisualsLocally(); syncVisuals();"> Use Gradients (Split Colors)
+          </label>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 12px; font-weight: bold;">Tournament:</span>
+          <input type="text" class="auto-text" id="ctrl-tournament-name" value="CFL 26-27" style="width: 200px;" onkeydown="if(event.key === 'Enter') { this.blur(); syncTexts(); }" onblur="syncTexts()">
+        </div>
+      </div>
+
+      <div class="ctrl-row">
+        <button class="ctrl-btn highlight" onclick="toggleClock()">Play/Pause</button>
+        <button class="ctrl-btn" onclick="resetClock(0)">Reset (0')</button>
+        <button class="ctrl-btn" onclick="resetClock(2700)">Set 45'</button>
+        <button class="ctrl-btn" onclick="setManualTime()">Custom Time</button>
+        <button class="ctrl-btn warning" onclick="setMatchPhase('HT')">HT</button>
+        <button class="ctrl-btn warning" onclick="setMatchPhase('FT')">FT</button>
+        <button class="ctrl-btn highlight" onclick="addInjuryTime()">+ Injury</button>
+        <button class="ctrl-btn" onclick="clearMatchPhase()">Clear Status</button>
+      </div>
+
+      <div class="ctrl-row">
+        <button class="ctrl-btn" style="padding: 10px 20px; font-size: 16px;" onclick="adjScore('home', 1)">+1 Home</button>
+        <button class="ctrl-btn" onclick="adjScore('home', -1)">-1 Home</button>
+        <button class="ctrl-btn" style="padding: 10px 20px; font-size: 16px; margin-left: 20px;" onclick="adjScore('away', 1)">+1 Away</button>
+        <button class="ctrl-btn" onclick="adjScore('away', -1)">-1 Away</button>
+      </div>
+
+      <div class="ctrl-row" style="gap: 16px; border-bottom: none;">
+        <div class="team-setup">
+          <div class="team-details">
+            <span class="section-title">Home Team</span>
+            <input type="text" id="ctrl-h-name" value="Mohun Bagan SG" placeholder="Team Name" onkeydown="if(event.key === 'Enter') { this.blur(); syncTexts(); }" onblur="syncTexts()">
+            <div class="color-row">
+              <input type="color" id="ctrl-h-c1" value="#7c1830" title="Primary Color" oninput="applyVisualsLocally()">
+              <input type="color" id="ctrl-h-c2" value="#005a36" title="Secondary Color" oninput="applyVisualsLocally()">
+              <input type="file" accept="image/*" id="ctrl-h-logo" onchange="processLogo(event, 'home')">
+            </div>
+          </div>
+        </div>
+        <div class="team-setup">
+          <div class="team-details">
+            <span class="section-title">Away Team</span>
+            <input type="text" id="ctrl-a-name" value="East Bengal" placeholder="Team Name" onkeydown="if(event.key === 'Enter') { this.blur(); syncTexts(); }" onblur="syncTexts()">
+            <div class="color-row">
+              <input type="color" id="ctrl-a-c1" value="#d31122" title="Primary Color" oninput="applyVisualsLocally()">
+              <input type="color" id="ctrl-a-c2" value="#f6b200" title="Secondary Color" oninput="applyVisualsLocally()">
+              <input type="file" accept="image/*" id="ctrl-a-logo" onchange="processLogo(event, 'away')">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slider-group">
+        <span class="section-title">Scoreboard Layout Settings (Local Preview)</span>
+        <div class="slider-container"><span>Text Color</span><input type="color" id="ctrl-sb-txt-color" value="#ffffff" oninput="applyVisualsLocally()"></div>
+        <div class="slider-container"><span>Overall Size</span><input type="range" id="sl-sb-scale" min="0.5" max="2" step="0.05" value="1" oninput="applyVisualsLocally()"></div>
+        <div class="slider-container"><span>Logo Size</span><input type="range" id="sl-logo-size" min="20" max="100" value="55" oninput="applyVisualsLocally()"></div>
+        <div class="slider-container"><span>Team Font</span><input type="range" id="sl-f-team" min="10" max="40" value="17" oninput="applyVisualsLocally()"></div>
+        <div class="slider-container"><span>Score Font</span><input type="range" id="sl-f-score" min="20" max="80" value="44" oninput="applyVisualsLocally()"></div>
+        <div class="slider-container"><span>Time Font</span><input type="range" id="sl-f-time" min="15" max="60" value="34" oninput="applyVisualsLocally()"></div>
+      </div>
     </div>
 
-    <div class="ctrl-row">
-      <input type="text" id="ctrl-tournament-name" value="CFL 26-27" placeholder="Tournament Name" style="padding: 6px; border-radius: 4px; border: 1px solid #555; background: #222; color: #fff; font-family: 'Montserrat', sans-serif; font-weight: bold;">
-      <button class="ctrl-btn highlight" onclick="setTournamentName()">Update Tournament</button>
-      <button class="ctrl-btn" onclick="setTarget('like')">Set Like Target</button>
-      <button class="ctrl-btn" onclick="setTarget('sub')">Set Sub Target</button>
-      <button class="ctrl-btn" onclick="toggleControls()">Hide Control Panel</button>
+    <div class="collapsible-header" onclick="togglePanel('panel-tgt')">
+      2. Target Box Controls <span id="panel-tgt-icon">▼</span>
+    </div>
+    <div class="collapsible-content" id="panel-tgt">
+      <div class="ctrl-row" style="gap: 20px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 13px; font-weight: bold;">Like Target:</span>
+          <input type="text" class="auto-text" id="ctrl-like-tgt" value="25" style="width: 100px; text-align: center;" onkeydown="if(event.key === 'Enter') { this.blur(); syncTexts(); }" onblur="syncTexts()">
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 13px; font-weight: bold;">Sub Target:</span>
+          <input type="text" class="auto-text" id="ctrl-sub-tgt" value="900" style="width: 100px; text-align: center;" onkeydown="if(event.key === 'Enter') { this.blur(); syncTexts(); }" onblur="syncTexts()">
+        </div>
+      </div>
+      <div class="slider-group">
+        <span class="section-title">Target Box Layout Settings (Local Preview)</span>
+        <div class="slider-container"><span>Box Size</span><input type="range" id="sl-tgt-scale" min="0.5" max="2" step="0.05" value="1" oninput="applyVisualsLocally()"></div>
+        <div class="slider-container"><span>Label Font</span><input type="range" id="sl-f-tgt-lbl" min="8" max="24" value="13" oninput="applyVisualsLocally()"></div>
+        <div class="slider-container"><span>Number Font</span><input type="range" id="sl-f-tgt-val" min="15" max="60" value="30" oninput="applyVisualsLocally()"></div>
+      </div>
     </div>
 
-    <div class="team-setup">
-      <strong>HOME:</strong>
-      <input type="text" id="ctrl-h-name" value="Mohun Bagan SG" placeholder="Team Name">
-      <input type="color" id="ctrl-h-c1" value="#7c1830" title="Primary Color">
-      <input type="color" id="ctrl-h-c2" value="#005a36" title="Secondary Color">
-      <input type="file" accept="image/*" id="ctrl-h-logo" onchange="processLogo(event, 'home')">
-      <button class="ctrl-btn highlight" onclick="applyTeamConfigs()">Update Teams</button>
+    <div class="collapsible-header" onclick="togglePanel('panel-lu')">
+      3. Playing 11 Lineup Controls <span id="panel-lu-icon">▼</span>
+    </div>
+    <div class="collapsible-content" id="panel-lu">
+      <div class="ctrl-row" style="justify-content: flex-start; padding-left: 10px;">
+        <button class="ctrl-btn special" onclick="toggleLineupsVisibility()" id="btn-toggle-lu">Show Lineups</button>
+        <label style="font-size: 12px; font-weight: bold; margin-left: 20px; display: flex; align-items: center; gap: 6px;">
+          <input type="checkbox" id="ctrl-lu-logo-show" checked onchange="applyVisualsLocally(); syncVisuals();"> Show Logos in Header
+        </label>
+      </div>
+      <div class="ctrl-row" style="align-items: flex-start; gap: 20px; border-bottom: none;">
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+          <span class="section-title">Home Playing 11 (Syncs on click away)</span>
+          <textarea class="lineup-input" id="ctrl-h-lineup" onblur="syncTexts()"></textarea>
+        </div>
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+          <span class="section-title">Away Playing 11 (Syncs on click away)</span>
+          <textarea class="lineup-input" id="ctrl-a-lineup" onblur="syncTexts()"></textarea>
+        </div>
+      </div>
+      <div class="slider-group">
+        <span class="section-title">Lineup Layout Settings (Local Preview)</span>
+        <div class="slider-container"><span>Text Color</span><input type="color" id="ctrl-lu-txt-color" value="#ffffff" oninput="applyVisualsLocally()"></div>
+        <div class="slider-container"><span>Panel Width</span><input type="range" id="sl-lu-w" min="150" max="400" value="260" oninput="applyVisualsLocally()"></div>
+        <div class="slider-container"><span>Font Size</span><input type="range" id="sl-lu-f" min="10" max="30" value="16" oninput="applyVisualsLocally()"></div>
+        <div class="slider-container"><span>BG Opacity</span><input type="range" id="sl-lu-op" min="0.2" max="1" step="0.05" value="0.85" oninput="applyVisualsLocally()"></div>
+        <div class="slider-container"><span>Logo Size</span><input type="range" id="sl-lu-logo-size" min="15" max="80" value="30" oninput="applyVisualsLocally()"></div>
+      </div>
     </div>
 
-    <div class="team-setup">
-      <strong>AWAY:</strong>
-      <input type="text" id="ctrl-a-name" value="East Bengal" placeholder="Team Name">
-      <input type="color" id="ctrl-a-c1" value="#d31122" title="Primary Color">
-      <input type="color" id="ctrl-a-c2" value="#f6b200" title="Secondary Color">
-      <input type="file" accept="image/*" id="ctrl-a-logo" onchange="processLogo(event, 'away')">
-      <button class="ctrl-btn highlight" onclick="applyTeamConfigs()">Update Teams</button>
+    <div class="collapsible-header" onclick="togglePanel('panel-tk')">
+      4. Bottom Ticker Controls <span id="panel-tk-icon">▼</span>
+    </div>
+    <div class="collapsible-content" id="panel-tk">
+      <div class="ctrl-row" style="justify-content: flex-start; gap: 20px; padding-left: 10px;">
+        <label style="font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="ctrl-tk-show" checked onchange="applyVisualsLocally(); syncVisuals();"> Enable Ticker</label>
+        <label style="font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="ctrl-tk-scroll" checked onchange="applyVisualsLocally(); syncVisuals();"> Scroll Animation</label>
+        <label style="font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="ctrl-tk-grad" checked onchange="applyVisualsLocally(); syncVisuals();"> Use Gradient</label>
+      </div>
+      <div class="ctrl-row" style="gap: 16px; border-bottom: none;">
+        <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 6px;">
+          <span class="section-title">Ticker Message (Press Enter to Sync)</span>
+          <input type="text" class="auto-text" id="ctrl-tk-text" value="Welcome to Sports Unplugged India! Please Like and Subscribe to the channel." style="width: 100%; font-size: 15px;" onkeydown="if(event.key === 'Enter') { this.blur(); syncTexts(); }" onblur="syncTexts()">
+        </div>
+      </div>
+      <div class="slider-group">
+        <span class="section-title">Ticker Layout Settings (Local Preview)</span>
+        <div class="slider-container"><span>Text C</span><input type="color" id="ctrl-tk-txt-c" value="#ffffff" oninput="applyVisualsLocally()"></div>
+        <div class="slider-container"><span>BG C1</span><input type="color" id="ctrl-tk-c1" value="#1a202c" oninput="applyVisualsLocally()"></div>
+        <div class="slider-container"><span>BG C2</span><input type="color" id="ctrl-tk-c2" value="#2d3748" oninput="applyVisualsLocally()"></div>
+        <div class="slider-container"><span>Bar Height</span><input type="range" id="sl-tk-h" min="20" max="100" value="40" oninput="applyVisualsLocally()"></div>
+        <div class="slider-container"><span>Font Size</span><input type="range" id="sl-tk-f" min="12" max="60" value="22" oninput="applyVisualsLocally()"></div>
+        <div class="slider-container"><span>Opacity</span><input type="range" id="sl-tk-op" min="0.2" max="1" step="0.05" value="0.9" oninput="applyVisualsLocally()"></div>
+      </div>
     </div>
 
   </div>
 
   <script>
-    // State Variables
+    // Accordion Logic
+    function togglePanel(panelId) {
+      const content = document.getElementById(panelId);
+      const icon = document.getElementById(panelId + '-icon');
+      if (content.classList.contains('active')) {
+        content.classList.remove('active');
+        icon.textContent = '▼';
+      } else {
+        content.classList.add('active');
+        icon.textContent = '▲';
+      }
+    }
+
+    // Match & UI State Variables
     let hScore = 0, aScore = 0, secs = 0, timerId = null, running = false;
     let tournamentName = "CFL 26-27";
     let likeTargetVal = "25", subTargetVal = "900";
+    let matchStatus = ""; let injuryTime = "";
     
-    // Match Phase Variables
-    let matchStatus = ""; // "" (empty), "HT", or "FT"
-    let injuryTime = "";  // "3", "4", etc.
-
-    // Team Customization State
+    // Team & Lineup State
     let hName = "Mohun Bagan SG", aName = "East Bengal";
     let hC1 = "#7c1830", hC2 = "#005a36", aC1 = "#d31122", aC2 = "#f6b200";
     let hLogo = "mbsg.webp", aLogo = "ebfc.png";
+    let hLineupStr = "Vishal (GK)\nAsish\nAlberto\nSubhasish\nListon\nThapa\nApuia\nSahal\nCummings\nPetratos\nStewart";
+    let aLineupStr = "Gill (GK)\nRakte\nAnwar\nYuste\nNishu\nJeakson\nSaul\nNandhakha\nCleiton\nMahesh\nDiamantakos";
+
+    // Ticker State
+    let tkText = "Welcome to Sports Unplugged India! Please Like and Subscribe to the channel.";
+    let isTkVis = true, isTkScroll = true, useTkGrad = true;
+    let tkC1 = "#1a202c", tkC2 = "#2d3748", tkTxtC = "#ffffff";
+    let vTkH = 40, vTkF = 22, vTkOp = 0.9;
+
+    // Visual/Scaling State
+    let isScoreboardVisible = true; let isLineupsVisible = false;
+    let useGradient = true; let showLuLogo = true;
+    let sbTxtColor = "#ffffff", luTxtColor = "#ffffff";
+    let vSbScale = 1, vTgtScale = 1, vLogoSize = 55;
+    let vFTeam = 17, vFScore = 44, vFTime = 34, vFTourney = 12, vFTgtLbl = 13, vFTgtVal = 30;
+    let vLuWidth = 260, vLuFont = 16, vLuOpacity = 0.85, vLuLogoSize = 30;
 
     // DOM Elements
-    const hEl = document.getElementById('home-score');
-    const aEl = document.getElementById('away-score');
-    const tEl = document.getElementById('timer');
-    const tNameEl = document.getElementById('tournament-name-display');
-    const likeEl = document.getElementById('like-target-display');
-    const subEl = document.getElementById('sub-target-display');
-    const hNameDisplay = document.getElementById('home-name-display');
-    const aNameDisplay = document.getElementById('away-name-display');
-    const hBg = document.getElementById('home-bg');
-    const aBg = document.getElementById('away-bg');
-    const hLogoDisplay = document.getElementById('home-logo-display');
-    const aLogoDisplay = document.getElementById('away-logo-display');
+    const hEl = document.getElementById('home-score'); const aEl = document.getElementById('away-score');
+    const tEl = document.getElementById('timer'); const tNameEl = document.getElementById('tournament-name-display');
+    const likeEl = document.getElementById('like-target-display'); const subEl = document.getElementById('sub-target-display');
+    const hNameDisplay = document.getElementById('home-name-display'); const aNameDisplay = document.getElementById('away-name-display');
+    const hBg = document.getElementById('home-bg'); const aBg = document.getElementById('away-bg');
+    const hLogoDisplay = document.getElementById('home-logo-display'); const aLogoDisplay = document.getElementById('away-logo-display');
+    const scoreboardMaster = document.getElementById('scoreboard-master');
+    const btnToggleSb = document.getElementById('btn-toggle-sb'); const btnToggleLu = document.getElementById('btn-toggle-lu');
+    
+    const luLeft = document.getElementById('lineup-left'); const luRight = document.getElementById('lineup-right');
+    const hLuBg = document.getElementById('home-lineup-bg'); const aLuBg = document.getElementById('away-lineup-bg');
+    const hLuHeaderText = document.getElementById('home-lineup-header-text'); const aLuHeaderText = document.getElementById('away-lineup-header-text');
+    const hLuLogoDisplay = document.getElementById('home-lu-logo'); const aLuLogoDisplay = document.getElementById('away-lu-logo');
+    const hLuList = document.getElementById('home-lineup-list'); const aLuList = document.getElementById('away-lineup-list');
+
+    const tkWrap = document.getElementById('ticker-wrapper');
+    const tkBgEl = document.getElementById('ticker-bg');
+    const tkTextEl = document.getElementById('ticker-text');
+
+    // Pre-fill local textareas
+    document.getElementById('ctrl-h-lineup').value = hLineupStr;
+    document.getElementById('ctrl-a-lineup').value = aLineupStr;
 
     // Hide controls if embedded in OBS/Restream
     const urlParams = new URLSearchParams(window.location.search);
@@ -310,53 +559,76 @@
       message: function(event) {
         const data = event.message;
         
-        // Update Variables from Cloud
-        hScore = data.hScore !== undefined ? data.hScore : hScore;
-        aScore = data.aScore !== undefined ? data.aScore : aScore;
-        secs = data.secs !== undefined ? data.secs : secs;
-        running = data.running !== undefined ? data.running : running;
+        // Update Variables
+        hScore = data.hScore !== undefined ? data.hScore : hScore; aScore = data.aScore !== undefined ? data.aScore : aScore;
+        secs = data.secs !== undefined ? data.secs : secs; running = data.running !== undefined ? data.running : running;
+        matchStatus = data.matchStatus !== undefined ? data.matchStatus : matchStatus; injuryTime = data.injuryTime !== undefined ? data.injuryTime : injuryTime;
+        tournamentName = data.tournamentName || tournamentName; likeTargetVal = data.likeTargetVal || likeTargetVal; subTargetVal = data.subTargetVal || subTargetVal;
+        hName = data.hName || hName; aName = data.aName || aName;
+        hC1 = data.hC1 || hC1; hC2 = data.hC2 || hC2; aC1 = data.aC1 || aC1; aC2 = data.aC2 || aC2;
+        hLogo = data.hLogo || hLogo; aLogo = data.aLogo || aLogo;
+        hLineupStr = data.hLineupStr || hLineupStr; aLineupStr = data.aLineupStr || aLineupStr;
+        tkText = data.tkText || tkText; isTkVis = data.isTkVis !== undefined ? data.isTkVis : isTkVis;
+        isTkScroll = data.isTkScroll !== undefined ? data.isTkScroll : isTkScroll; useTkGrad = data.useTkGrad !== undefined ? data.useTkGrad : useTkGrad;
+        tkC1 = data.tkC1 || tkC1; tkC2 = data.tkC2 || tkC2; tkTxtC = data.tkTxtC || tkTxtC;
+        vTkH = data.vTkH || vTkH; vTkF = data.vTkF || vTkF; vTkOp = data.vTkOp || vTkOp;
+        isScoreboardVisible = data.isScoreboardVisible !== undefined ? data.isScoreboardVisible : isScoreboardVisible;
+        isLineupsVisible = data.isLineupsVisible !== undefined ? data.isLineupsVisible : isLineupsVisible;
+        useGradient = data.useGradient !== undefined ? data.useGradient : useGradient;
+        showLuLogo = data.showLuLogo !== undefined ? data.showLuLogo : showLuLogo;
+        sbTxtColor = data.sbTxtColor || sbTxtColor; luTxtColor = data.luTxtColor || luTxtColor;
+        vSbScale = data.vSbScale || vSbScale; vTgtScale = data.vTgtScale || vTgtScale; vLogoSize = data.vLogoSize || vLogoSize;
+        vFTeam = data.vFTeam || vFTeam; vFScore = data.vFScore || vFScore; vFTime = data.vFTime || vFTime; 
+        vFTourney = data.vFTourney || vFTourney; vFTgtLbl = data.vFTgtLbl || vFTgtLbl; vFTgtVal = data.vFTgtVal || vFTgtVal;
+        vLuWidth = data.vLuWidth || vLuWidth; vLuFont = data.vLuFont || vLuFont; vLuOpacity = data.vLuOpacity || vLuOpacity;
+        vLuLogoSize = data.vLuLogoSize || vLuLogoSize;
+
+        // Apply DOM Content
+        hEl.textContent = hScore; aEl.textContent = aScore; likeEl.textContent = likeTargetVal; subEl.textContent = subTargetVal;
+        tNameEl.textContent = tournamentName; hNameDisplay.textContent = hName; aNameDisplay.textContent = aName;
+        hLogoDisplay.src = hLogo; aLogoDisplay.src = aLogo; hLuLogoDisplay.src = hLogo; aLuLogoDisplay.src = aLogo;
+        hLuHeaderText.textContent = hName; aLuHeaderText.textContent = aName;
+        tkTextEl.textContent = tkText;
+        hLuList.innerHTML = hLineupStr.split('\n').filter(p => p.trim()).map(p => `<div class="lineup-player">${p}</div>`).join('');
+        aLuList.innerHTML = aLineupStr.split('\n').filter(p => p.trim()).map(p => `<div class="lineup-player">${p}</div>`).join('');
+
+        // Apply Backgrounds & Visibility
+        hBg.style.background = useGradient ? `linear-gradient(135deg, ${hC1} 50%, ${hC2} 50%)` : hC1;
+        aBg.style.background = useGradient ? `linear-gradient(135deg, ${aC1} 50%, ${aC2} 50%)` : aC1;
+        hLuBg.style.background = useGradient ? `linear-gradient(135deg, ${hC1} 50%, ${hC2} 50%)` : hC1;
+        aLuBg.style.background = useGradient ? `linear-gradient(135deg, ${aC1} 50%, ${aC2} 50%)` : aC1;
+        hLuLogoDisplay.style.display = showLuLogo ? 'block' : 'none'; aLuLogoDisplay.style.display = showLuLogo ? 'block' : 'none';
+        tkBgEl.style.background = useTkGrad ? `linear-gradient(90deg, ${tkC1} 0%, ${tkC2} 100%)` : tkC1;
+        tkWrap.style.display = isTkVis ? 'flex' : 'none'; tkTextEl.className = isTkScroll ? 'ticker-text scrolling' : 'ticker-text static';
+        scoreboardMaster.style.display = isScoreboardVisible ? 'flex' : 'none';
+        btnToggleSb.textContent = isScoreboardVisible ? 'Hide Scoreboard' : 'Show Scoreboard';
+        luLeft.style.display = isLineupsVisible ? 'flex' : 'none'; luRight.style.display = isLineupsVisible ? 'flex' : 'none';
+        btnToggleLu.textContent = isLineupsVisible ? 'Hide Lineups' : 'Show Lineups';
+
+        // Apply Visual CSS Variables
+        const root = document.documentElement;
+        root.style.setProperty('--sb-txt', sbTxtColor); root.style.setProperty('--lu-txt', luTxtColor);
+        root.style.setProperty('--sb-scale', vSbScale); root.style.setProperty('--target-scale', vTgtScale);
+        root.style.setProperty('--logo-size', vLogoSize + 'px'); root.style.setProperty('--f-team', vFTeam + 'px');
+        root.style.setProperty('--f-score', vFScore + 'px'); root.style.setProperty('--f-time', vFTime + 'px');
+        root.style.setProperty('--f-tourney', Math.floor(vFTime * 0.35) + 'px'); 
+        root.style.setProperty('--f-tgt-label', vFTgtLbl + 'px'); root.style.setProperty('--f-tgt-val', vFTgtVal + 'px');
+        root.style.setProperty('--lu-w', vLuWidth + 'px'); root.style.setProperty('--lu-f', vLuFont + 'px');
+        root.style.setProperty('--lu-bg-op', vLuOpacity); root.style.setProperty('--lu-logo-size', vLuLogoSize + 'px');
+        root.style.setProperty('--tk-h', vTkH + 'px'); root.style.setProperty('--tk-f', vTkF + 'px');
+        root.style.setProperty('--tk-op', vTkOp); root.style.setProperty('--tk-txt-c', tkTxtC);
         
-        matchStatus = data.matchStatus !== undefined ? data.matchStatus : matchStatus;
-        injuryTime = data.injuryTime !== undefined ? data.injuryTime : injuryTime;
-        tournamentName = data.tournamentName || tournamentName;
-
-        likeTargetVal = data.likeTargetVal || likeTargetVal;
-        subTargetVal = data.subTargetVal || subTargetVal;
-        hName = data.hName || hName;
-        aName = data.aName || aName;
-        hC1 = data.hC1 || hC1; hC2 = data.hC2 || hC2;
-        aC1 = data.aC1 || aC1; aC2 = data.aC2 || aC2;
-        hLogo = data.hLogo || hLogo;
-        aLogo = data.aLogo || aLogo;
-
-        // Apply to DOM
-        hEl.textContent = hScore;
-        aEl.textContent = aScore;
-        likeEl.textContent = likeTargetVal;
-        subEl.textContent = subTargetVal;
-        tNameEl.textContent = tournamentName;
-        
-        hNameDisplay.textContent = hName;
-        aNameDisplay.textContent = aName;
-        hBg.style.background = `linear-gradient(135deg, ${hC1} 50%, ${hC2} 50%)`;
-        aBg.style.background = `linear-gradient(135deg, ${aC1} 50%, ${aC2} 50%)`;
-        hLogoDisplay.src = hLogo;
-        aLogoDisplay.src = aLogo;
-
-        // Sync inputs in control panel to match external changes
-        document.getElementById('ctrl-tournament-name').value = tournamentName;
-        document.getElementById('ctrl-h-name').value = hName;
-        document.getElementById('ctrl-a-name').value = aName;
-        document.getElementById('ctrl-h-c1').value = hC1;
-        document.getElementById('ctrl-h-c2').value = hC2;
-        document.getElementById('ctrl-a-c1').value = aC1;
-        document.getElementById('ctrl-a-c2').value = aC2;
-
-        renderTime();
-        clearInterval(timerId);
-        if (running) {
-          timerId = setInterval(() => { secs++; renderTime(); }, 1000);
+        // Sync Inputs in Controller View (Display variables only)
+        if (urlParams.get('view') !== 'overlay') {
+          document.getElementById('ctrl-tournament-name').value = tournamentName;
+          document.getElementById('ctrl-h-name').value = hName; document.getElementById('ctrl-a-name').value = aName;
+          document.getElementById('ctrl-like-tgt').value = likeTargetVal; document.getElementById('ctrl-sub-tgt').value = subTargetVal;
+          document.getElementById('ctrl-h-lineup').value = hLineupStr; document.getElementById('ctrl-a-lineup').value = aLineupStr;
+          document.getElementById('ctrl-tk-text').value = tkText;
         }
+
+        renderTime(); clearInterval(timerId);
+        if (running) { timerId = setInterval(() => { secs++; renderTime(); }, 1000); }
       }
     });
 
@@ -364,163 +636,143 @@
       pubnub.publish({
         channel: 'kolkata_derby_live_stream_channel',
         message: { 
-          hScore, aScore, secs, running,
-          matchStatus, injuryTime, tournamentName,
-          likeTargetVal, subTargetVal,
-          hName, aName, hC1, hC2, aC1, aC2, hLogo, aLogo
+          hScore, aScore, secs, running, matchStatus, injuryTime, tournamentName,
+          likeTargetVal, subTargetVal, hName, aName, hC1, hC2, aC1, aC2, hLogo, aLogo, hLineupStr, aLineupStr,
+          tkText, isTkVis, isTkScroll, useTkGrad, tkC1, tkC2, tkTxtC, vTkH, vTkF, vTkOp,
+          isScoreboardVisible, isLineupsVisible, useGradient, showLuLogo, sbTxtColor, luTxtColor,
+          vSbScale, vTgtScale, vLogoSize, vFTeam, vFScore, vFTime, vFTourney, vFTgtLbl, vFTgtVal, vLuWidth, vLuFont, vLuOpacity, vLuLogoSize
         }
       });
     }
 
-    function renderTime() {
-      if (matchStatus === 'HT') {
-        tEl.textContent = 'HT';
-      } else if (matchStatus === 'FT') {
-        tEl.textContent = 'FT';
-      } else {
-        const m = Math.floor(secs / 60).toString().padStart(2, '0');
-        const s = (secs % 60).toString().padStart(2, '0');
-        let displayTxt = `${m}:${s}`;
-        
-        // Append injury time if active
-        if (injuryTime) {
-          displayTxt += ` +${injuryTime}`;
-        }
-        tEl.textContent = displayTxt;
-      }
-    }
-
-    // --- Control Functions ---
-
+    // --- Core Match Controls ---
     function adjScore(team, val) {
-      if (team === 'home') hScore = Math.max(0, hScore + val);
-      else aScore = Math.max(0, aScore + val);
+      if (team === 'home') hScore = Math.max(0, hScore + val); else aScore = Math.max(0, aScore + val);
       broadcastState();
     }
-
-    function toggleClock() {
-      running = !running;
-      clearInterval(timerId);
-      if (running) { timerId = setInterval(() => { secs++; renderTime(); }, 1000); }
-      broadcastState();
-    }
-
-    function resetClock(startSec) {
-      secs = startSec; renderTime(); broadcastState();
-    }
-
+    function toggleClock() { running = !running; clearInterval(timerId); if (running) { timerId = setInterval(() => { secs++; renderTime(); }, 1000); } broadcastState(); }
+    function resetClock(startSec) { secs = startSec; renderTime(); broadcastState(); }
     function setManualTime() {
-      const input = prompt("Enter time in MM:SS format (e.g., 45:00):", "00:00");
+      const input = prompt("Enter time in MM:SS format:", "00:00");
       if (input) {
         const parts = input.split(':');
-        if (parts.length === 2) {
-          const m = parseInt(parts[0], 10);
-          const s = parseInt(parts[1], 10);
-          if (!isNaN(m) && !isNaN(s)) {
-            secs = (m * 60) + s;
-            matchStatus = ""; // Clear HT/FT overrides
-            renderTime(); broadcastState();
-          } else alert("Invalid numbers. Please use MM:SS.");
-        } else alert("Invalid format. Please use MM:SS.");
+        if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+          secs = (parseInt(parts[0], 10) * 60) + parseInt(parts[1], 10); matchStatus = ""; renderTime(); broadcastState(); 
+        } else alert("Invalid format. Use MM:SS.");
       }
     }
-    
-    // --- Phase & Injury Time Functions ---
-    
-    function setMatchPhase(phase) {
-      matchStatus = phase;
-      injuryTime = ""; 
-      running = false; // Pause the live clock automatically
-      clearInterval(timerId);
-      renderTime();
+    function renderTime() {
+      if (matchStatus === 'HT') tEl.textContent = 'HT'; else if (matchStatus === 'FT') tEl.textContent = 'FT';
+      else {
+        let displayTxt = `${Math.floor(secs / 60).toString().padStart(2, '0')}:${(secs % 60).toString().padStart(2, '0')}`;
+        if (injuryTime) displayTxt += ` +${injuryTime}`; tEl.textContent = displayTxt;
+      }
+    }
+    function setMatchPhase(phase) { matchStatus = phase; injuryTime = ""; running = false; clearInterval(timerId); renderTime(); broadcastState(); }
+    function addInjuryTime() { const input = prompt("Enter injury time minutes:", "3"); if (input) { injuryTime = input.trim(); matchStatus = ""; renderTime(); broadcastState(); } }
+    function clearMatchPhase() { matchStatus = ""; injuryTime = ""; renderTime(); broadcastState(); }
+    function toggleScoreboardVisibility() { isScoreboardVisible = !isScoreboardVisible; broadcastState(); }
+    function toggleLineupsVisibility() { isLineupsVisible = !isLineupsVisible; broadcastState(); }
+
+    // --- Strict Sync on Enter/Blur for Text Fields ---
+    function syncTexts() {
+      tournamentName = document.getElementById('ctrl-tournament-name').value;
+      hName = document.getElementById('ctrl-h-name').value; 
+      aName = document.getElementById('ctrl-a-name').value;
+      likeTargetVal = document.getElementById('ctrl-like-tgt').value; 
+      subTargetVal = document.getElementById('ctrl-sub-tgt').value;
+      hLineupStr = document.getElementById('ctrl-h-lineup').value; 
+      aLineupStr = document.getElementById('ctrl-a-lineup').value;
+      tkText = document.getElementById('ctrl-tk-text').value;
       broadcastState();
     }
-
-    function addInjuryTime() {
-      const input = prompt("Enter injury time minutes (e.g., 3):", "3");
-      if (input !== null && input.trim() !== "") {
-        injuryTime = input.trim();
-        matchStatus = ""; // Clear HT/FT if applying injury time
-        renderTime();
-        broadcastState();
-      }
-    }
-
-    function clearMatchPhase() {
-      matchStatus = "";
-      injuryTime = "";
-      renderTime();
-      broadcastState();
-    }
-
-    // --- Target, Tournament & Customization Functions ---
     
-    function setTournamentName() {
-      const input = document.getElementById('ctrl-tournament-name').value;
-      if (input.trim() !== "") {
-        tournamentName = input.trim();
-        broadcastState();
-      }
+    // --- Visual Settings (Local Preview & Global Sync) ---
+    function applyVisualsLocally() {
+      const root = document.documentElement;
+      // Main UI
+      root.style.setProperty('--sb-txt', document.getElementById('ctrl-sb-txt-color').value);
+      root.style.setProperty('--lu-txt', document.getElementById('ctrl-lu-txt-color').value);
+      root.style.setProperty('--sb-scale', document.getElementById('sl-sb-scale').value);
+      root.style.setProperty('--target-scale', document.getElementById('sl-tgt-scale').value);
+      root.style.setProperty('--logo-size', document.getElementById('sl-logo-size').value + 'px');
+      root.style.setProperty('--f-team', document.getElementById('sl-f-team').value + 'px');
+      root.style.setProperty('--f-score', document.getElementById('sl-f-score').value + 'px');
+      root.style.setProperty('--f-time', document.getElementById('sl-f-time').value + 'px');
+      root.style.setProperty('--f-tourney', Math.floor(document.getElementById('sl-f-time').value * 0.35) + 'px');
+      root.style.setProperty('--f-tgt-label', document.getElementById('sl-f-tgt-lbl').value + 'px');
+      root.style.setProperty('--f-tgt-val', document.getElementById('sl-f-tgt-val').value + 'px');
+      root.style.setProperty('--lu-w', document.getElementById('sl-lu-w').value + 'px');
+      root.style.setProperty('--lu-f', document.getElementById('sl-lu-f').value + 'px');
+      root.style.setProperty('--lu-bg-op', document.getElementById('sl-lu-op').value);
+      root.style.setProperty('--lu-logo-size', document.getElementById('sl-lu-logo-size').value + 'px');
+      
+      const gradChecked = document.getElementById('ctrl-gradient').checked;
+      const hc1 = document.getElementById('ctrl-h-c1').value; const hc2 = document.getElementById('ctrl-h-c2').value;
+      const ac1 = document.getElementById('ctrl-a-c1').value; const ac2 = document.getElementById('ctrl-a-c2').value;
+      hBg.style.background = gradChecked ? `linear-gradient(135deg, ${hc1} 50%, ${hc2} 50%)` : hc1;
+      aBg.style.background = gradChecked ? `linear-gradient(135deg, ${ac1} 50%, ${ac2} 50%)` : ac1;
+      hLuBg.style.background = gradChecked ? `linear-gradient(135deg, ${hc1} 50%, ${hc2} 50%)` : hc1;
+      aLuBg.style.background = gradChecked ? `linear-gradient(135deg, ${ac1} 50%, ${ac2} 50%)` : ac1;
+      
+      const logoChecked = document.getElementById('ctrl-lu-logo-show').checked;
+      hLuLogoDisplay.style.display = logoChecked ? 'block' : 'none'; aLuLogoDisplay.style.display = logoChecked ? 'block' : 'none';
+
+      // Ticker Locals
+      root.style.setProperty('--tk-h', document.getElementById('sl-tk-h').value + 'px');
+      root.style.setProperty('--tk-f', document.getElementById('sl-tk-f').value + 'px');
+      root.style.setProperty('--tk-op', document.getElementById('sl-tk-op').value);
+      root.style.setProperty('--tk-txt-c', document.getElementById('ctrl-tk-txt-c').value);
+
+      const tkVis = document.getElementById('ctrl-tk-show').checked;
+      const tkScr = document.getElementById('ctrl-tk-scroll').checked;
+      const tkGrad = document.getElementById('ctrl-tk-grad').checked;
+      const tC1 = document.getElementById('ctrl-tk-c1').value; const tC2 = document.getElementById('ctrl-tk-c2').value;
+
+      tkWrap.style.display = tkVis ? 'flex' : 'none';
+      tkTextEl.className = tkScr ? 'ticker-text scrolling' : 'ticker-text static';
+      tkBgEl.style.background = tkGrad ? `linear-gradient(90deg, ${tC1} 0%, ${tC2} 100%)` : tC1;
     }
 
-    function setTarget(type) {
-      if (type === 'like') {
-        const input = prompt("Enter new Like Target:", likeTargetVal);
-        if (input !== null && input.trim() !== "") { likeTargetVal = input.trim(); broadcastState(); }
-      } else if (type === 'sub') {
-        const input = prompt("Enter new Sub Target:", subTargetVal);
-        if (input !== null && input.trim() !== "") { subTargetVal = input.trim(); broadcastState(); }
-      }
-    }
-
-    function applyTeamConfigs() {
-      hName = document.getElementById('ctrl-h-name').value || "Home";
-      aName = document.getElementById('ctrl-a-name').value || "Away";
-      hC1 = document.getElementById('ctrl-h-c1').value;
-      hC2 = document.getElementById('ctrl-h-c2').value;
-      aC1 = document.getElementById('ctrl-a-c1').value;
-      aC2 = document.getElementById('ctrl-a-c2').value;
+    // Explicit Layout Synchronization Button
+    function syncVisuals() {
+      useGradient = document.getElementById('ctrl-gradient').checked; showLuLogo = document.getElementById('ctrl-lu-logo-show').checked;
+      sbTxtColor = document.getElementById('ctrl-sb-txt-color').value; luTxtColor = document.getElementById('ctrl-lu-txt-color').value;
+      hC1 = document.getElementById('ctrl-h-c1').value; hC2 = document.getElementById('ctrl-h-c2').value;
+      aC1 = document.getElementById('ctrl-a-c1').value; aC2 = document.getElementById('ctrl-a-c2').value;
+      vSbScale = document.getElementById('sl-sb-scale').value; vTgtScale = document.getElementById('sl-tgt-scale').value;
+      vLogoSize = document.getElementById('sl-logo-size').value; vFTeam = document.getElementById('sl-f-team').value;
+      vFScore = document.getElementById('sl-f-score').value; vFTime = document.getElementById('sl-f-time').value;
+      vFTourney = Math.floor(vFTime * 0.35); vFTgtLbl = document.getElementById('sl-f-tgt-lbl').value; vFTgtVal = document.getElementById('sl-f-tgt-val').value;
+      vLuWidth = document.getElementById('sl-lu-w').value; vLuFont = document.getElementById('sl-lu-f').value; 
+      vLuOpacity = document.getElementById('sl-lu-op').value; vLuLogoSize = document.getElementById('sl-lu-logo-size').value;
+      
+      isTkVis = document.getElementById('ctrl-tk-show').checked; isTkScroll = document.getElementById('ctrl-tk-scroll').checked;
+      useTkGrad = document.getElementById('ctrl-tk-grad').checked; tkTxtC = document.getElementById('ctrl-tk-txt-c').value;
+      tkC1 = document.getElementById('ctrl-tk-c1').value; tkC2 = document.getElementById('ctrl-tk-c2').value;
+      vTkH = document.getElementById('sl-tk-h').value; vTkF = document.getElementById('sl-tk-f').value; vTkOp = document.getElementById('sl-tk-op').value;
+      
       broadcastState();
     }
-
-    // Image Resizer/Compressor (Prevents PubNub Payload Crashes)
+    
+    // Auto Image Compressor
     function processLogo(event, team) {
-      const file = event.target.files[0];
-      if (!file) return;
-
+      const file = event.target.files[0]; if (!file) return;
       const reader = new FileReader();
       reader.onload = function(e) {
         const img = new Image();
         img.onload = function() {
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          
-          // Shrink to max 100x100px so Base64 string is tiny
-          const MAX_SIZE = 100;
-          let width = img.width;
-          let height = img.height;
-          if (width > height) {
-            if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
-          } else {
-            if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
-          }
-          
-          canvas.width = width; canvas.height = height;
-          ctx.drawImage(img, 0, 0, width, height);
-          
-          // Compress to webp for ultra-small broadcast size
+          const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+          const MAX_SIZE = 100; let width = img.width; let height = img.height;
+          if (width > height) { if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; } } 
+          else { if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; } }
+          canvas.width = width; canvas.height = height; ctx.drawImage(img, 0, 0, width, height);
           const compressedDataUrl = canvas.toDataURL('image/webp', 0.8);
-          
-          if (team === 'home') hLogo = compressedDataUrl;
-          else aLogo = compressedDataUrl;
-          
-          broadcastState(); // Sync it immediately
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
+          if (team === 'home') hLogo = compressedDataUrl; else aLogo = compressedDataUrl;
+          broadcastState(); 
+        }; img.src = e.target.result;
+      }; reader.readAsDataURL(file);
     }
-
     function toggleControls() { document.getElementById('controls').style.display = 'none'; }
   </script>
 </body>
