@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <title>Sports Unplugged India | Ultimate Broadcast Overlay</title>
-  <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Montserrat:wght@800&family=Roboto:wght@700&family=Bebas+Neue&family=Oswald:wght@700&family=Anton&family=Poppins:wght@700&family=Lato:wght@700&family=Open+Sans:wght@700&family=Raleway:wght@700&family=Ubuntu:wght@700&family=PT+Sans:wght@700&family=Merriweather:wght@700&family=Playfair+Display:wght@700&family=Rubik:wght@700&family=Work+Sans:wght@700&family=Nunito:wght@700&family=Fira+Sans:wght@700&family=Inter:wght@700&display=swap" rel="stylesheet">
   <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.7.2.2.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <style>
-    /* CSS Variables for Real-Time Scaling & Colors */
+    /* CSS Variables for Real-Time Scaling, Colors & Fonts */
     :root {
       --sb-scale: 1;
       --target-scale: 1;
@@ -15,18 +15,26 @@
       --logo-size-h: 55px;
       --logo-size-a: 55px;
 
+      --ff-team: 'Montserrat', sans-serif;
       --f-team: 17px;
+      --ff-score: 'Teko', sans-serif;
       --f-score: 44px;
+      --ff-time: 'Teko', sans-serif;
       --f-time: 34px;
+      --ff-tourney: 'Montserrat', sans-serif;
       --f-tourney: 12px;
       --tourney-logo-size: 20px;
+      
+      --ff-tgt-lbl: 'Montserrat', sans-serif;
       --f-tgt-label: 13px;
+      --ff-tgt-val: 'Teko', sans-serif;
       --f-tgt-val: 30px;
 
       --sb-txt: #ffffff;
       --lu-txt: #ffffff;
 
       --lu-w: 260px;
+      --ff-lu: 'Montserrat', sans-serif;
       --lu-f: 16px;
       --lu-bg-op: 0.85;
       --lu-logo-size: 30px;
@@ -35,12 +43,14 @@
 
       /* Ticker Variables */
       --tk-h: 40px;
+      --ff-tk: 'Montserrat', sans-serif;
       --tk-f: 22px;
       --tk-op: 0.9;
       --tk-txt-c: #ffffff;
 
       /* New Penalty Board Variables */
       --pen-board-scale: 1;
+      --ff-pen: 'Montserrat', sans-serif;
       --pen-board-txt: 16px;
       --pen-logo-size: 35px;
       --pen-logo-size-h: 35px;
@@ -85,8 +95,8 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 4px;
     }
     .target-row:last-child { border-bottom: none; padding-bottom: 0; }
-    .target-label { color: #e2e8f0; font-size: var(--f-tgt-label); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 800; transition: font-size 0.2s; }
-    .target-value { color: #ffd700; font-family: 'Teko', sans-serif; font-size: var(--f-tgt-val); line-height: 0.8; font-weight: 700; text-shadow: 1px 1px 3px rgba(0,0,0,0.9); transition: font-size 0.2s; }
+    .target-label { color: #e2e8f0; font-family: var(--ff-tgt-lbl); font-size: var(--f-tgt-label); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 800; transition: font-size 0.2s; }
+    .target-value { color: #ffd700; font-family: var(--ff-tgt-val); font-size: var(--f-tgt-val); line-height: 0.8; font-weight: 700; text-shadow: 1px 1px 3px rgba(0,0,0,0.9); transition: font-size 0.2s; }
 
     /* Lineup Graphics (Playing 11) */
     .lineup-wrapper {
@@ -108,7 +118,7 @@
     .lineup-header {
       background: rgba(0,0,0,0.6); color: var(--lu-txt); padding: 12px;
       display: flex; align-items: center; justify-content: center; gap: 10px;
-      font-size: calc(var(--lu-f) + 4px); font-weight: 800; text-align: center;
+      font-family: var(--ff-lu); font-size: calc(var(--lu-f) + 4px); font-weight: 800; text-align: center;
       text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid rgba(255,255,255,0.2);
     }
     .lineup-logo {
@@ -123,7 +133,7 @@
       display: flex; flex-direction: column; padding: 12px 20px; gap: 8px;
     }
     .lineup-player {
-      color: var(--lu-txt); font-size: var(--lu-f); font-weight: 700;
+      color: var(--lu-txt); font-family: var(--ff-lu); font-size: var(--lu-f); font-weight: 700;
       text-transform: uppercase; text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
       border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px;
     }
@@ -136,7 +146,7 @@
       transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.3s;
     }
     .tournament-top-bar {
-      background: #111; color: var(--sb-txt); padding: 6px 10px; font-size: var(--f-tourney);
+      background: #111; color: var(--sb-txt); padding: 6px 10px; font-family: var(--ff-tourney); font-size: var(--f-tourney);
       font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
       border: 2px solid rgba(255, 255, 255, 0.18); border-bottom: none; border-radius: 8px 8px 0 0;
       box-shadow: 0 -4px 12px rgba(0,0,0,0.6); z-index: 10; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
@@ -174,13 +184,12 @@
     #away-logo-display { width: var(--logo-size-a); height: var(--logo-size-a); }
 
     .team-abbr {
-      color: var(--sb-txt); font-size: var(--f-team); letter-spacing: 0.8px; text-transform: uppercase;
+      color: var(--sb-txt); font-family: var(--ff-team); font-size: var(--f-team); letter-spacing: 0.8px; text-transform: uppercase;
       white-space: nowrap; text-shadow: 1px 1px 3px rgba(0,0,0,0.9); transition: font-size 0.2s, color 0.2s;
     }
     
-    /* BACKGROUND FIX: Made digits and timer transparent so Scoreboard BG shows through */
     .score-digit {
-      color: var(--sb-txt); font-family: 'Teko', sans-serif; font-size: var(--f-score); line-height: 1;
+      color: var(--sb-txt); font-family: var(--ff-score); font-size: var(--f-score); line-height: 1;
       min-width: 60px; padding: 0 10px; height: 100%; display: flex; align-items: center; justify-content: center; 
       background: transparent; font-weight: 700; transition: font-size 0.2s, color 0.2s;
     }
@@ -194,7 +203,7 @@
     .live-indicator { width: 8px; height: 8px; border-radius: 50%; background: #ff3344; animation: pulse 1s infinite alternate; }
     @keyframes pulse { from { opacity: 0.3; } to { opacity: 1; } }
     .clock-display {
-      color: var(--sb-txt); font-family: 'Teko', sans-serif; font-size: var(--f-time);
+      color: var(--sb-txt); font-family: var(--ff-time); font-size: var(--f-time);
       letter-spacing: 1px; min-width: 58px; text-align: center; white-space: nowrap; transition: font-size 0.2s, color 0.2s;
     }
 
@@ -224,7 +233,7 @@
     .large-pen-row:last-child { border-bottom: none; padding-bottom: 0; }
     .large-pen-team { 
       display: flex; align-items: center; gap: 10px; width: 220px; 
-      font-family: 'Montserrat', sans-serif; font-size: var(--pen-board-txt); font-weight: 800; 
+      font-family: var(--ff-pen); font-size: var(--pen-board-txt); font-weight: 800; 
       text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
     }
     .large-pen-logo { object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); transition: width 0.2s, height 0.2s; }
@@ -248,7 +257,7 @@
     }
     .ticker-content { position: relative; z-index: 2; width: 100%; }
     .ticker-text {
-      color: var(--tk-txt-c); font-size: var(--tk-f); font-weight: 800;
+      color: var(--tk-txt-c); font-family: var(--ff-tk); font-size: var(--tk-f); font-weight: 800;
       text-transform: uppercase; letter-spacing: 1.5px; text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
       transition: font-size 0.2s, color 0.2s; white-space: nowrap;
     }
@@ -293,6 +302,7 @@
     .collapsible-content.active { display: flex; }
 
     .ctrl-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; align-items: center; }
+    .sub-panel { background: rgba(0,0,0,0.4); padding: 16px; border-radius: 8px; border: 1px solid #333; margin-bottom: 12px; }
     .ctrl-btn {
       background: #2b323c; color: #eee; border: 1px solid #555; padding: 8px 16px; font-size: 13px; 
       font-weight: bold; border-radius: 6px; cursor: pointer; transition: background 0.2s, transform 0.1s;
@@ -305,10 +315,11 @@
     .ctrl-btn.sync-btn { background: #eab308; border-color: #ca8a04; color: #000; font-size: 15px; padding: 10px 24px; box-shadow: 0 4px 10px rgba(234, 179, 8, 0.3); }
 
     /* Visual Settings Groups */
-    .slider-group { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; background: rgba(0,0,0,0.4); padding: 16px; border-radius: 8px; border: 1px solid #333; }
+    .slider-group { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
     .slider-container { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 11px; color: #ccc; font-weight: bold; text-transform: uppercase; }
     .slider-container input[type="range"] { width: 90px; cursor: pointer; accent-color: #eab308; }
     .slider-container input[type="color"] { border: 1px solid #555; border-radius: 4px; width: 34px; height: 34px; cursor: pointer; background: #222; }
+    .font-select { background: #222; color: #fff; border: 1px solid #555; border-radius: 4px; padding: 2px 4px; font-size: 10px; width: 90px; }
 
     .team-setup {
       display: flex; gap: 16px; justify-content: space-between; align-items: flex-start;
@@ -325,7 +336,7 @@
       background: #222; color: #fff; font-family: 'Montserrat', sans-serif; font-size: 13px; resize: none; line-height: 1.4;
     }
 
-    .section-title { font-size: 13px; color: #ffd700; font-weight: 800; text-transform: uppercase; width: 100%; text-align: left; margin-bottom: 4px; letter-spacing: 1px; }
+    .section-title { font-size: 13px; color: #ffd700; font-weight: 800; text-transform: uppercase; width: 100%; text-align: left; margin-bottom: 8px; letter-spacing: 1px; display: block; border-bottom: 1px solid #444; padding-bottom: 6px; }
 
     /* Text Input Base Styling */
     input.auto-text {
@@ -358,52 +369,9 @@
   <div id="load-modal">
     <h3 style="margin-bottom: 15px; color: #ffd700; text-transform: uppercase; letter-spacing: 1px;">Load Layout</h3>
     <input type="text" id="layout-search" placeholder="Search layouts..." onkeyup="filterLayouts()" style="width: 100%; margin-bottom: 15px; padding: 10px; background: #0d1117; color: #fff; border: 1px solid #30363d; border-radius: 4px;">
-    <div id="layout-list" style="max-height: 250px; overflow-y: auto; border: 1px solid #30363d; border-radius: 4px; background: #0d1117;">
-      </div>
+    <div id="layout-list" style="max-height: 250px; overflow-y: auto; border: 1px solid #30363d; border-radius: 4px; background: #0d1117;"></div>
     <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
       <button class="ctrl-btn" onclick="closeLoadModal()">Cancel</button>
-    </div>
-  </div>
-
-  <div id="manual-modal-bg" onclick="closeManualModal()" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 999;"></div>
-  <div id="manual-modal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #161b22; border: 2px solid #30363d; z-index: 1000; padding: 24px; border-radius: 8px; width: 800px; max-height: 80vh; overflow-y: auto; color: #fff; box-shadow: 0 20px 50px rgba(0,0,0,0.9); font-family: 'Montserrat', sans-serif;">
-    <h2 style="color: #ffd700; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #30363d; padding-bottom: 10px; margin-bottom: 20px;">Sports Unplugged India | User Manual</h2>
-    
-    <div style="line-height: 1.6; font-size: 14px;">
-      <h3 style="color: #4ade80; margin-top: 15px;">Overview</h3>
-      <p>This Ultimate Broadcast Overlay is a two-part system designed for live sports broadcasting. You must open this file twice:</p>
-      <ul style="margin-left: 20px; margin-bottom: 15px;">
-        <li><strong>Control Panel (Your view):</strong> Open the file normally in your browser. Use this window to manage the match, update scores, and change layouts.</li>
-        <li><strong>Live Overlay (Audience view):</strong> Add this file to OBS/vMix/Restream as a Browser Source, and append <code>?view=overlay</code> to the end of the file path. The Control Panel will hide automatically, displaying only the transparent graphics.</li>
-      </ul>
-
-      <h3 style="color: #4ade80; margin-top: 15px;">1. Instant vs. Sync Actions</h3>
-      <p><strong>Instant Actions (No Sync Needed):</strong> Changing scores, updating clock, adding red cards, toggling elements (Show/Hide Scoreboard, Target Box, Ticker, Penalties), typing names/lineups, extracting text via image, and clicking penalty bulbs. These update live on the stream instantly.</p>
-      <p><strong>Layout Actions (Requires Sync):</strong> Dragging sliders (size, position), changing fonts, selecting colors. These preview locally on your Control Panel. Once satisfied, click <strong>"SYNC LAYOUT TO STREAM"</strong> to push changes live.</p>
-
-      <h3 style="color: #4ade80; margin-top: 15px;">2. Scoreboard Controls</h3>
-      <p>Manage the main match here. Click "Play/Pause" for the clock, add goals using the +/- buttons, and set match phases (HT, FT). Red card buttons (+/-) instantly appear above the team names. You can also upload custom Team and Tournament logos.</p>
-      <p><em>Pro Tip:</em> Use the "Save to Memory" button next to a team name to save it for future streams. It will autocomplete when you type it next time!</p>
-
-      <h3 style="color: #4ade80; margin-top: 15px;">3. Playing 11 / Lineup Controls</h3>
-      <p>Enter lineups manually or click <strong>"Auto-Extract Image"</strong> to upload a screenshot of the playing 11. The built-in OCR AI will automatically read the names from the image and paste them into the box. Just click out of the box to instantly broadcast them to the screen.</p>
-
-      <h3 style="color: #4ade80; margin-top: 15px;">4. Ticker & Target Box</h3>
-      <p>The Bottom Ticker scrolls an editable message across the bottom. The Target Box can display Like and Subscriber goals. Toggle them on/off instantly and customize their background gradients and text sizing before syncing.</p>
-
-      <h3 style="color: #4ade80; margin-top: 15px;">5. Penalty Shootout Controls</h3>
-      <p>Click "Enable Penalty Drop-down" to reveal the shootout bar attached to the scoreboard, plus a larger penalty summary graphic. Click the circular bulbs to cycle their status: <strong>Gray (Empty) ➔ Green (Scored) ➔ Red (Missed)</strong>. Brackets with the penalty scores will appear automatically next to the main score.</p>
-
-      <h3 style="color: #4ade80; margin-top: 15px;">6. Layout Memory System (Undo/Redo & Save)</h3>
-      <p>Any visual layout tweaks (sizes, fonts, colors) are tracked. You can hit <strong>Undo/Redo</strong> to revert local layout mistakes. Once perfectly set up, click <strong>Save As</strong> to save your customized layout for specific leagues (e.g., "ISL Preset"). Use <strong>Load</strong> to quickly hot-swap between your saved presets.</p>
-      
-      <h3 style="color: #4ade80; margin-top: 15px;">7. Minimizing the Panel</h3>
-      <p>Click <strong>"Minimize Panel"</strong> to collapse the massive dashboard. You can click and drag the "MASTER CONTROL SUITE" header to move the widget out of your way to see your stream preview clearly.</p>
-
-    </div>
-    
-    <div style="display: flex; justify-content: flex-end; margin-top: 25px; border-top: 1px solid #30363d; padding-top: 15px;">
-      <button class="ctrl-btn highlight" onclick="closeManualModal()" style="font-size: 14px; padding: 8px 24px;">Close Manual</button>
     </div>
   </div>
 
@@ -505,6 +473,31 @@
     </div>
   </div>
 
+  <!-- Reusable Font Options Snippet -->
+  <script>
+    const fontOptions = `
+      <option value="'Montserrat', sans-serif">Montserrat</option>
+      <option value="'Teko', sans-serif">Teko</option>
+      <option value="'Roboto', sans-serif">Roboto</option>
+      <option value="'Bebas Neue', sans-serif">Bebas Neue</option>
+      <option value="'Oswald', sans-serif">Oswald</option>
+      <option value="'Anton', sans-serif">Anton</option>
+      <option value="'Poppins', sans-serif">Poppins</option>
+      <option value="'Lato', sans-serif">Lato</option>
+      <option value="'Open Sans', sans-serif">Open Sans</option>
+      <option value="'Raleway', sans-serif">Raleway</option>
+      <option value="'Ubuntu', sans-serif">Ubuntu</option>
+      <option value="'PT Sans', sans-serif">PT Sans</option>
+      <option value="'Merriweather', serif">Merriweather</option>
+      <option value="'Playfair Display', serif">Playfair Display</option>
+      <option value="'Rubik', sans-serif">Rubik</option>
+      <option value="'Work Sans', sans-serif">Work Sans</option>
+      <option value="'Nunito', sans-serif">Nunito</option>
+      <option value="'Fira Sans', sans-serif">Fira Sans</option>
+      <option value="'Inter', sans-serif">Inter</option>
+    `;
+  </script>
+
   <div class="controller-panel" id="controls">
 
     <div class="ctrl-master-header">
@@ -513,7 +506,6 @@
         <span class="layout-name-badge" id="current-layout-badge">Layout: Default</span>
       </div>
       <div style="display: flex; gap: 8px; pointer-events: auto;">
-        <button class="ctrl-btn special" onclick="openManualModal()" title="View User Manual">Manual</button>
         <button class="ctrl-btn" onclick="undoVisuals()" title="Undo last layout change">Undo</button>
         <button class="ctrl-btn" onclick="redoVisuals()" title="Redo last layout change">Redo</button>
         <button class="ctrl-btn sync-btn" onclick="syncVisuals()">SYNC LAYOUT TO STREAM</button>
@@ -530,109 +522,141 @@
       </div>
       <div class="collapsible-content active" id="panel-sb">
 
-        <div class="ctrl-row" style="justify-content: space-between; padding: 0 10px;">
-          <div style="display: flex; gap: 8px;">
-            <button class="ctrl-btn special" onclick="toggleScoreboardVisibility()" id="btn-toggle-sb">Hide Scoreboard</button>
-            <label style="font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 6px; margin-left: 10px;">
-              Background Style:
-              <select id="ctrl-bg-style" onchange="applyVisualsLocally()" style="background: #222; color: #fff; border: 1px solid #555; border-radius: 4px; padding: 2px 4px; font-family: 'Montserrat', sans-serif;">
-                <option value="solid">Solid Color</option>
-                <option value="split" selected>Split Colors</option>
-                <option value="gradient">Smooth Gradient</option>
-              </select>
-            </label>
-          </div>
-          <div style="display: flex; align-items: center; gap: 4px;">
-            <span style="font-size: 12px; font-weight: bold;">Tournament:</span>
-            <input type="file" accept="image/*" id="ctrl-t-logo" style="width: 75px; font-size: 10px; color: #aaa;" onchange="processLogo(event, 'tourney')" title="Tournament Logo">
-            <button class="ctrl-btn warning" style="padding: 2px 6px; font-size: 10px;" onclick="removeLogo('tourney')" title="Remove Logo">X</button>
-            <input type="text" class="auto-text" id="ctrl-tournament-name" value="CFL 26-27" style="width: 150px; margin-left:4px;" onkeydown="if(event.key === 'Enter') { this.blur(); }" onblur="syncTexts()">
-          </div>
-        </div>
-
-        <div class="ctrl-row">
-          <button class="ctrl-btn highlight" onclick="toggleClock()">Play/Pause</button>
-          <button class="ctrl-btn" onclick="resetClock(0)">Reset (0')</button>
-          <button class="ctrl-btn" onclick="resetClock(2700)">Set 45'</button>
-          <button class="ctrl-btn" onclick="resetClock(5400)">Set 90'</button>
-          <button class="ctrl-btn" onclick="setManualTime()">Custom Time</button>
-          <button class="ctrl-btn warning" onclick="setMatchPhase('HT')">HT</button>
-          <button class="ctrl-btn warning" onclick="setMatchPhase('FT')">FT</button>
-          <button class="ctrl-btn warning" onclick="setMatchPhase('ET HT')">ET HT</button>
-          <button class="ctrl-btn warning" onclick="setMatchPhase('PEN')">PEN</button>
-          <button class="ctrl-btn highlight" onclick="addInjuryTime()">+ Injury</button>
-          <button class="ctrl-btn" onclick="clearMatchPhase()">Clear Status</button>
-        </div>
-
-        <div class="ctrl-row" style="margin-top: 10px;">
-          <div style="display:flex; flex-direction:column; align-items:center; background:#111; padding:8px 16px; border-radius:6px; border:1px solid #333;">
-            <span style="font-size:11px; font-weight:bold; margin-bottom:6px; color:#ef4444;">HOME RED CARDS</span>
-            <div><button class="ctrl-btn" onclick="adjRed('home', -1)">-</button><span id="ctrl-h-red" style="margin:0 12px; font-weight:bold;">0</span><button class="ctrl-btn warning" onclick="adjRed('home', 1)">+</button></div>
-          </div>
-          <div style="display:flex; gap:12px; align-items:center;">
-            <button class="ctrl-btn" style="padding: 10px 20px; font-size: 16px;" onclick="adjScore('home', 1)">+1 Home</button>
-            <button class="ctrl-btn" onclick="adjScore('home', -1)">-1</button>
-            <span style="font-weight:bold; font-size:18px; margin:0 10px;">SCORE</span>
-            <button class="ctrl-btn" onclick="adjScore('away', -1)">-1</button>
-            <button class="ctrl-btn" style="padding: 10px 20px; font-size: 16px;" onclick="adjScore('away', 1)">+1 Away</button>
-          </div>
-          <div style="display:flex; flex-direction:column; align-items:center; background:#111; padding:8px 16px; border-radius:6px; border:1px solid #333;">
-            <span style="font-size:11px; font-weight:bold; margin-bottom:6px; color:#ef4444;">AWAY RED CARDS</span>
-            <div><button class="ctrl-btn" onclick="adjRed('away', -1)">-</button><span id="ctrl-a-red" style="margin:0 12px; font-weight:bold;">0</span><button class="ctrl-btn warning" onclick="adjRed('away', 1)">+</button></div>
-          </div>
-        </div>
-
-        <div class="ctrl-row" style="gap: 16px; border-bottom: none;">
-          <div class="team-setup">
-            <div class="team-details">
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span class="section-title">Home Team</span>
-                <button class="ctrl-btn" style="padding:2px 8px; font-size:10px;" onclick="saveTeamToMemory('home')">Save to Memory</button>
-              </div>
-              <input type="text" id="ctrl-h-name" list="saved-teams-list" value="Mohun Bagan SG" placeholder="Team Name" onkeydown="if(event.key === 'Enter') { this.blur(); }" onblur="syncTexts()">
-              <div class="color-row">
-                <input type="color" id="ctrl-h-c1" value="#7c1830" title="Primary Color" oninput="applyVisualsLocally()">
-                <input type="color" id="ctrl-h-c2" value="#005a36" title="Secondary Color" oninput="applyVisualsLocally()">
-                <input type="file" accept="image/*" id="ctrl-h-logo" onchange="processLogo(event, 'home')">
-                <button class="ctrl-btn warning" style="padding: 2px 6px; font-size: 10px;" onclick="removeLogo('home')" title="Remove Logo">X</button>
-              </div>
+        <!-- SUB PANEL 1: Top Bar & Basic Visibility -->
+        <div class="sub-panel">
+          <span class="section-title">Top Bar & Match Setup</span>
+          <div class="ctrl-row" style="justify-content: space-between;">
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <button class="ctrl-btn special" onclick="toggleScoreboardVisibility()" id="btn-toggle-sb">Hide Scoreboard</button>
+              <label style="font-size: 12px; font-weight: bold; margin-left: 10px;">
+                Background Style:
+                <select id="ctrl-bg-style" onchange="applyVisualsLocally()" style="background: #222; color: #fff; border: 1px solid #555; border-radius: 4px; padding: 4px;">
+                  <option value="solid">Solid Color</option>
+                  <option value="split" selected>Split Colors</option>
+                  <option value="gradient">Smooth Gradient</option>
+                </select>
+              </label>
             </div>
-          </div>
-          <div class="team-setup">
-            <div class="team-details">
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span class="section-title">Away Team</span>
-                <button class="ctrl-btn" style="padding:2px 8px; font-size:10px;" onclick="saveTeamToMemory('away')">Save to Memory</button>
-              </div>
-              <input type="text" id="ctrl-a-name" list="saved-teams-list" value="East Bengal" placeholder="Team Name" onkeydown="if(event.key === 'Enter') { this.blur(); }" onblur="syncTexts()">
-              <div class="color-row">
-                <input type="color" id="ctrl-a-c1" value="#d31122" title="Primary Color" oninput="applyVisualsLocally()">
-                <input type="color" id="ctrl-a-c2" value="#f6b200" title="Secondary Color" oninput="applyVisualsLocally()">
-                <input type="file" accept="image/*" id="ctrl-a-logo" onchange="processLogo(event, 'away')">
-                <button class="ctrl-btn warning" style="padding: 2px 6px; font-size: 10px;" onclick="removeLogo('away')" title="Remove Logo">X</button>
-              </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="font-size: 12px; font-weight: bold;">Tournament Logo:</span>
+              <input type="file" accept="image/*" id="ctrl-t-logo" style="width: 75px; font-size: 10px; color: #aaa;" onchange="processLogo(event, 'tourney')">
+              <button class="ctrl-btn warning" style="padding: 2px 6px; font-size: 10px;" onclick="removeLogo('tourney')">X</button>
+              <input type="text" class="auto-text" id="ctrl-tournament-name" value="CFL 26-27" style="width: 150px; margin-left:4px;" onkeydown="if(event.key === 'Enter') { this.blur(); }" onblur="syncTexts()">
             </div>
           </div>
         </div>
 
-        <div class="slider-group">
-          <span class="section-title">Scoreboard Layout Settings (Local Preview)</span>
-          <div class="slider-container"><span>SB Use Grad</span><input type="checkbox" id="ctrl-sb-grad" onchange="applyVisualsLocally()"></div>
+        <!-- SUB PANEL 2: Main Match Controls -->
+        <div class="sub-panel">
+          <span class="section-title">Match Actions & Teams</span>
+          <div class="ctrl-row" style="margin-bottom: 12px;">
+            <button class="ctrl-btn highlight" onclick="toggleClock()">Play/Pause</button>
+            <button class="ctrl-btn" onclick="resetClock(0)">Reset (0')</button>
+            <button class="ctrl-btn" onclick="resetClock(2700)">Set 45'</button>
+            <button class="ctrl-btn" onclick="resetClock(5400)">Set 90'</button>
+            <button class="ctrl-btn" onclick="setManualTime()">Custom Time</button>
+            <button class="ctrl-btn warning" onclick="setMatchPhase('HT')">HT</button>
+            <button class="ctrl-btn warning" onclick="setMatchPhase('FT')">FT</button>
+            <button class="ctrl-btn warning" onclick="setMatchPhase('ET HT')">ET HT</button>
+            <button class="ctrl-btn warning" onclick="setMatchPhase('PEN')">PEN</button>
+            <button class="ctrl-btn highlight" onclick="addInjuryTime()">+ Injury</button>
+            <button class="ctrl-btn" onclick="clearMatchPhase()">Clear Status</button>
+          </div>
+
+          <div class="ctrl-row" style="margin-bottom: 16px;">
+            <div style="display:flex; flex-direction:column; align-items:center; background:#111; padding:8px 16px; border-radius:6px; border:1px solid #333;">
+              <span style="font-size:11px; font-weight:bold; margin-bottom:6px; color:#ef4444;">HOME RED CARDS</span>
+              <div><button class="ctrl-btn" onclick="adjRed('home', -1)">-</button><span id="ctrl-h-red" style="margin:0 12px; font-weight:bold;">0</span><button class="ctrl-btn warning" onclick="adjRed('home', 1)">+</button></div>
+            </div>
+            <div style="display:flex; gap:12px; align-items:center;">
+              <button class="ctrl-btn" style="padding: 10px 20px; font-size: 16px;" onclick="adjScore('home', 1)">+1 Home</button>
+              <button class="ctrl-btn" onclick="adjScore('home', -1)">-1</button>
+              <span style="font-weight:bold; font-size:18px; margin:0 10px;">SCORE</span>
+              <button class="ctrl-btn" onclick="adjScore('away', -1)">-1</button>
+              <button class="ctrl-btn" style="padding: 10px 20px; font-size: 16px;" onclick="adjScore('away', 1)">+1 Away</button>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:center; background:#111; padding:8px 16px; border-radius:6px; border:1px solid #333;">
+              <span style="font-size:11px; font-weight:bold; margin-bottom:6px; color:#ef4444;">AWAY RED CARDS</span>
+              <div><button class="ctrl-btn" onclick="adjRed('away', -1)">-</button><span id="ctrl-a-red" style="margin:0 12px; font-weight:bold;">0</span><button class="ctrl-btn warning" onclick="adjRed('away', 1)">+</button></div>
+            </div>
+          </div>
+
+          <div class="ctrl-row" style="gap: 16px;">
+            <div class="team-setup">
+              <div class="team-details">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span class="section-title" style="margin:0; border:none; padding:0;">Home Team</span>
+                  <button class="ctrl-btn" style="padding:2px 8px; font-size:10px;" onclick="saveTeamToMemory('home')">Save to Memory</button>
+                </div>
+                <input type="text" id="ctrl-h-name" list="saved-teams-list" value="Mohun Bagan SG" placeholder="Team Name" onkeydown="if(event.key === 'Enter') { this.blur(); }" onblur="syncTexts()">
+                <div class="color-row">
+                  <input type="color" id="ctrl-h-c1" value="#7c1830" title="Primary Color" oninput="applyVisualsLocally()">
+                  <input type="color" id="ctrl-h-c2" value="#005a36" title="Secondary Color" oninput="applyVisualsLocally()">
+                  <input type="file" accept="image/*" id="ctrl-h-logo" onchange="processLogo(event, 'home')">
+                  <button class="ctrl-btn warning" style="padding: 2px 6px; font-size: 10px;" onclick="removeLogo('home')">X</button>
+                </div>
+              </div>
+            </div>
+            <div class="team-setup">
+              <div class="team-details">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span class="section-title" style="margin:0; border:none; padding:0;">Away Team</span>
+                  <button class="ctrl-btn" style="padding:2px 8px; font-size:10px;" onclick="saveTeamToMemory('away')">Save to Memory</button>
+                </div>
+                <input type="text" id="ctrl-a-name" list="saved-teams-list" value="East Bengal" placeholder="Team Name" onkeydown="if(event.key === 'Enter') { this.blur(); }" onblur="syncTexts()">
+                <div class="color-row">
+                  <input type="color" id="ctrl-a-c1" value="#d31122" title="Primary Color" oninput="applyVisualsLocally()">
+                  <input type="color" id="ctrl-a-c2" value="#f6b200" title="Secondary Color" oninput="applyVisualsLocally()">
+                  <input type="file" accept="image/*" id="ctrl-a-logo" onchange="processLogo(event, 'away')">
+                  <button class="ctrl-btn warning" style="padding: 2px 6px; font-size: 10px;" onclick="removeLogo('away')">X</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUB PANEL 3: Visual Settings -->
+        <div class="sub-panel slider-group" style="margin-bottom: 0;">
+          <span class="section-title">Scoreboard Layout & Typography (Local Preview)</span>
+          <div class="slider-container"><span>SB Text Color</span><input type="color" id="ctrl-sb-txt-color" value="#ffffff" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>SB Overall Size</span><input type="range" id="sl-sb-scale" min="0.5" max="2" step="0.05" value="1" oninput="applyVisualsLocally()"></div>
+          
+          <div class="slider-container">
+            <span>Tourney Text</span>
+            <select id="ctrl-ff-tourney" class="font-select" onchange="applyVisualsLocally()"><script>document.write(fontOptions);</script></select>
+            <input type="range" id="sl-f-tourney" min="8" max="30" value="12" oninput="applyVisualsLocally()">
+          </div>
+          <div class="slider-container"><span>Tourney Logo Size</span><input type="range" id="sl-tourney-logo-size" min="10" max="60" value="20" oninput="applyVisualsLocally()"></div>
+          
+          <div class="slider-container">
+            <span>Team Name Text</span>
+            <select id="ctrl-ff-team" class="font-select" onchange="applyVisualsLocally()"><script>document.write(fontOptions);</script></select>
+            <input type="range" id="sl-f-team" min="10" max="40" value="17" oninput="applyVisualsLocally()">
+          </div>
+          
+          <div class="slider-container">
+            <span>Score Numbers</span>
+            <select id="ctrl-ff-score" class="font-select" onchange="applyVisualsLocally()"><script>document.write(fontOptions);</script></select>
+            <input type="range" id="sl-f-score" min="20" max="80" value="44" oninput="applyVisualsLocally()">
+          </div>
+          
+          <div class="slider-container">
+            <span>Match Clock Text</span>
+            <select id="ctrl-ff-time" class="font-select" onchange="applyVisualsLocally()"><script>document.write(fontOptions);</script></select>
+            <input type="range" id="sl-f-time" min="15" max="60" value="34" oninput="applyVisualsLocally()">
+          </div>
+
+          <div class="slider-container"><span>Logo Size (Both)</span><input type="range" id="sl-logo-size" min="20" max="100" value="55" oninput="syncBothLogos('sb')"></div>
+          <div class="slider-container"><span>Home Logo Size</span><input type="range" id="sl-logo-size-h" min="20" max="100" value="55" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>Away Logo Size</span><input type="range" id="sl-logo-size-a" min="20" max="100" value="55" oninput="applyVisualsLocally()"></div>
+          
+          <!-- Extra Background Controls -->
+          <div class="slider-container" style="border-left: 1px solid #444; padding-left: 15px;"><span>SB Use Grad</span><input type="checkbox" id="ctrl-sb-grad" onchange="applyVisualsLocally()"></div>
           <div class="slider-container"><span>SB BG C1</span><input type="color" id="ctrl-sb-bg-c1" value="#0c0e12" oninput="applyVisualsLocally()"></div>
           <div class="slider-container"><span>SB BG C2</span><input type="color" id="ctrl-sb-bg-c2" value="#1a1a1a" oninput="applyVisualsLocally()"></div>
           <div class="slider-container"><span>Top Bar Grad</span><input type="checkbox" id="ctrl-tb-grad" onchange="applyVisualsLocally()"></div>
           <div class="slider-container"><span>Top Bar C1</span><input type="color" id="ctrl-tb-bg-c1" value="#111111" oninput="applyVisualsLocally()"></div>
           <div class="slider-container"><span>Top Bar C2</span><input type="color" id="ctrl-tb-bg-c2" value="#222222" oninput="applyVisualsLocally()"></div>
-          <div class="slider-container"><span>Text Color</span><input type="color" id="ctrl-sb-txt-color" value="#ffffff" oninput="applyVisualsLocally()"></div>
-          <div class="slider-container"><span>Overall Size</span><input type="range" id="sl-sb-scale" min="0.5" max="2" step="0.05" value="1" oninput="applyVisualsLocally()"></div>
-          <div class="slider-container"><span>Tourney Font</span><input type="range" id="sl-f-tourney" min="8" max="30" value="12" oninput="applyVisualsLocally()"></div>
-          <div class="slider-container"><span>Tourney Logo</span><input type="range" id="sl-tourney-logo-size" min="10" max="60" value="20" oninput="applyVisualsLocally()"></div>
-          <div class="slider-container"><span>Logo Size (Both)</span><input type="range" id="sl-logo-size" min="20" max="100" value="55" oninput="syncBothLogos('sb')"></div>
-          <div class="slider-container"><span>Home Logo Size</span><input type="range" id="sl-logo-size-h" min="20" max="100" value="55" oninput="applyVisualsLocally()"></div>
-          <div class="slider-container"><span>Away Logo Size</span><input type="range" id="sl-logo-size-a" min="20" max="100" value="55" oninput="applyVisualsLocally()"></div>
-          <div class="slider-container"><span>Team Font</span><input type="range" id="sl-f-team" min="10" max="40" value="17" oninput="applyVisualsLocally()"></div>
-          <div class="slider-container"><span>Score Font</span><input type="range" id="sl-f-score" min="20" max="80" value="44" oninput="applyVisualsLocally()"></div>
-          <div class="slider-container"><span>Time Font</span><input type="range" id="sl-f-time" min="15" max="60" value="34" oninput="applyVisualsLocally()"></div>
         </div>
       </div>
 
@@ -650,14 +674,24 @@
             <input type="text" class="auto-text" id="ctrl-sub-tgt" value="900" style="width: 100px; text-align: center;" onkeydown="if(event.key === 'Enter') { this.blur(); }" onblur="syncTexts()">
           </div>
         </div>
-        <div class="slider-group">
+        <div class="sub-panel slider-group" style="margin-bottom: 0;">
           <span class="section-title">Target Box Layout Settings (Local Preview)</span>
-          <div class="slider-container"><span>Use Grad</span><input type="checkbox" id="ctrl-tgt-grad" checked onchange="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>Box Size</span><input type="range" id="sl-tgt-scale" min="0.5" max="2" step="0.05" value="1" oninput="applyVisualsLocally()"></div>
+          
+          <div class="slider-container">
+            <span>Label Text</span>
+            <select id="ctrl-ff-tgt-lbl" class="font-select" onchange="applyVisualsLocally()"><script>document.write(fontOptions);</script></select>
+            <input type="range" id="sl-f-tgt-lbl" min="8" max="24" value="13" oninput="applyVisualsLocally()">
+          </div>
+          <div class="slider-container">
+            <span>Number Text</span>
+            <select id="ctrl-ff-tgt-val" class="font-select" onchange="applyVisualsLocally()"><script>document.write(fontOptions);</script></select>
+            <input type="range" id="sl-f-tgt-val" min="15" max="60" value="30" oninput="applyVisualsLocally()">
+          </div>
+
+          <div class="slider-container" style="border-left: 1px solid #444; padding-left: 15px;"><span>Use Grad</span><input type="checkbox" id="ctrl-tgt-grad" checked onchange="applyVisualsLocally()"></div>
           <div class="slider-container"><span>BG C1</span><input type="color" id="ctrl-tgt-c1" value="#2c3e50" oninput="applyVisualsLocally()"></div>
           <div class="slider-container"><span>BG C2</span><input type="color" id="ctrl-tgt-c2" value="#636e72" oninput="applyVisualsLocally()"></div>
-          <div class="slider-container"><span>Box Size</span><input type="range" id="sl-tgt-scale" min="0.5" max="2" step="0.05" value="1" oninput="applyVisualsLocally()"></div>
-          <div class="slider-container"><span>Label Font</span><input type="range" id="sl-f-tgt-lbl" min="8" max="24" value="13" oninput="applyVisualsLocally()"></div>
-          <div class="slider-container"><span>Number Font</span><input type="range" id="sl-f-tgt-val" min="15" max="60" value="30" oninput="applyVisualsLocally()"></div>
         </div>
       </div>
 
@@ -674,7 +708,7 @@
         <div class="ctrl-row" style="align-items: flex-start; gap: 20px; border-bottom: none;">
           <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span class="section-title">Home Playing 11</span>
+              <span class="section-title" style="border:none; margin:0;">Home Playing 11</span>
               <label class="ctrl-btn special" style="padding: 4px 8px; font-size: 10px; margin: 0; cursor: pointer;">
                 Auto-Extract Image
                 <input type="file" accept="image/*" style="display: none;" onchange="extractLineupFromImage(event, 'home')">
@@ -685,7 +719,7 @@
           </div>
           <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span class="section-title">Away Playing 11</span>
+              <span class="section-title" style="border:none; margin:0;">Away Playing 11</span>
               <label class="ctrl-btn special" style="padding: 4px 8px; font-size: 10px; margin: 0; cursor: pointer;">
                 Auto-Extract Image
                 <input type="file" accept="image/*" style="display: none;" onchange="extractLineupFromImage(event, 'away')">
@@ -695,12 +729,18 @@
             <textarea class="lineup-input" id="ctrl-a-lineup" onblur="syncTexts()"></textarea>
           </div>
         </div>
-        <div class="slider-group">
+        <div class="sub-panel slider-group" style="margin-bottom: 0;">
           <span class="section-title">Lineup Layout Settings (Local Preview)</span>
           <div class="slider-container"><span>Text Color</span><input type="color" id="ctrl-lu-txt-color" value="#ffffff" oninput="applyVisualsLocally()"></div>
           <div class="slider-container"><span>Panel Width</span><input type="range" id="sl-lu-w" min="150" max="400" value="260" oninput="applyVisualsLocally()"></div>
-          <div class="slider-container"><span>Font Size</span><input type="range" id="sl-lu-f" min="10" max="30" value="16" oninput="applyVisualsLocally()"></div>
           <div class="slider-container"><span>BG Opacity</span><input type="range" id="sl-lu-op" min="0.2" max="1" step="0.05" value="0.85" oninput="applyVisualsLocally()"></div>
+          
+          <div class="slider-container">
+            <span>Font Style & Size</span>
+            <select id="ctrl-ff-lu" class="font-select" onchange="applyVisualsLocally()"><script>document.write(fontOptions);</script></select>
+            <input type="range" id="sl-lu-f" min="10" max="30" value="16" oninput="applyVisualsLocally()">
+          </div>
+
           <div class="slider-container"><span>Logo Size (Both)</span><input type="range" id="sl-lu-logo-size" min="15" max="80" value="30" oninput="syncBothLogos('lu')"></div>
           <div class="slider-container"><span>Home Logo Size</span><input type="range" id="sl-lu-logo-size-h" min="15" max="80" value="30" oninput="applyVisualsLocally()"></div>
           <div class="slider-container"><span>Away Logo Size</span><input type="range" id="sl-lu-logo-size-a" min="15" max="80" value="30" oninput="applyVisualsLocally()"></div>
@@ -718,18 +758,24 @@
         </div>
         <div class="ctrl-row" style="gap: 16px; border-bottom: none;">
           <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 6px;">
-            <span class="section-title">Ticker Message (Press Enter to Sync)</span>
+            <span class="section-title" style="border:none;">Ticker Message (Press Enter to Sync)</span>
             <input type="text" class="auto-text" id="ctrl-tk-text" value="Welcome to Sports Unplugged India! Please Like and Subscribe to the channel." style="width: 100%; font-size: 15px;" onkeydown="if(event.key === 'Enter') { this.blur(); }" onblur="syncTexts()">
           </div>
         </div>
-        <div class="slider-group">
+        <div class="sub-panel slider-group" style="margin-bottom: 0;">
           <span class="section-title">Ticker Layout Settings (Local Preview)</span>
-          <div class="slider-container"><span>Text C</span><input type="color" id="ctrl-tk-txt-c" value="#ffffff" oninput="applyVisualsLocally()"></div>
-          <div class="slider-container"><span>BG C1</span><input type="color" id="ctrl-tk-c1" value="#1a202c" oninput="applyVisualsLocally()"></div>
-          <div class="slider-container"><span>BG C2</span><input type="color" id="ctrl-tk-c2" value="#2d3748" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>Text Color</span><input type="color" id="ctrl-tk-txt-c" value="#ffffff" oninput="applyVisualsLocally()"></div>
           <div class="slider-container"><span>Bar Height</span><input type="range" id="sl-tk-h" min="20" max="100" value="40" oninput="applyVisualsLocally()"></div>
-          <div class="slider-container"><span>Font Size</span><input type="range" id="sl-tk-f" min="12" max="60" value="22" oninput="applyVisualsLocally()"></div>
           <div class="slider-container"><span>Opacity</span><input type="range" id="sl-tk-op" min="0.2" max="1" step="0.05" value="0.9" oninput="applyVisualsLocally()"></div>
+          
+          <div class="slider-container">
+            <span>Font Style & Size</span>
+            <select id="ctrl-ff-tk" class="font-select" onchange="applyVisualsLocally()"><script>document.write(fontOptions);</script></select>
+            <input type="range" id="sl-tk-f" min="12" max="60" value="22" oninput="applyVisualsLocally()">
+          </div>
+
+          <div class="slider-container" style="border-left: 1px solid #444; padding-left: 15px;"><span>BG C1</span><input type="color" id="ctrl-tk-c1" value="#1a202c" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>BG C2</span><input type="color" id="ctrl-tk-c2" value="#2d3748" oninput="applyVisualsLocally()"></div>
         </div>
       </div>
 
@@ -743,23 +789,29 @@
         <div class="ctrl-row" style="flex-direction: column; gap: 16px; border-bottom: none;">
           <div style="background: #111; padding: 16px; border-radius: 8px; border: 1px solid #333; width: 100%;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <span class="section-title" id="ctrl-pen-h-name" style="width: auto;">Home Penalties</span>
+              <span class="section-title" id="ctrl-pen-h-name" style="width: auto; border:none; padding:0;">Home Penalties</span>
               <div><button class="ctrl-btn" onclick="adjPenBulbs('home', 1)">+ Add Bulb</button> <button class="ctrl-btn" onclick="adjPenBulbs('home', -1)">- Remove</button></div>
             </div>
             <div id="ctrl-pen-matrix-home" style="display: flex; gap: 10px;"></div>
           </div>
           <div style="background: #111; padding: 16px; border-radius: 8px; border: 1px solid #333; width: 100%;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <span class="section-title" id="ctrl-pen-a-name" style="width: auto;">Away Penalties</span>
+              <span class="section-title" id="ctrl-pen-a-name" style="width: auto; border:none; padding:0;">Away Penalties</span>
               <div><button class="ctrl-btn" onclick="adjPenBulbs('away', 1)">+ Add Bulb</button> <button class="ctrl-btn" onclick="adjPenBulbs('away', -1)">- Remove</button></div>
             </div>
             <div id="ctrl-pen-matrix-away" style="display: flex; gap: 10px;"></div>
           </div>
         </div>
-        <div class="slider-group" style="margin-top: 10px;">
+        <div class="sub-panel slider-group" style="margin-bottom: 0;">
           <span class="section-title">Large Penalty Board Layout (Local Preview)</span>
           <div class="slider-container"><span>Panel Size</span><input type="range" id="sl-pen-board-scale" min="0.5" max="2" step="0.05" value="1" oninput="applyVisualsLocally()"></div>
-          <div class="slider-container"><span>Text Size</span><input type="range" id="sl-pen-board-txt" min="10" max="30" value="16" oninput="applyVisualsLocally()"></div>
+          
+          <div class="slider-container">
+            <span>Text Font & Size</span>
+            <select id="ctrl-ff-pen" class="font-select" onchange="applyVisualsLocally()"><script>document.write(fontOptions);</script></select>
+            <input type="range" id="sl-pen-board-txt" min="10" max="30" value="16" oninput="applyVisualsLocally()">
+          </div>
+
           <div class="slider-container"><span>Logo Size (Both)</span><input type="range" id="sl-pen-logo-size" min="15" max="100" value="35" oninput="syncBothLogos('pen')"></div>
           <div class="slider-container"><span>Home Logo Size</span><input type="range" id="sl-pen-logo-size-h" min="15" max="100" value="35" oninput="applyVisualsLocally()"></div>
           <div class="slider-container"><span>Away Logo Size</span><input type="range" id="sl-pen-logo-size-a" min="15" max="100" value="35" oninput="applyVisualsLocally()"></div>
@@ -770,6 +822,17 @@
   </div>
 
   <script>
+    // Set Default Fonts Initial Values in dropdowns right away
+    document.getElementById('ctrl-ff-team').value = "'Montserrat', sans-serif";
+    document.getElementById('ctrl-ff-score').value = "'Teko', sans-serif";
+    document.getElementById('ctrl-ff-time').value = "'Teko', sans-serif";
+    document.getElementById('ctrl-ff-tourney').value = "'Montserrat', sans-serif";
+    document.getElementById('ctrl-ff-tgt-lbl').value = "'Montserrat', sans-serif";
+    document.getElementById('ctrl-ff-tgt-val').value = "'Teko', sans-serif";
+    document.getElementById('ctrl-ff-lu').value = "'Montserrat', sans-serif";
+    document.getElementById('ctrl-ff-tk').value = "'Montserrat', sans-serif";
+    document.getElementById('ctrl-ff-pen').value = "'Montserrat', sans-serif";
+
     // --- Draggable Control Panel Logic ---
     const dragHeader = document.querySelector('.ctrl-master-header');
     const ctrlPanel = document.getElementById('controls');
@@ -823,7 +886,7 @@
       if (lastLoaded && savedLayouts[lastLoaded]) loadLayoutState(lastLoaded);
       else loadLayoutState("Default");
       
-      initHistory(); // Initialize the Undo/Redo tracking
+      initHistory(); 
     }
 
     function saveToStorage() { localStorage.setItem('suiSavedLayouts', JSON.stringify(savedLayouts)); }
@@ -837,7 +900,8 @@
         vLuWidth, vLuFont, vLuOpacity, vLuLogoSizeH, vLuLogoSizeA,
         isPenVis, hPens, aPens, hRed, aRed,
         vPenBoardScale, vPenBoardTxt, vPenLogoSizeH, vPenLogoSizeA,
-        tgtUseGrad, tgtBgC1, tgtBgC2, sbUseGrad, sbBgC1, sbBgC2, tbUseGrad, tbBgC1, tbBgC2
+        tgtUseGrad, tgtBgC1, tgtBgC2, sbUseGrad, sbBgC1, sbBgC2, tbUseGrad, tbBgC1, tbBgC2,
+        vFfTeam, vFfScore, vFfTime, vFfTourney, vFfTgtLbl, vFfTgtVal, vFfLu, vFfTk, vFfPen
       };
     }
 
@@ -898,6 +962,12 @@
       tbUseGrad = layout.tbUseGrad !== undefined ? layout.tbUseGrad : tbUseGrad;
       tbBgC1 = layout.tbBgC1 !== undefined ? layout.tbBgC1 : tbBgC1;
       tbBgC2 = layout.tbBgC2 !== undefined ? layout.tbBgC2 : tbBgC2;
+      
+      vFfTeam = layout.vFfTeam || "'Montserrat', sans-serif"; vFfScore = layout.vFfScore || "'Teko', sans-serif";
+      vFfTime = layout.vFfTime || "'Teko', sans-serif"; vFfTourney = layout.vFfTourney || "'Montserrat', sans-serif";
+      vFfTgtLbl = layout.vFfTgtLbl || "'Montserrat', sans-serif"; vFfTgtVal = layout.vFfTgtVal || "'Teko', sans-serif";
+      vFfLu = layout.vFfLu || "'Montserrat', sans-serif"; vFfTk = layout.vFfTk || "'Montserrat', sans-serif";
+      vFfPen = layout.vFfPen || "'Montserrat', sans-serif";
 
       syncInputsToVariables();
       applyVisualsLocally();
@@ -905,7 +975,7 @@
       renderRedCards();
       broadcastState();
       
-      initHistory(); // Reset visual history when a new layout is loaded
+      initHistory(); 
     }
 
     function saveLayout() {
@@ -954,7 +1024,6 @@
     }
     function executeLoad(name) { loadLayoutState(name); closeLoadModal(); }
 
-    // --- Accordion & Panel Logic ---
     function togglePanel(panelId) {
       const content = document.getElementById(panelId); const icon = document.getElementById(panelId + '-icon');
       if (content.classList.contains('active')) { content.classList.remove('active'); icon.textContent = '▼'; } 
@@ -990,18 +1059,21 @@
     let isScoreboardVisible = true; let isLineupsVisible = false; let bgStyle = 'split'; let showLuLogo = true;
     let sbTxtColor = "#ffffff", luTxtColor = "#ffffff"; let vSbScale = 1, vTgtScale = 1;
     let vLogoSizeH = 55, vLogoSizeA = 55;
+    
     let vFTeam = 17, vFScore = 44, vFTime = 34, vFTourney = 12, vTourneyLogoSize = 20, vFTgtLbl = 13, vFTgtVal = 30;
     let vLuWidth = 260, vLuFont = 16, vLuOpacity = 0.85, vLuLogoSizeH = 30, vLuLogoSizeA = 30;
+    
+    let vFfTeam = "'Montserrat', sans-serif", vFfScore = "'Teko', sans-serif", vFfTime = "'Teko', sans-serif";
+    let vFfTourney = "'Montserrat', sans-serif", vFfTgtLbl = "'Montserrat', sans-serif", vFfTgtVal = "'Teko', sans-serif";
+    let vFfLu = "'Montserrat', sans-serif", vFfTk = "'Montserrat', sans-serif", vFfPen = "'Montserrat', sans-serif";
 
-    // Background Color Variables
     let tgtUseGrad = true, tgtBgC1 = "#2c3e50", tgtBgC2 = "#636e72";
     let sbUseGrad = false, sbBgC1 = "#0c0e12", sbBgC2 = "#1a1a1a";
     let tbUseGrad = false, tbBgC1 = "#111111", tbBgC2 = "#222222";
 
-    // Penalty & Red Card variables
     let hRed = 0, aRed = 0;
     let isPenVis = false;
-    let hPens = [0,0,0,0,0], aPens = [0,0,0,0,0]; // 0=empty, 1=scored, 2=missed
+    let hPens = [0,0,0,0,0], aPens = [0,0,0,0,0]; 
     let vPenBoardScale = 1, vPenBoardTxt = 16, vPenLogoSizeH = 35, vPenLogoSizeA = 35;
 
     // DOM Elements
@@ -1020,7 +1092,6 @@
     const hLuLogoDisplay = document.getElementById('home-lu-logo'); const aLuLogoDisplay = document.getElementById('away-lu-logo');
     const hLuList = document.getElementById('home-lineup-list'); const aLuList = document.getElementById('away-lineup-list');
     const tkWrap = document.getElementById('ticker-wrapper'); const tkBgEl = document.getElementById('ticker-bg'); const tkTextEl = document.getElementById('ticker-text');
-    
     const hRedEl = document.getElementById('home-red-cards'); const aRedEl = document.getElementById('away-red-cards');
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -1042,10 +1113,13 @@
         tkText = data.tkText || tkText; isTkVis = data.isTkVis !== undefined ? data.isTkVis : isTkVis; isTkScroll = data.isTkScroll !== undefined ? data.isTkScroll : isTkScroll; 
         useTkGrad = data.useTkGrad !== undefined ? data.useTkGrad : useTkGrad; tkC1 = data.tkC1 || tkC1; tkC2 = data.tkC2 || tkC2; tkTxtC = data.tkTxtC || tkTxtC;
         vTkH = data.vTkH || vTkH; vTkF = data.vTkF || vTkF; vTkOp = data.vTkOp || vTkOp;
+        
         isScoreboardVisible = data.isScoreboardVisible !== undefined ? data.isScoreboardVisible : isScoreboardVisible;
         isLineupsVisible = data.isLineupsVisible !== undefined ? data.isLineupsVisible : isLineupsVisible;
-        bgStyle = data.bgStyle || (data.useGradient !== undefined ? (data.useGradient ? 'split' : 'solid') : bgStyle); showLuLogo = data.showLuLogo !== undefined ? data.showLuLogo : showLuLogo;
+        bgStyle = data.bgStyle || (data.useGradient !== undefined ? (data.useGradient ? 'split' : 'solid') : bgStyle);
+        showLuLogo = data.showLuLogo !== undefined ? data.showLuLogo : showLuLogo;
         sbTxtColor = data.sbTxtColor || sbTxtColor; luTxtColor = data.luTxtColor || luTxtColor;
+        
         vSbScale = data.vSbScale || vSbScale; vTgtScale = data.vTgtScale || vTgtScale; 
         vLogoSizeH = data.vLogoSizeH !== undefined ? data.vLogoSizeH : vLogoSizeH; vLogoSizeA = data.vLogoSizeA !== undefined ? data.vLogoSizeA : vLogoSizeA;
         vFTeam = data.vFTeam || vFTeam; vFScore = data.vFScore || vFScore; vFTime = data.vFTime || vFTime; 
@@ -1053,6 +1127,10 @@
         vFTgtLbl = data.vFTgtLbl || vFTgtLbl; vFTgtVal = data.vFTgtVal || vFTgtVal;
         vLuWidth = data.vLuWidth || vLuWidth; vLuFont = data.vLuFont || vLuFont; vLuOpacity = data.vLuOpacity || vLuOpacity; 
         vLuLogoSizeH = data.vLuLogoSizeH !== undefined ? data.vLuLogoSizeH : vLuLogoSizeH; vLuLogoSizeA = data.vLuLogoSizeA !== undefined ? data.vLuLogoSizeA : vLuLogoSizeA;
+
+        vFfTeam = data.vFfTeam || vFfTeam; vFfScore = data.vFfScore || vFfScore; vFfTime = data.vFfTime || vFfTime;
+        vFfTourney = data.vFfTourney || vFfTourney; vFfTgtLbl = data.vFfTgtLbl || vFfTgtLbl; vFfTgtVal = data.vFfTgtVal || vFfTgtVal;
+        vFfLu = data.vFfLu || vFfLu; vFfTk = data.vFfTk || vFfTk; vFfPen = data.vFfPen || vFfPen;
 
         isPenVis = data.isPenVis !== undefined ? data.isPenVis : isPenVis;
         hPens = data.hPens !== undefined ? data.hPens : hPens;
@@ -1096,6 +1174,7 @@
         aBg.style.background = bgStyle === 'split' ? `linear-gradient(135deg, ${aC1} 50%, ${aC2} 50%)` : (bgStyle === 'gradient' ? `linear-gradient(135deg, ${aC1} 0%, ${aC2} 100%)` : aC1);
         hLuBg.style.background = bgStyle === 'split' ? `linear-gradient(135deg, ${hC1} 50%, ${hC2} 50%)` : (bgStyle === 'gradient' ? `linear-gradient(135deg, ${hC1} 0%, ${hC2} 100%)` : hC1);
         aLuBg.style.background = bgStyle === 'split' ? `linear-gradient(135deg, ${aC1} 50%, ${aC2} 50%)` : (bgStyle === 'gradient' ? `linear-gradient(135deg, ${aC1} 0%, ${aC2} 100%)` : aC1);
+
         hLuLogoDisplay.style.display = showLuLogo ? 'block' : 'none'; aLuLogoDisplay.style.display = showLuLogo ? 'block' : 'none';
         tkBgEl.style.background = useTkGrad ? `linear-gradient(90deg, ${tkC1} 0%, ${tkC2} 100%)` : tkC1;
         
@@ -1119,18 +1198,21 @@
         const root = document.documentElement;
         root.style.setProperty('--sb-txt', sbTxtColor); root.style.setProperty('--lu-txt', luTxtColor);
         root.style.setProperty('--sb-scale', vSbScale); root.style.setProperty('--target-scale', vTgtScale);
-        root.style.setProperty('--f-team', vFTeam + 'px');
-        root.style.setProperty('--f-score', vFScore + 'px'); root.style.setProperty('--f-time', vFTime + 'px');
-        root.style.setProperty('--f-tourney', vFTourney + 'px'); root.style.setProperty('--tourney-logo-size', vTourneyLogoSize + 'px');
-        root.style.setProperty('--f-tgt-label', vFTgtLbl + 'px'); root.style.setProperty('--f-tgt-val', vFTgtVal + 'px');
-        root.style.setProperty('--lu-w', vLuWidth + 'px'); root.style.setProperty('--lu-f', vLuFont + 'px');
+        root.style.setProperty('--ff-team', vFfTeam); root.style.setProperty('--f-team', vFTeam + 'px');
+        root.style.setProperty('--ff-score', vFfScore); root.style.setProperty('--f-score', vFScore + 'px'); 
+        root.style.setProperty('--ff-time', vFfTime); root.style.setProperty('--f-time', vFTime + 'px');
+        root.style.setProperty('--ff-tourney', vFfTourney); root.style.setProperty('--f-tourney', vFTourney + 'px'); 
+        root.style.setProperty('--tourney-logo-size', vTourneyLogoSize + 'px');
+        root.style.setProperty('--ff-tgt-lbl', vFfTgtLbl); root.style.setProperty('--f-tgt-label', vFTgtLbl + 'px'); 
+        root.style.setProperty('--ff-tgt-val', vFfTgtVal); root.style.setProperty('--f-tgt-val', vFTgtVal + 'px');
+        root.style.setProperty('--lu-w', vLuWidth + 'px'); root.style.setProperty('--ff-lu', vFfLu); root.style.setProperty('--lu-f', vLuFont + 'px');
         root.style.setProperty('--lu-bg-op', vLuOpacity); 
-        root.style.setProperty('--tk-h', vTkH + 'px'); root.style.setProperty('--tk-f', vTkF + 'px');
+        root.style.setProperty('--tk-h', vTkH + 'px'); root.style.setProperty('--ff-tk', vFfTk); root.style.setProperty('--tk-f', vTkF + 'px');
         root.style.setProperty('--tk-op', vTkOp); root.style.setProperty('--tk-txt-c', tkTxtC);
         
         root.style.setProperty('--logo-size-h', vLogoSizeH + 'px'); root.style.setProperty('--logo-size-a', vLogoSizeA + 'px');
         root.style.setProperty('--lu-logo-size-h', vLuLogoSizeH + 'px'); root.style.setProperty('--lu-logo-size-a', vLuLogoSizeA + 'px');
-        root.style.setProperty('--pen-board-scale', vPenBoardScale); root.style.setProperty('--pen-board-txt', vPenBoardTxt + 'px');
+        root.style.setProperty('--pen-board-scale', vPenBoardScale); root.style.setProperty('--ff-pen', vFfPen); root.style.setProperty('--pen-board-txt', vPenBoardTxt + 'px');
         root.style.setProperty('--pen-logo-size-h', vPenLogoSizeH + 'px'); root.style.setProperty('--pen-logo-size-a', vPenLogoSizeA + 'px');
         
         if (urlParams.get('view') !== 'overlay') { 
@@ -1156,19 +1238,23 @@
       document.getElementById('sl-sb-scale').value = vSbScale; document.getElementById('sl-tgt-scale').value = vTgtScale;
       
       document.getElementById('sl-logo-size-h').value = vLogoSizeH; document.getElementById('sl-logo-size-a').value = vLogoSizeA;
-      document.getElementById('sl-f-team').value = vFTeam; document.getElementById('sl-f-score').value = vFScore; document.getElementById('sl-f-time').value = vFTime;
-      document.getElementById('sl-f-tourney').value = vFTourney; document.getElementById('sl-tourney-logo-size').value = vTourneyLogoSize;
-      document.getElementById('sl-f-tgt-lbl').value = vFTgtLbl; document.getElementById('sl-f-tgt-val').value = vFTgtVal;
-      document.getElementById('sl-lu-w').value = vLuWidth; document.getElementById('sl-lu-f').value = vLuFont; 
+      document.getElementById('ctrl-ff-team').value = vFfTeam; document.getElementById('sl-f-team').value = vFTeam; 
+      document.getElementById('ctrl-ff-score').value = vFfScore; document.getElementById('sl-f-score').value = vFScore; 
+      document.getElementById('ctrl-ff-time').value = vFfTime; document.getElementById('sl-f-time').value = vFTime;
+      document.getElementById('ctrl-ff-tourney').value = vFfTourney; document.getElementById('sl-f-tourney').value = vFTourney; document.getElementById('sl-tourney-logo-size').value = vTourneyLogoSize;
+      
+      document.getElementById('ctrl-ff-tgt-lbl').value = vFfTgtLbl; document.getElementById('sl-f-tgt-lbl').value = vFTgtLbl; 
+      document.getElementById('ctrl-ff-tgt-val').value = vFfTgtVal; document.getElementById('sl-f-tgt-val').value = vFTgtVal;
+      document.getElementById('sl-lu-w').value = vLuWidth; document.getElementById('ctrl-ff-lu').value = vFfLu; document.getElementById('sl-lu-f').value = vLuFont; 
       document.getElementById('sl-lu-op').value = vLuOpacity; 
       document.getElementById('sl-lu-logo-size-h').value = vLuLogoSizeH; document.getElementById('sl-lu-logo-size-a').value = vLuLogoSizeA;
       
       document.getElementById('ctrl-tk-show').checked = isTkVis; document.getElementById('ctrl-tk-scroll').checked = isTkScroll;
       document.getElementById('ctrl-tk-grad').checked = useTkGrad; document.getElementById('ctrl-tk-c1').value = tkC1;
       document.getElementById('ctrl-tk-c2').value = tkC2; document.getElementById('ctrl-tk-txt-c').value = tkTxtC;
-      document.getElementById('sl-tk-h').value = vTkH; document.getElementById('sl-tk-f').value = vTkF; document.getElementById('sl-tk-op').value = vTkOp;
+      document.getElementById('sl-tk-h').value = vTkH; document.getElementById('ctrl-ff-tk').value = vFfTk; document.getElementById('sl-tk-f').value = vTkF; document.getElementById('sl-tk-op').value = vTkOp;
       
-      document.getElementById('sl-pen-board-scale').value = vPenBoardScale; document.getElementById('sl-pen-board-txt').value = vPenBoardTxt;
+      document.getElementById('sl-pen-board-scale').value = vPenBoardScale; document.getElementById('ctrl-ff-pen').value = vFfPen; document.getElementById('sl-pen-board-txt').value = vPenBoardTxt;
       document.getElementById('sl-pen-logo-size-h').value = vPenLogoSizeH; document.getElementById('sl-pen-logo-size-a').value = vPenLogoSizeA;
 
       document.getElementById('ctrl-tgt-grad').checked = tgtUseGrad;
@@ -1201,7 +1287,8 @@
           vSbScale, vTgtScale, vLogoSizeH, vLogoSizeA, vFTeam, vFScore, vFTime, vFTourney, vTourneyLogoSize, vFTgtLbl, vFTgtVal, 
           vLuWidth, vLuFont, vLuOpacity, vLuLogoSizeH, vLuLogoSizeA,
           isPenVis, hPens, aPens, vPenBoardScale, vPenBoardTxt, vPenLogoSizeH, vPenLogoSizeA, hRed, aRed,
-          tgtUseGrad, tgtBgC1, tgtBgC2, sbUseGrad, sbBgC1, sbBgC2, tbUseGrad, tbBgC1, tbBgC2
+          tgtUseGrad, tgtBgC1, tgtBgC2, sbUseGrad, sbBgC1, sbBgC2, tbUseGrad, tbBgC1, tbBgC2,
+          vFfTeam, vFfScore, vFfTime, vFfTourney, vFfTgtLbl, vFfTgtVal, vFfLu, vFfTk, vFfPen
         }
       });
     }
@@ -1354,12 +1441,13 @@
     
     const visualInputIds = [
       'ctrl-bg-style', 'ctrl-h-c1', 'ctrl-h-c2', 'ctrl-a-c1', 'ctrl-a-c2',
-      'ctrl-sb-txt-color', 'sl-sb-scale', 'sl-logo-size', 'sl-logo-size-h', 'sl-logo-size-a', 'sl-f-team', 'sl-f-score', 'sl-f-time',
-      'sl-f-tourney', 'sl-tourney-logo-size',
-      'sl-tgt-scale', 'sl-f-tgt-lbl', 'sl-f-tgt-val',
-      'ctrl-lu-logo-show', 'ctrl-lu-txt-color', 'sl-lu-w', 'sl-lu-f', 'sl-lu-op', 'sl-lu-logo-size', 'sl-lu-logo-size-h', 'sl-lu-logo-size-a',
-      'ctrl-tk-show', 'ctrl-tk-scroll', 'ctrl-tk-grad', 'ctrl-tk-txt-c', 'ctrl-tk-c1', 'ctrl-tk-c2', 'sl-tk-h', 'sl-tk-f', 'sl-tk-op',
-      'sl-pen-board-scale', 'sl-pen-board-txt', 'sl-pen-logo-size', 'sl-pen-logo-size-h', 'sl-pen-logo-size-a',
+      'ctrl-sb-txt-color', 'sl-sb-scale', 'sl-logo-size', 'sl-logo-size-h', 'sl-logo-size-a', 
+      'ctrl-ff-team', 'sl-f-team', 'ctrl-ff-score', 'sl-f-score', 'ctrl-ff-time', 'sl-f-time',
+      'ctrl-ff-tourney', 'sl-f-tourney', 'sl-tourney-logo-size',
+      'sl-tgt-scale', 'ctrl-ff-tgt-lbl', 'sl-f-tgt-lbl', 'ctrl-ff-tgt-val', 'sl-f-tgt-val',
+      'ctrl-lu-logo-show', 'ctrl-lu-txt-color', 'sl-lu-w', 'ctrl-ff-lu', 'sl-lu-f', 'sl-lu-op', 'sl-lu-logo-size', 'sl-lu-logo-size-h', 'sl-lu-logo-size-a',
+      'ctrl-tk-show', 'ctrl-tk-scroll', 'ctrl-tk-grad', 'ctrl-tk-txt-c', 'ctrl-tk-c1', 'ctrl-tk-c2', 'sl-tk-h', 'ctrl-ff-tk', 'sl-tk-f', 'sl-tk-op',
+      'sl-pen-board-scale', 'ctrl-ff-pen', 'sl-pen-board-txt', 'sl-pen-logo-size', 'sl-pen-logo-size-h', 'sl-pen-logo-size-a',
       'ctrl-tgt-grad', 'ctrl-tgt-c1', 'ctrl-tgt-c2', 'ctrl-sb-grad', 'ctrl-sb-bg-c1', 'ctrl-sb-bg-c2',
       'ctrl-tb-grad', 'ctrl-tb-bg-c1', 'ctrl-tb-bg-c2'
     ];
@@ -1397,7 +1485,7 @@
           el.addEventListener('change', () => {
             undoStack.push(currentVisualState);
             currentVisualState = getVisualDOMState();
-            redoStack = []; // clear redo on new action
+            redoStack = []; 
           });
         }
       });
@@ -1426,14 +1514,24 @@
       root.style.setProperty('--lu-txt', document.getElementById('ctrl-lu-txt-color').value);
       root.style.setProperty('--sb-scale', document.getElementById('sl-sb-scale').value);
       root.style.setProperty('--target-scale', document.getElementById('sl-tgt-scale').value);
+      
+      root.style.setProperty('--ff-team', document.getElementById('ctrl-ff-team').value);
       root.style.setProperty('--f-team', document.getElementById('sl-f-team').value + 'px');
+      root.style.setProperty('--ff-score', document.getElementById('ctrl-ff-score').value);
       root.style.setProperty('--f-score', document.getElementById('sl-f-score').value + 'px');
+      root.style.setProperty('--ff-time', document.getElementById('ctrl-ff-time').value);
       root.style.setProperty('--f-time', document.getElementById('sl-f-time').value + 'px');
+      root.style.setProperty('--ff-tourney', document.getElementById('ctrl-ff-tourney').value);
       root.style.setProperty('--f-tourney', document.getElementById('sl-f-tourney').value + 'px');
       root.style.setProperty('--tourney-logo-size', document.getElementById('sl-tourney-logo-size').value + 'px');
+      
+      root.style.setProperty('--ff-tgt-lbl', document.getElementById('ctrl-ff-tgt-lbl').value);
       root.style.setProperty('--f-tgt-label', document.getElementById('sl-f-tgt-lbl').value + 'px');
+      root.style.setProperty('--ff-tgt-val', document.getElementById('ctrl-ff-tgt-val').value);
       root.style.setProperty('--f-tgt-val', document.getElementById('sl-f-tgt-val').value + 'px');
+      
       root.style.setProperty('--lu-w', document.getElementById('sl-lu-w').value + 'px');
+      root.style.setProperty('--ff-lu', document.getElementById('ctrl-ff-lu').value);
       root.style.setProperty('--lu-f', document.getElementById('sl-lu-f').value + 'px');
       root.style.setProperty('--lu-bg-op', document.getElementById('sl-lu-op').value);
       
@@ -1441,10 +1539,11 @@
       root.style.setProperty('--logo-size-a', document.getElementById('sl-logo-size-a').value + 'px');
       root.style.setProperty('--lu-logo-size-h', document.getElementById('sl-lu-logo-size-h').value + 'px');
       root.style.setProperty('--lu-logo-size-a', document.getElementById('sl-lu-logo-size-a').value + 'px');
+      root.style.setProperty('--pen-board-scale', document.getElementById('sl-pen-board-scale').value);
+      root.style.setProperty('--ff-pen', document.getElementById('ctrl-ff-pen').value);
+      root.style.setProperty('--pen-board-txt', document.getElementById('sl-pen-board-txt').value + 'px');
       root.style.setProperty('--pen-logo-size-h', document.getElementById('sl-pen-logo-size-h').value + 'px');
       root.style.setProperty('--pen-logo-size-a', document.getElementById('sl-pen-logo-size-a').value + 'px');
-      root.style.setProperty('--pen-board-scale', document.getElementById('sl-pen-board-scale').value);
-      root.style.setProperty('--pen-board-txt', document.getElementById('sl-pen-board-txt').value + 'px');
 
       // Update variables locally so they don't reset on the next broadcast (e.g. bulb click)
       vPenBoardScale = document.getElementById('sl-pen-board-scale').value;
@@ -1459,23 +1558,25 @@
       vPenLogoSizeH = document.getElementById('sl-pen-logo-size-h').value; 
       vPenLogoSizeA = document.getElementById('sl-pen-logo-size-a').value; 
       
-      vFTeam = document.getElementById('sl-f-team').value;
-      vFScore = document.getElementById('sl-f-score').value; 
-      vFTime = document.getElementById('sl-f-time').value;
-      vFTourney = document.getElementById('sl-f-tourney').value;
+      vFfTeam = document.getElementById('ctrl-ff-team').value; vFTeam = document.getElementById('sl-f-team').value;
+      vFfScore = document.getElementById('ctrl-ff-score').value; vFScore = document.getElementById('sl-f-score').value; 
+      vFfTime = document.getElementById('ctrl-ff-time').value; vFTime = document.getElementById('sl-f-time').value;
+      vFfTourney = document.getElementById('ctrl-ff-tourney').value; vFTourney = document.getElementById('sl-f-tourney').value;
       vTourneyLogoSize = document.getElementById('sl-tourney-logo-size').value;
-      vFTgtLbl = document.getElementById('sl-f-tgt-lbl').value; 
-      vFTgtVal = document.getElementById('sl-f-tgt-val').value;
+      vFfTgtLbl = document.getElementById('ctrl-ff-tgt-lbl').value; vFTgtLbl = document.getElementById('sl-f-tgt-lbl').value; 
+      vFfTgtVal = document.getElementById('ctrl-ff-tgt-val').value; vFTgtVal = document.getElementById('sl-f-tgt-val').value;
       vLuWidth = document.getElementById('sl-lu-w').value; 
-      vLuFont = document.getElementById('sl-lu-f').value; 
+      vFfLu = document.getElementById('ctrl-ff-lu').value; vLuFont = document.getElementById('sl-lu-f').value; 
       vLuOpacity = document.getElementById('sl-lu-op').value; 
       vTkH = document.getElementById('sl-tk-h').value; 
-      vTkF = document.getElementById('sl-tk-f').value; 
+      vFfTk = document.getElementById('ctrl-ff-tk').value; vTkF = document.getElementById('sl-tk-f').value; 
       vTkOp = document.getElementById('sl-tk-op').value;
+      vFfPen = document.getElementById('ctrl-ff-pen').value;
 
       const localBgStyle = document.getElementById('ctrl-bg-style').value;
       const hc1 = document.getElementById('ctrl-h-c1').value; const hc2 = document.getElementById('ctrl-h-c2').value;
       const ac1 = document.getElementById('ctrl-a-c1').value; const ac2 = document.getElementById('ctrl-a-c2').value;
+      
       hBg.style.background = localBgStyle === 'split' ? `linear-gradient(135deg, ${hc1} 50%, ${hc2} 50%)` : (localBgStyle === 'gradient' ? `linear-gradient(135deg, ${hc1} 0%, ${hc2} 100%)` : hc1);
       aBg.style.background = localBgStyle === 'split' ? `linear-gradient(135deg, ${ac1} 50%, ${ac2} 50%)` : (localBgStyle === 'gradient' ? `linear-gradient(135deg, ${ac1} 0%, ${ac2} 100%)` : ac1);
       hLuBg.style.background = localBgStyle === 'split' ? `linear-gradient(135deg, ${hc1} 50%, ${hc2} 50%)` : (localBgStyle === 'gradient' ? `linear-gradient(135deg, ${hc1} 0%, ${hc2} 100%)` : hc1);
@@ -1485,6 +1586,7 @@
       hLuLogoDisplay.style.display = logoChecked ? 'block' : 'none'; aLuLogoDisplay.style.display = logoChecked ? 'block' : 'none';
 
       root.style.setProperty('--tk-h', document.getElementById('sl-tk-h').value + 'px');
+      root.style.setProperty('--ff-tk', document.getElementById('ctrl-ff-tk').value);
       root.style.setProperty('--tk-f', document.getElementById('sl-tk-f').value + 'px');
       root.style.setProperty('--tk-op', document.getElementById('sl-tk-op').value);
       root.style.setProperty('--tk-txt-c', document.getElementById('ctrl-tk-txt-c').value);
@@ -1530,19 +1632,27 @@
       vLuLogoSizeH = document.getElementById('sl-lu-logo-size-h').value; vLuLogoSizeA = document.getElementById('sl-lu-logo-size-a').value;
       vPenLogoSizeH = document.getElementById('sl-pen-logo-size-h').value; vPenLogoSizeA = document.getElementById('sl-pen-logo-size-a').value;
       
-      vFTeam = document.getElementById('sl-f-team').value;
-      vFScore = document.getElementById('sl-f-score').value; vFTime = document.getElementById('sl-f-time').value;
-      vFTourney = document.getElementById('sl-f-tourney').value; vTourneyLogoSize = document.getElementById('sl-tourney-logo-size').value;
-      vFTgtLbl = document.getElementById('sl-f-tgt-lbl').value; vFTgtVal = document.getElementById('sl-f-tgt-val').value;
-      vLuWidth = document.getElementById('sl-lu-w').value; vLuFont = document.getElementById('sl-lu-f').value; 
+      vFfTeam = document.getElementById('ctrl-ff-team').value; vFTeam = document.getElementById('sl-f-team').value;
+      vFfScore = document.getElementById('ctrl-ff-score').value; vFScore = document.getElementById('sl-f-score').value; 
+      vFfTime = document.getElementById('ctrl-ff-time').value; vFTime = document.getElementById('sl-f-time').value;
+      vFfTourney = document.getElementById('ctrl-ff-tourney').value; vFTourney = document.getElementById('sl-f-tourney').value; 
+      vTourneyLogoSize = document.getElementById('sl-tourney-logo-size').value;
+      
+      vFfTgtLbl = document.getElementById('ctrl-ff-tgt-lbl').value; vFTgtLbl = document.getElementById('sl-f-tgt-lbl').value; 
+      vFfTgtVal = document.getElementById('ctrl-ff-tgt-val').value; vFTgtVal = document.getElementById('sl-f-tgt-val').value;
+      vLuWidth = document.getElementById('sl-lu-w').value; 
+      vFfLu = document.getElementById('ctrl-ff-lu').value; vLuFont = document.getElementById('sl-lu-f').value; 
       vLuOpacity = document.getElementById('sl-lu-op').value; 
       
       isTkVis = document.getElementById('ctrl-tk-show').checked; isTkScroll = document.getElementById('ctrl-tk-scroll').checked;
       useTkGrad = document.getElementById('ctrl-tk-grad').checked; tkTxtC = document.getElementById('ctrl-tk-txt-c').value;
       tkC1 = document.getElementById('ctrl-tk-c1').value; tkC2 = document.getElementById('ctrl-tk-c2').value;
-      vTkH = document.getElementById('sl-tk-h').value; vTkF = document.getElementById('sl-tk-f').value; vTkOp = document.getElementById('sl-tk-op').value;
+      vTkH = document.getElementById('sl-tk-h').value; 
+      vFfTk = document.getElementById('ctrl-ff-tk').value; vTkF = document.getElementById('sl-tk-f').value; 
+      vTkOp = document.getElementById('sl-tk-op').value;
       
       vPenBoardScale = document.getElementById('sl-pen-board-scale').value;
+      vFfPen = document.getElementById('ctrl-ff-pen').value;
       vPenBoardTxt = document.getElementById('sl-pen-board-txt').value;
 
       tgtUseGrad = document.getElementById('ctrl-tgt-grad').checked;
@@ -1616,7 +1726,7 @@
     // Initialize the storage on startup
     if (urlParams.get('view') !== 'overlay') {
       initStorage();
-      window.onload = initHistory; // Trigger history tracking after init
+      window.onload = initHistory;
     }
   </script>
 </body>
