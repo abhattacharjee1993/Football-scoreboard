@@ -352,7 +352,9 @@
 </head>
 <body>
 
-  <div id="load-modal-bg"></div>
+  <datalist id="saved-teams-list"></datalist>
+
+  <div id="load-modal-bg" onclick="closeLoadModal()"></div>
   <div id="load-modal">
     <h3 style="margin-bottom: 15px; color: #ffd700; text-transform: uppercase; letter-spacing: 1px;">Load Layout</h3>
     <input type="text" id="layout-search" placeholder="Search layouts..." onkeyup="filterLayouts()" style="width: 100%; margin-bottom: 15px; padding: 10px; background: #0d1117; color: #fff; border: 1px solid #30363d; border-radius: 4px;">
@@ -360,6 +362,48 @@
       </div>
     <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
       <button class="ctrl-btn" onclick="closeLoadModal()">Cancel</button>
+    </div>
+  </div>
+
+  <div id="manual-modal-bg" onclick="closeManualModal()" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 999;"></div>
+  <div id="manual-modal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #161b22; border: 2px solid #30363d; z-index: 1000; padding: 24px; border-radius: 8px; width: 800px; max-height: 80vh; overflow-y: auto; color: #fff; box-shadow: 0 20px 50px rgba(0,0,0,0.9); font-family: 'Montserrat', sans-serif;">
+    <h2 style="color: #ffd700; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #30363d; padding-bottom: 10px; margin-bottom: 20px;">Sports Unplugged India | User Manual</h2>
+    
+    <div style="line-height: 1.6; font-size: 14px;">
+      <h3 style="color: #4ade80; margin-top: 15px;">Overview</h3>
+      <p>This Ultimate Broadcast Overlay is a two-part system designed for live sports broadcasting. You must open this file twice:</p>
+      <ul style="margin-left: 20px; margin-bottom: 15px;">
+        <li><strong>Control Panel (Your view):</strong> Open the file normally in your browser. Use this window to manage the match, update scores, and change layouts.</li>
+        <li><strong>Live Overlay (Audience view):</strong> Add this file to OBS/vMix/Restream as a Browser Source, and append <code>?view=overlay</code> to the end of the file path. The Control Panel will hide automatically, displaying only the transparent graphics.</li>
+      </ul>
+
+      <h3 style="color: #4ade80; margin-top: 15px;">1. Instant vs. Sync Actions</h3>
+      <p><strong>Instant Actions (No Sync Needed):</strong> Changing scores, updating clock, adding red cards, toggling elements (Show/Hide Scoreboard, Target Box, Ticker, Penalties), typing names/lineups, extracting text via image, and clicking penalty bulbs. These update live on the stream instantly.</p>
+      <p><strong>Layout Actions (Requires Sync):</strong> Dragging sliders (size, position), changing fonts, selecting colors. These preview locally on your Control Panel. Once satisfied, click <strong>"SYNC LAYOUT TO STREAM"</strong> to push changes live.</p>
+
+      <h3 style="color: #4ade80; margin-top: 15px;">2. Scoreboard Controls</h3>
+      <p>Manage the main match here. Click "Play/Pause" for the clock, add goals using the +/- buttons, and set match phases (HT, FT). Red card buttons (+/-) instantly appear above the team names. You can also upload custom Team and Tournament logos.</p>
+      <p><em>Pro Tip:</em> Use the "Save to Memory" button next to a team name to save it for future streams. It will autocomplete when you type it next time!</p>
+
+      <h3 style="color: #4ade80; margin-top: 15px;">3. Playing 11 / Lineup Controls</h3>
+      <p>Enter lineups manually or click <strong>"Auto-Extract Image"</strong> to upload a screenshot of the playing 11. The built-in OCR AI will automatically read the names from the image and paste them into the box. Just click out of the box to instantly broadcast them to the screen.</p>
+
+      <h3 style="color: #4ade80; margin-top: 15px;">4. Ticker & Target Box</h3>
+      <p>The Bottom Ticker scrolls an editable message across the bottom. The Target Box can display Like and Subscriber goals. Toggle them on/off instantly and customize their background gradients and text sizing before syncing.</p>
+
+      <h3 style="color: #4ade80; margin-top: 15px;">5. Penalty Shootout Controls</h3>
+      <p>Click "Enable Penalty Drop-down" to reveal the shootout bar attached to the scoreboard, plus a larger penalty summary graphic. Click the circular bulbs to cycle their status: <strong>Gray (Empty) ➔ Green (Scored) ➔ Red (Missed)</strong>. Brackets with the penalty scores will appear automatically next to the main score.</p>
+
+      <h3 style="color: #4ade80; margin-top: 15px;">6. Layout Memory System (Undo/Redo & Save)</h3>
+      <p>Any visual layout tweaks (sizes, fonts, colors) are tracked. You can hit <strong>Undo/Redo</strong> to revert local layout mistakes. Once perfectly set up, click <strong>Save As</strong> to save your customized layout for specific leagues (e.g., "ISL Preset"). Use <strong>Load</strong> to quickly hot-swap between your saved presets.</p>
+      
+      <h3 style="color: #4ade80; margin-top: 15px;">7. Minimizing the Panel</h3>
+      <p>Click <strong>"Minimize Panel"</strong> to collapse the massive dashboard. You can click and drag the "MASTER CONTROL SUITE" header to move the widget out of your way to see your stream preview clearly.</p>
+
+    </div>
+    
+    <div style="display: flex; justify-content: flex-end; margin-top: 25px; border-top: 1px solid #30363d; padding-top: 15px;">
+      <button class="ctrl-btn highlight" onclick="closeManualModal()" style="font-size: 14px; padding: 8px 24px;">Close Manual</button>
     </div>
   </div>
 
@@ -469,6 +513,7 @@
         <span class="layout-name-badge" id="current-layout-badge">Layout: Default</span>
       </div>
       <div style="display: flex; gap: 8px; pointer-events: auto;">
+        <button class="ctrl-btn special" onclick="openManualModal()" title="View User Manual">Manual</button>
         <button class="ctrl-btn" onclick="undoVisuals()" title="Undo last layout change">Undo</button>
         <button class="ctrl-btn" onclick="redoVisuals()" title="Redo last layout change">Redo</button>
         <button class="ctrl-btn sync-btn" onclick="syncVisuals()">SYNC LAYOUT TO STREAM</button>
@@ -535,8 +580,11 @@
         <div class="ctrl-row" style="gap: 16px; border-bottom: none;">
           <div class="team-setup">
             <div class="team-details">
-              <span class="section-title">Home Team</span>
-              <input type="text" id="ctrl-h-name" value="Mohun Bagan SG" placeholder="Team Name" onkeydown="if(event.key === 'Enter') { this.blur(); }" onblur="syncTexts()">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span class="section-title">Home Team</span>
+                <button class="ctrl-btn" style="padding:2px 8px; font-size:10px;" onclick="saveTeamToMemory('home')">Save to Memory</button>
+              </div>
+              <input type="text" id="ctrl-h-name" list="saved-teams-list" value="Mohun Bagan SG" placeholder="Team Name" onkeydown="if(event.key === 'Enter') { this.blur(); }" onblur="syncTexts()">
               <div class="color-row">
                 <input type="color" id="ctrl-h-c1" value="#7c1830" title="Primary Color" oninput="applyVisualsLocally()">
                 <input type="color" id="ctrl-h-c2" value="#005a36" title="Secondary Color" oninput="applyVisualsLocally()">
@@ -547,8 +595,11 @@
           </div>
           <div class="team-setup">
             <div class="team-details">
-              <span class="section-title">Away Team</span>
-              <input type="text" id="ctrl-a-name" value="East Bengal" placeholder="Team Name" onkeydown="if(event.key === 'Enter') { this.blur(); }" onblur="syncTexts()">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span class="section-title">Away Team</span>
+                <button class="ctrl-btn" style="padding:2px 8px; font-size:10px;" onclick="saveTeamToMemory('away')">Save to Memory</button>
+              </div>
+              <input type="text" id="ctrl-a-name" list="saved-teams-list" value="East Bengal" placeholder="Team Name" onkeydown="if(event.key === 'Enter') { this.blur(); }" onblur="syncTexts()">
               <div class="color-row">
                 <input type="color" id="ctrl-a-c1" value="#d31122" title="Primary Color" oninput="applyVisualsLocally()">
                 <input type="color" id="ctrl-a-c2" value="#f6b200" title="Secondary Color" oninput="applyVisualsLocally()">
@@ -878,6 +929,12 @@
     function closeLoadModal() {
       document.getElementById('load-modal-bg').style.display = 'none'; document.getElementById('load-modal').style.display = 'none';
       document.getElementById('layout-search').value = "";
+    }
+    function openManualModal() {
+      document.getElementById('manual-modal-bg').style.display = 'block'; document.getElementById('manual-modal').style.display = 'block';
+    }
+    function closeManualModal() {
+      document.getElementById('manual-modal-bg').style.display = 'none'; document.getElementById('manual-modal').style.display = 'none';
     }
     function filterLayouts() {
       const query = document.getElementById('layout-search').value.toLowerCase();
