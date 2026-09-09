@@ -141,7 +141,7 @@
       border: 2px solid rgba(255, 255, 255, 0.18); border-bottom: none; border-radius: 8px 8px 0 0;
       box-shadow: 0 -4px 12px rgba(0,0,0,0.6); z-index: 10; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
       display: flex; justify-content: center; align-items: center; gap: 8px; height: auto;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: font-size 0.2s, color 0.2s;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: font-size 0.2s, color 0.2s, background 0.3s;
     }
     .tourney-logo {
       width: var(--tourney-logo-size); height: var(--tourney-logo-size);
@@ -177,17 +177,19 @@
       color: var(--sb-txt); font-size: var(--f-team); letter-spacing: 0.8px; text-transform: uppercase;
       white-space: nowrap; text-shadow: 1px 1px 3px rgba(0,0,0,0.9); transition: font-size 0.2s, color 0.2s;
     }
+    
+    /* BACKGROUND FIX: Made digits and timer transparent so Scoreboard BG shows through */
     .score-digit {
       color: var(--sb-txt); font-family: 'Teko', sans-serif; font-size: var(--f-score); line-height: 1;
       min-width: 60px; padding: 0 10px; height: 100%; display: flex; align-items: center; justify-content: center; 
-      background: #080a0d; font-weight: 700; transition: font-size 0.2s, color 0.2s;
+      background: transparent; font-weight: 700; transition: font-size 0.2s, color 0.2s;
     }
     .pen-score-display {
       font-size: 0.55em; color: #ffd700; margin: 0 4px; font-weight: 600; display: none;
     }
     .timer-cell {
       display: flex; align-items: center; gap: 8px; padding: 0 18px;
-      background: #14171d; height: 100%; border-left: 1px solid rgba(255, 255, 255, 0.12);
+      background: transparent; height: 100%; border-left: 1px solid rgba(255, 255, 255, 0.12);
     }
     .live-indicator { width: 8px; height: 8px; border-radius: 50%; background: #ff3344; animation: pulse 1s infinite alternate; }
     @keyframes pulse { from { opacity: 0.3; } to { opacity: 1; } }
@@ -562,6 +564,9 @@
           <div class="slider-container"><span>SB Use Grad</span><input type="checkbox" id="ctrl-sb-grad" onchange="applyVisualsLocally()"></div>
           <div class="slider-container"><span>SB BG C1</span><input type="color" id="ctrl-sb-bg-c1" value="#0c0e12" oninput="applyVisualsLocally()"></div>
           <div class="slider-container"><span>SB BG C2</span><input type="color" id="ctrl-sb-bg-c2" value="#1a1a1a" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>Top Bar Grad</span><input type="checkbox" id="ctrl-tb-grad" onchange="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>Top Bar C1</span><input type="color" id="ctrl-tb-bg-c1" value="#111111" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>Top Bar C2</span><input type="color" id="ctrl-tb-bg-c2" value="#222222" oninput="applyVisualsLocally()"></div>
           <div class="slider-container"><span>Text Color</span><input type="color" id="ctrl-sb-txt-color" value="#ffffff" oninput="applyVisualsLocally()"></div>
           <div class="slider-container"><span>Overall Size</span><input type="range" id="sl-sb-scale" min="0.5" max="2" step="0.05" value="1" oninput="applyVisualsLocally()"></div>
           <div class="slider-container"><span>Tourney Font</span><input type="range" id="sl-f-tourney" min="8" max="30" value="12" oninput="applyVisualsLocally()"></div>
@@ -776,7 +781,7 @@
         vLuWidth, vLuFont, vLuOpacity, vLuLogoSizeH, vLuLogoSizeA,
         isPenVis, hPens, aPens, hRed, aRed,
         vPenBoardScale, vPenBoardTxt, vPenLogoSizeH, vPenLogoSizeA,
-        tgtUseGrad, tgtBgC1, tgtBgC2, sbUseGrad, sbBgC1, sbBgC2
+        tgtUseGrad, tgtBgC1, tgtBgC2, sbUseGrad, sbBgC1, sbBgC2, tbUseGrad, tbBgC1, tbBgC2
       };
     }
 
@@ -799,7 +804,7 @@
 
       tkText = layout.tkText !== undefined ? layout.tkText : tkText; isTkVis = layout.isTkVis !== undefined ? layout.isTkVis : isTkVis;
       isTkScroll = layout.isTkScroll !== undefined ? layout.isTkScroll : isTkScroll; useTkGrad = layout.useTkGrad !== undefined ? layout.useTkGrad : useTkGrad;
-      tkC1 = layout.tkC1 !== undefined ? layout.tkC1 : tkC1; tkC2 = layout.tkC2 !== undefined ? tkC2 : tkC2; tkTxtC = layout.tkTxtC !== undefined ? layout.tkTxtC : tkTxtC;
+      tkC1 = layout.tkC1 !== undefined ? layout.tkC1 : tkC1; tkC2 = layout.tkC2 !== undefined ? layout.tkC2 : tkC2; tkTxtC = layout.tkTxtC !== undefined ? layout.tkTxtC : tkTxtC;
       vTkH = layout.vTkH !== undefined ? layout.vTkH : vTkH; vTkF = layout.vTkF !== undefined ? layout.vTkF : vTkF; vTkOp = layout.vTkOp !== undefined ? layout.vTkOp : vTkOp;
 
       isScoreboardVisible = layout.isScoreboardVisible !== undefined ? layout.isScoreboardVisible : isScoreboardVisible;
@@ -827,13 +832,16 @@
       vPenBoardTxt = layout.vPenBoardTxt !== undefined ? layout.vPenBoardTxt : vPenBoardTxt;
       vPenLogoSizeH = layout.vPenLogoSizeH !== undefined ? layout.vPenLogoSizeH : vPenLogoSizeH;
       vPenLogoSizeA = layout.vPenLogoSizeA !== undefined ? layout.vPenLogoSizeA : vPenLogoSizeA;
-      
+
       tgtUseGrad = layout.tgtUseGrad !== undefined ? layout.tgtUseGrad : tgtUseGrad;
       tgtBgC1 = layout.tgtBgC1 !== undefined ? layout.tgtBgC1 : tgtBgC1;
       tgtBgC2 = layout.tgtBgC2 !== undefined ? layout.tgtBgC2 : tgtBgC2;
       sbUseGrad = layout.sbUseGrad !== undefined ? layout.sbUseGrad : sbUseGrad;
       sbBgC1 = layout.sbBgC1 !== undefined ? layout.sbBgC1 : sbBgC1;
       sbBgC2 = layout.sbBgC2 !== undefined ? layout.sbBgC2 : sbBgC2;
+      tbUseGrad = layout.tbUseGrad !== undefined ? layout.tbUseGrad : tbUseGrad;
+      tbBgC1 = layout.tbBgC1 !== undefined ? layout.tbBgC1 : tbBgC1;
+      tbBgC2 = layout.tbBgC2 !== undefined ? layout.tbBgC2 : tbBgC2;
 
       syncInputsToVariables();
       applyVisualsLocally();
@@ -926,6 +934,7 @@
     // Background Color Variables
     let tgtUseGrad = true, tgtBgC1 = "#2c3e50", tgtBgC2 = "#636e72";
     let sbUseGrad = false, sbBgC1 = "#0c0e12", sbBgC2 = "#1a1a1a";
+    let tbUseGrad = false, tbBgC1 = "#111111", tbBgC2 = "#222222";
 
     // Penalty & Red Card variables
     let hRed = 0, aRed = 0;
@@ -1000,6 +1009,9 @@
         sbUseGrad = data.sbUseGrad !== undefined ? data.sbUseGrad : sbUseGrad;
         sbBgC1 = data.sbBgC1 !== undefined ? data.sbBgC1 : sbBgC1;
         sbBgC2 = data.sbBgC2 !== undefined ? data.sbBgC2 : sbBgC2;
+        tbUseGrad = data.tbUseGrad !== undefined ? data.tbUseGrad : tbUseGrad;
+        tbBgC1 = data.tbBgC1 !== undefined ? data.tbBgC1 : tbBgC1;
+        tbBgC2 = data.tbBgC2 !== undefined ? data.tbBgC2 : tbBgC2;
 
         // Apply DOM
         hEl.textContent = hScore; aEl.textContent = aScore; likeEl.textContent = likeTargetVal; subEl.textContent = subTargetVal;
@@ -1024,9 +1036,13 @@
         
         const tgtWrapObj = document.getElementById('targets-wrapper');
         tgtWrapObj.style.background = tgtUseGrad ? `linear-gradient(135deg, ${tgtBgC1} 0%, ${tgtBgC2} 100%)` : tgtBgC1;
+        
         const sbWrapObj = document.getElementById('sb-wrap-element');
         sbWrapObj.style.background = sbUseGrad ? `linear-gradient(135deg, ${sbBgC1} 0%, ${sbBgC2} 100%)` : sbBgC1;
         
+        const tbWrapObj = document.getElementById('tournament-bar-display');
+        tbWrapObj.style.background = tbUseGrad ? `linear-gradient(135deg, ${tbBgC1} 0%, ${tbBgC2} 100%)` : tbBgC1;
+
         tkWrap.style.display = isTkVis ? 'flex' : 'none'; tkTextEl.className = isTkScroll ? 'ticker-text scrolling' : 'ticker-text static';
         scoreboardMaster.style.display = isScoreboardVisible ? 'flex' : 'none'; btnToggleSb.textContent = isScoreboardVisible ? 'Hide Scoreboard' : 'Show Scoreboard';
         luLeft.style.display = isLineupsVisible ? 'flex' : 'none'; luRight.style.display = isLineupsVisible ? 'flex' : 'none'; btnToggleLu.textContent = isLineupsVisible ? 'Hide Lineups' : 'Show Lineups';
@@ -1096,6 +1112,9 @@
       document.getElementById('ctrl-sb-grad').checked = sbUseGrad;
       document.getElementById('ctrl-sb-bg-c1').value = sbBgC1;
       document.getElementById('ctrl-sb-bg-c2').value = sbBgC2;
+      document.getElementById('ctrl-tb-grad').checked = tbUseGrad;
+      document.getElementById('ctrl-tb-bg-c1').value = tbBgC1;
+      document.getElementById('ctrl-tb-bg-c2').value = tbBgC2;
 
       document.getElementById('ctrl-h-red').textContent = hRed; document.getElementById('ctrl-a-red').textContent = aRed;
 
@@ -1117,7 +1136,7 @@
           vSbScale, vTgtScale, vLogoSizeH, vLogoSizeA, vFTeam, vFScore, vFTime, vFTourney, vTourneyLogoSize, vFTgtLbl, vFTgtVal, 
           vLuWidth, vLuFont, vLuOpacity, vLuLogoSizeH, vLuLogoSizeA,
           isPenVis, hPens, aPens, vPenBoardScale, vPenBoardTxt, vPenLogoSizeH, vPenLogoSizeA, hRed, aRed,
-          tgtUseGrad, tgtBgC1, tgtBgC2, sbUseGrad, sbBgC1, sbBgC2
+          tgtUseGrad, tgtBgC1, tgtBgC2, sbUseGrad, sbBgC1, sbBgC2, tbUseGrad, tbBgC1, tbBgC2
         }
       });
     }
@@ -1276,7 +1295,8 @@
       'ctrl-lu-logo-show', 'ctrl-lu-txt-color', 'sl-lu-w', 'sl-lu-f', 'sl-lu-op', 'sl-lu-logo-size', 'sl-lu-logo-size-h', 'sl-lu-logo-size-a',
       'ctrl-tk-show', 'ctrl-tk-scroll', 'ctrl-tk-grad', 'ctrl-tk-txt-c', 'ctrl-tk-c1', 'ctrl-tk-c2', 'sl-tk-h', 'sl-tk-f', 'sl-tk-op',
       'sl-pen-board-scale', 'sl-pen-board-txt', 'sl-pen-logo-size', 'sl-pen-logo-size-h', 'sl-pen-logo-size-a',
-      'ctrl-tgt-grad', 'ctrl-tgt-c1', 'ctrl-tgt-c2', 'ctrl-sb-grad', 'ctrl-sb-bg-c1', 'ctrl-sb-bg-c2'
+      'ctrl-tgt-grad', 'ctrl-tgt-c1', 'ctrl-tgt-c2', 'ctrl-sb-grad', 'ctrl-sb-bg-c1', 'ctrl-sb-bg-c2',
+      'ctrl-tb-grad', 'ctrl-tb-bg-c1', 'ctrl-tb-bg-c2'
     ];
 
     function getVisualDOMState() {
@@ -1411,7 +1431,7 @@
       tkTextEl.className = tkScr ? 'ticker-text scrolling' : 'ticker-text static';
       tkBgEl.style.background = tkGrad ? `linear-gradient(90deg, ${tC1} 0%, ${tC2} 100%)` : tC1;
 
-      // Handle New Scoreboard & Target Box Backgrounds locally
+      // Handle New Scoreboard, Target Box & Tourney BG locally
       const tgtWrapObj = document.getElementById('targets-wrapper');
       const tgtGradChecked = document.getElementById('ctrl-tgt-grad').checked;
       const tgtC1 = document.getElementById('ctrl-tgt-c1').value;
@@ -1423,6 +1443,12 @@
       const sbC1 = document.getElementById('ctrl-sb-bg-c1').value;
       const sbC2 = document.getElementById('ctrl-sb-bg-c2').value;
       sbWrapObj.style.background = sbGradChecked ? `linear-gradient(135deg, ${sbC1} 0%, ${sbC2} 100%)` : sbC1;
+      
+      const tbWrapObj = document.getElementById('tournament-bar-display');
+      const tbGradChecked = document.getElementById('ctrl-tb-grad').checked;
+      const tbC1 = document.getElementById('ctrl-tb-bg-c1').value;
+      const tbC2 = document.getElementById('ctrl-tb-bg-c2').value;
+      tbWrapObj.style.background = tbGradChecked ? `linear-gradient(135deg, ${tbC1} 0%, ${tbC2} 100%)` : tbC1;
     }
 
     // Explicit Layout Synchronization Button
@@ -1458,6 +1484,9 @@
       sbUseGrad = document.getElementById('ctrl-sb-grad').checked;
       sbBgC1 = document.getElementById('ctrl-sb-bg-c1').value;
       sbBgC2 = document.getElementById('ctrl-sb-bg-c2').value;
+      tbUseGrad = document.getElementById('ctrl-tb-grad').checked;
+      tbBgC1 = document.getElementById('ctrl-tb-bg-c1').value;
+      tbBgC2 = document.getElementById('ctrl-tb-bg-c2').value;
 
       broadcastState();
     }
