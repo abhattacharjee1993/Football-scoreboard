@@ -1,3 +1,12 @@
+This is a phenomenal enhancement for your broadcast workflow. Being able to save and hot-swap between entire broadcast presets (like a specific "CFL Derby" layout vs. an "Indian Super League" layout) will save you massive amounts of time during live productions.
+Here is what I have built into this ultimate update:
+ * Always-Visible Header & Toggle: The main Control Panel header is now pinned. When you click Hide Panel, the massive wall of controls vanishes, leaving just a sleek, non-intrusive header bar with a Show Panel button.
+ * Local Storage Save/Load System: Added a complete preset engine.
+   * Save: Instantly overwrites the currently loaded preset.
+   * Save As: Prompts you for a new preset name to save a fresh copy.
+   * Load: Opens a custom dark-mode modal with a searchable, scrollable dropdown list of all your saved layouts.
+ * Auto-Load Default: The system automatically saves a permanent "Default Layout". Whenever you open the URL, it reads your browser's memory and instantly loads the last layout you were working on.
+Here is the fully upgraded index.html code. Copy, paste, and replace:
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -175,16 +184,20 @@
 
     /* --- BROADCAST CONTROLLER SUITE GUI --- */
     .controller-panel {
-      position: absolute; top: 120px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column;
+      position: absolute; top: 110px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column;
       background: rgba(16, 20, 26, 0.95); padding: 20px; border-radius: 12px; border: 2px solid #333; width: 950px;
-      color: #fff; max-height: calc(100vh - 140px); overflow-y: auto; z-index: 100; box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+      color: #fff; max-height: calc(100vh - 120px); z-index: 100; box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+    }
+    .controls-body {
+      overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 8px;
     }
     
     /* Top Sticky Header */
     .ctrl-master-header {
       display: flex; justify-content: space-between; align-items: center; 
-      padding-bottom: 16px; border-bottom: 2px solid #333; margin-bottom: 16px; position: sticky; top: -20px; background: rgba(16, 20, 26, 0.95); z-index: 10;
+      padding-bottom: 16px; border-bottom: 2px solid #333; margin-bottom: 16px;
     }
+    .layout-name-badge { background: #333; padding: 4px 10px; border-radius: 4px; font-size: 12px; color: #aaa; margin-left: 10px; font-weight: bold; }
     
     /* Accordion Panels */
     .collapsible-header {
@@ -202,9 +215,7 @@
     }
     .collapsible-content.active { display: flex; }
 
-    .ctrl-row {
-      display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; align-items: center;
-    }
+    .ctrl-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; align-items: center; }
     .ctrl-btn {
       background: #2b323c; color: #eee; border: 1px solid #555; padding: 8px 16px; font-size: 13px; 
       font-weight: bold; border-radius: 6px; cursor: pointer; transition: background 0.2s, transform 0.1s;
@@ -214,7 +225,7 @@
     .ctrl-btn.highlight { background: #1a4d2e; border-color: #277144; color: #fff; }
     .ctrl-btn.warning { background: #8a2b2b; border-color: #a63a3a; color: #fff; }
     .ctrl-btn.special { background: #2563eb; border-color: #1d4ed8; color: #fff; }
-    .ctrl-btn.sync-btn { background: #eab308; border-color: #ca8a04; color: #000; font-size: 15px; padding: 10px 24px; box-shadow: 0 4px 10px rgba(234, 179, 8, 0.3); }
+    .ctrl-btn.sync-btn { background: #eab308; border-color: #ca8a04; color: #000; font-size: 14px; padding: 8px 20px; box-shadow: 0 4px 10px rgba(234, 179, 8, 0.3); }
 
     /* Visual Settings Groups */
     .slider-group { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; background: rgba(0,0,0,0.4); padding: 16px; border-radius: 8px; border: 1px solid #333; }
@@ -239,15 +250,35 @@
     
     .section-title { font-size: 13px; color: #ffd700; font-weight: 800; text-transform: uppercase; width: 100%; text-align: left; margin-bottom: 4px; letter-spacing: 1px; }
     
-    /* Text Input Base Styling */
     input.auto-text {
       padding: 8px 12px; border-radius: 4px; border: 1px solid #555; background: #222; 
       color: #fff; font-family: 'Montserrat', sans-serif; font-weight: bold; font-size: 14px;
     }
     input.auto-text:focus, textarea.lineup-input:focus { outline: 2px solid #eab308; border-color: transparent; }
+
+    /* LOAD MODAL STYLES */
+    #load-modal-bg { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 999; }
+    #load-modal {
+      display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      background: #161b22; border: 2px solid #30363d; z-index: 1000; padding: 24px; border-radius: 8px; width: 450px; color: #fff; box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+    }
+    .layout-list-item { padding: 10px 12px; border-bottom: 1px solid #30363d; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s; }
+    .layout-list-item:hover { background: #21262d; }
+    .layout-list-item:last-child { border-bottom: none; }
   </style>
 </head>
 <body>
+
+  <div id="load-modal-bg"></div>
+  <div id="load-modal">
+    <h3 style="margin-bottom: 15px; color: #ffd700; text-transform: uppercase; letter-spacing: 1px;">Load Layout</h3>
+    <input type="text" id="layout-search" placeholder="Search layouts..." onkeyup="filterLayouts()" style="width: 100%; margin-bottom: 15px; padding: 10px; background: #0d1117; color: #fff; border: 1px solid #30363d; border-radius: 4px;">
+    <div id="layout-list" style="max-height: 250px; overflow-y: auto; border: 1px solid #30363d; border-radius: 4px; background: #0d1117;">
+      </div>
+    <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+      <button class="ctrl-btn" onclick="closeLoadModal()">Cancel</button>
+    </div>
+  </div>
 
   <div class="sub-count-wrapper">
     <iframe src="https://socialcounts.org/youtube-live-subscriber-count/UC6HP5_0MxNjZddNg9_t47gg/embed" allowtransparency="true" frameborder="0" scrolling="no"></iframe>
@@ -316,176 +347,316 @@
   <div class="controller-panel" id="controls">
     
     <div class="ctrl-master-header">
-      <span style="font-weight: 800; font-size: 18px; color: #fff; letter-spacing: 1px;">MASTER CONTROL SUITE</span>
-      <div style="display: flex; gap: 12px;">
+      <div style="display: flex; align-items: center;">
+        <span style="font-weight: 800; font-size: 18px; color: #fff; letter-spacing: 1px;">MASTER CONTROL SUITE</span>
+        <span class="layout-name-badge" id="current-layout-badge">Layout: Default</span>
+      </div>
+      <div style="display: flex; gap: 8px;">
         <button class="ctrl-btn sync-btn" onclick="syncVisuals()">SYNC LAYOUT TO STREAM</button>
-        <button class="ctrl-btn" onclick="toggleControls()">Hide Panel</button>
+        <button class="ctrl-btn" onclick="saveLayout()">Save</button>
+        <button class="ctrl-btn" onclick="saveLayoutAs()">Save As</button>
+        <button class="ctrl-btn" onclick="openLoadModal()">Load</button>
+        <button class="ctrl-btn special" id="btn-toggle-panel" onclick="togglePanelBody()">Hide Panel</button>
       </div>
     </div>
 
-    <div class="collapsible-header" onclick="togglePanel('panel-sb')">
-      1. Scoreboard Controls <span id="panel-sb-icon">▲</span>
-    </div>
-    <div class="collapsible-content active" id="panel-sb">
-      
-      <div class="ctrl-row" style="justify-content: space-between; padding: 0 10px;">
-        <div style="display: flex; gap: 8px;">
-          <button class="ctrl-btn special" onclick="toggleScoreboardVisibility()" id="btn-toggle-sb">Hide Scoreboard</button>
-          <label style="font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 6px; margin-left: 10px;">
-            <input type="checkbox" id="ctrl-gradient" checked onchange="applyVisualsLocally(); syncVisuals();"> Use Gradients (Split Colors)
+    <div class="controls-body" id="controls-body">
+      <div class="collapsible-header" onclick="togglePanel('panel-sb')">
+        1. Scoreboard Controls <span id="panel-sb-icon">▲</span>
+      </div>
+      <div class="collapsible-content active" id="panel-sb">
+        
+        <div class="ctrl-row" style="justify-content: space-between; padding: 0 10px;">
+          <div style="display: flex; gap: 8px;">
+            <button class="ctrl-btn special" onclick="toggleScoreboardVisibility()" id="btn-toggle-sb">Hide Scoreboard</button>
+            <label style="font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 6px; margin-left: 10px;">
+              <input type="checkbox" id="ctrl-gradient" checked onchange="applyVisualsLocally()"> Use Gradients (Split Colors)
+            </label>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 12px; font-weight: bold;">Tournament:</span>
+            <input type="text" class="auto-text" id="ctrl-tournament-name" value="CFL 26-27" style="width: 200px;" onkeydown="if(event.key === 'Enter') { this.blur(); }" onblur="syncTexts()">
+          </div>
+        </div>
+
+        <div class="ctrl-row">
+          <button class="ctrl-btn highlight" onclick="toggleClock()">Play/Pause</button>
+          <button class="ctrl-btn" onclick="resetClock(0)">Reset (0')</button>
+          <button class="ctrl-btn" onclick="resetClock(2700)">Set 45'</button>
+          <button class="ctrl-btn" onclick="setManualTime()">Custom Time</button>
+          <button class="ctrl-btn warning" onclick="setMatchPhase('HT')">HT</button>
+          <button class="ctrl-btn warning" onclick="setMatchPhase('FT')">FT</button>
+          <button class="ctrl-btn highlight" onclick="addInjuryTime()">+ Injury</button>
+          <button class="ctrl-btn" onclick="clearMatchPhase()">Clear Status</button>
+        </div>
+
+        <div class="ctrl-row">
+          <button class="ctrl-btn" style="padding: 10px 20px; font-size: 16px;" onclick="adjScore('home', 1)">+1 Home</button>
+          <button class="ctrl-btn" onclick="adjScore('home', -1)">-1 Home</button>
+          <button class="ctrl-btn" style="padding: 10px 20px; font-size: 16px; margin-left: 20px;" onclick="adjScore('away', 1)">+1 Away</button>
+          <button class="ctrl-btn" onclick="adjScore('away', -1)">-1 Away</button>
+        </div>
+
+        <div class="ctrl-row" style="gap: 16px; border-bottom: none;">
+          <div class="team-setup">
+            <div class="team-details">
+              <span class="section-title">Home Team</span>
+              <input type="text" id="ctrl-h-name" value="Mohun Bagan SG" placeholder="Team Name" onkeydown="if(event.key === 'Enter') { this.blur(); }" onblur="syncTexts()">
+              <div class="color-row">
+                <input type="color" id="ctrl-h-c1" value="#7c1830" title="Primary Color" oninput="applyVisualsLocally()">
+                <input type="color" id="ctrl-h-c2" value="#005a36" title="Secondary Color" oninput="applyVisualsLocally()">
+                <input type="file" accept="image/*" id="ctrl-h-logo" onchange="processLogo(event, 'home')">
+              </div>
+            </div>
+          </div>
+          <div class="team-setup">
+            <div class="team-details">
+              <span class="section-title">Away Team</span>
+              <input type="text" id="ctrl-a-name" value="East Bengal" placeholder="Team Name" onkeydown="if(event.key === 'Enter') { this.blur(); }" onblur="syncTexts()">
+              <div class="color-row">
+                <input type="color" id="ctrl-a-c1" value="#d31122" title="Primary Color" oninput="applyVisualsLocally()">
+                <input type="color" id="ctrl-a-c2" value="#f6b200" title="Secondary Color" oninput="applyVisualsLocally()">
+                <input type="file" accept="image/*" id="ctrl-a-logo" onchange="processLogo(event, 'away')">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slider-group">
+          <span class="section-title">Scoreboard Layout Settings (Local Preview)</span>
+          <div class="slider-container"><span>Text Color</span><input type="color" id="ctrl-sb-txt-color" value="#ffffff" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>Overall Size</span><input type="range" id="sl-sb-scale" min="0.5" max="2" step="0.05" value="1" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>Logo Size</span><input type="range" id="sl-logo-size" min="20" max="100" value="55" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>Team Font</span><input type="range" id="sl-f-team" min="10" max="40" value="17" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>Score Font</span><input type="range" id="sl-f-score" min="20" max="80" value="44" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>Time Font</span><input type="range" id="sl-f-time" min="15" max="60" value="34" oninput="applyVisualsLocally()"></div>
+        </div>
+      </div>
+
+      <div class="collapsible-header" onclick="togglePanel('panel-tgt')">
+        2. Target Box Controls <span id="panel-tgt-icon">▼</span>
+      </div>
+      <div class="collapsible-content" id="panel-tgt">
+        <div class="ctrl-row" style="gap: 20px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 13px; font-weight: bold;">Like Target:</span>
+            <input type="text" class="auto-text" id="ctrl-like-tgt" value="25" style="width: 100px; text-align: center;" onkeydown="if(event.key === 'Enter') { this.blur(); }" onblur="syncTexts()">
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 13px; font-weight: bold;">Sub Target:</span>
+            <input type="text" class="auto-text" id="ctrl-sub-tgt" value="900" style="width: 100px; text-align: center;" onkeydown="if(event.key === 'Enter') { this.blur(); }" onblur="syncTexts()">
+          </div>
+        </div>
+        <div class="slider-group">
+          <span class="section-title">Target Box Layout Settings (Local Preview)</span>
+          <div class="slider-container"><span>Box Size</span><input type="range" id="sl-tgt-scale" min="0.5" max="2" step="0.05" value="1" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>Label Font</span><input type="range" id="sl-f-tgt-lbl" min="8" max="24" value="13" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>Number Font</span><input type="range" id="sl-f-tgt-val" min="15" max="60" value="30" oninput="applyVisualsLocally()"></div>
+        </div>
+      </div>
+
+      <div class="collapsible-header" onclick="togglePanel('panel-lu')">
+        3. Playing 11 Lineup Controls <span id="panel-lu-icon">▼</span>
+      </div>
+      <div class="collapsible-content" id="panel-lu">
+        <div class="ctrl-row" style="justify-content: flex-start; padding-left: 10px;">
+          <button class="ctrl-btn special" onclick="toggleLineupsVisibility()" id="btn-toggle-lu">Show Lineups</button>
+          <label style="font-size: 12px; font-weight: bold; margin-left: 20px; display: flex; align-items: center; gap: 6px;">
+            <input type="checkbox" id="ctrl-lu-logo-show" checked onchange="applyVisualsLocally()"> Show Logos in Header
           </label>
         </div>
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="font-size: 12px; font-weight: bold;">Tournament:</span>
-          <input type="text" class="auto-text" id="ctrl-tournament-name" value="CFL 26-27" style="width: 200px;" onkeydown="if(event.key === 'Enter') { this.blur(); syncTexts(); }" onblur="syncTexts()">
-        </div>
-      </div>
-
-      <div class="ctrl-row">
-        <button class="ctrl-btn highlight" onclick="toggleClock()">Play/Pause</button>
-        <button class="ctrl-btn" onclick="resetClock(0)">Reset (0')</button>
-        <button class="ctrl-btn" onclick="resetClock(2700)">Set 45'</button>
-        <button class="ctrl-btn" onclick="setManualTime()">Custom Time</button>
-        <button class="ctrl-btn warning" onclick="setMatchPhase('HT')">HT</button>
-        <button class="ctrl-btn warning" onclick="setMatchPhase('FT')">FT</button>
-        <button class="ctrl-btn highlight" onclick="addInjuryTime()">+ Injury</button>
-        <button class="ctrl-btn" onclick="clearMatchPhase()">Clear Status</button>
-      </div>
-
-      <div class="ctrl-row">
-        <button class="ctrl-btn" style="padding: 10px 20px; font-size: 16px;" onclick="adjScore('home', 1)">+1 Home</button>
-        <button class="ctrl-btn" onclick="adjScore('home', -1)">-1 Home</button>
-        <button class="ctrl-btn" style="padding: 10px 20px; font-size: 16px; margin-left: 20px;" onclick="adjScore('away', 1)">+1 Away</button>
-        <button class="ctrl-btn" onclick="adjScore('away', -1)">-1 Away</button>
-      </div>
-
-      <div class="ctrl-row" style="gap: 16px; border-bottom: none;">
-        <div class="team-setup">
-          <div class="team-details">
-            <span class="section-title">Home Team</span>
-            <input type="text" id="ctrl-h-name" value="Mohun Bagan SG" placeholder="Team Name" onkeydown="if(event.key === 'Enter') { this.blur(); syncTexts(); }" onblur="syncTexts()">
-            <div class="color-row">
-              <input type="color" id="ctrl-h-c1" value="#7c1830" title="Primary Color" oninput="applyVisualsLocally()">
-              <input type="color" id="ctrl-h-c2" value="#005a36" title="Secondary Color" oninput="applyVisualsLocally()">
-              <input type="file" accept="image/*" id="ctrl-h-logo" onchange="processLogo(event, 'home')">
-            </div>
+        <div class="ctrl-row" style="align-items: flex-start; gap: 20px; border-bottom: none;">
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+            <span class="section-title">Home Playing 11 (Syncs on click away)</span>
+            <textarea class="lineup-input" id="ctrl-h-lineup" onblur="syncTexts()"></textarea>
+          </div>
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+            <span class="section-title">Away Playing 11 (Syncs on click away)</span>
+            <textarea class="lineup-input" id="ctrl-a-lineup" onblur="syncTexts()"></textarea>
           </div>
         </div>
-        <div class="team-setup">
-          <div class="team-details">
-            <span class="section-title">Away Team</span>
-            <input type="text" id="ctrl-a-name" value="East Bengal" placeholder="Team Name" onkeydown="if(event.key === 'Enter') { this.blur(); syncTexts(); }" onblur="syncTexts()">
-            <div class="color-row">
-              <input type="color" id="ctrl-a-c1" value="#d31122" title="Primary Color" oninput="applyVisualsLocally()">
-              <input type="color" id="ctrl-a-c2" value="#f6b200" title="Secondary Color" oninput="applyVisualsLocally()">
-              <input type="file" accept="image/*" id="ctrl-a-logo" onchange="processLogo(event, 'away')">
-            </div>
+        <div class="slider-group">
+          <span class="section-title">Lineup Layout Settings (Local Preview)</span>
+          <div class="slider-container"><span>Text Color</span><input type="color" id="ctrl-lu-txt-color" value="#ffffff" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>Panel Width</span><input type="range" id="sl-lu-w" min="150" max="400" value="260" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>Font Size</span><input type="range" id="sl-lu-f" min="10" max="30" value="16" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>BG Opacity</span><input type="range" id="sl-lu-op" min="0.2" max="1" step="0.05" value="0.85" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>Logo Size</span><input type="range" id="sl-lu-logo-size" min="15" max="80" value="30" oninput="applyVisualsLocally()"></div>
+        </div>
+      </div>
+
+      <div class="collapsible-header" onclick="togglePanel('panel-tk')">
+        4. Bottom Ticker Controls <span id="panel-tk-icon">▼</span>
+      </div>
+      <div class="collapsible-content" id="panel-tk">
+        <div class="ctrl-row" style="justify-content: flex-start; gap: 20px; padding-left: 10px;">
+          <label style="font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="ctrl-tk-show" checked onchange="applyVisualsLocally()"> Enable Ticker</label>
+          <label style="font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="ctrl-tk-scroll" checked onchange="applyVisualsLocally()"> Scroll Animation</label>
+          <label style="font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="ctrl-tk-grad" checked onchange="applyVisualsLocally()"> Use Gradient</label>
+        </div>
+        <div class="ctrl-row" style="gap: 16px; border-bottom: none;">
+          <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 6px;">
+            <span class="section-title">Ticker Message (Press Enter to Sync)</span>
+            <input type="text" class="auto-text" id="ctrl-tk-text" value="Welcome to Sports Unplugged India! Please Like and Subscribe to the channel." style="width: 100%; font-size: 15px;" onkeydown="if(event.key === 'Enter') { this.blur(); }" onblur="syncTexts()">
           </div>
         </div>
-      </div>
-
-      <div class="slider-group">
-        <span class="section-title">Scoreboard Layout Settings (Local Preview)</span>
-        <div class="slider-container"><span>Text Color</span><input type="color" id="ctrl-sb-txt-color" value="#ffffff" oninput="applyVisualsLocally()"></div>
-        <div class="slider-container"><span>Overall Size</span><input type="range" id="sl-sb-scale" min="0.5" max="2" step="0.05" value="1" oninput="applyVisualsLocally()"></div>
-        <div class="slider-container"><span>Logo Size</span><input type="range" id="sl-logo-size" min="20" max="100" value="55" oninput="applyVisualsLocally()"></div>
-        <div class="slider-container"><span>Team Font</span><input type="range" id="sl-f-team" min="10" max="40" value="17" oninput="applyVisualsLocally()"></div>
-        <div class="slider-container"><span>Score Font</span><input type="range" id="sl-f-score" min="20" max="80" value="44" oninput="applyVisualsLocally()"></div>
-        <div class="slider-container"><span>Time Font</span><input type="range" id="sl-f-time" min="15" max="60" value="34" oninput="applyVisualsLocally()"></div>
-      </div>
-    </div>
-
-    <div class="collapsible-header" onclick="togglePanel('panel-tgt')">
-      2. Target Box Controls <span id="panel-tgt-icon">▼</span>
-    </div>
-    <div class="collapsible-content" id="panel-tgt">
-      <div class="ctrl-row" style="gap: 20px;">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="font-size: 13px; font-weight: bold;">Like Target:</span>
-          <input type="text" class="auto-text" id="ctrl-like-tgt" value="25" style="width: 100px; text-align: center;" onkeydown="if(event.key === 'Enter') { this.blur(); syncTexts(); }" onblur="syncTexts()">
-        </div>
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="font-size: 13px; font-weight: bold;">Sub Target:</span>
-          <input type="text" class="auto-text" id="ctrl-sub-tgt" value="900" style="width: 100px; text-align: center;" onkeydown="if(event.key === 'Enter') { this.blur(); syncTexts(); }" onblur="syncTexts()">
+        <div class="slider-group">
+          <span class="section-title">Ticker Layout Settings (Local Preview)</span>
+          <div class="slider-container"><span>Text C</span><input type="color" id="ctrl-tk-txt-c" value="#ffffff" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>BG C1</span><input type="color" id="ctrl-tk-c1" value="#1a202c" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>BG C2</span><input type="color" id="ctrl-tk-c2" value="#2d3748" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>Bar Height</span><input type="range" id="sl-tk-h" min="20" max="100" value="40" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>Font Size</span><input type="range" id="sl-tk-f" min="12" max="60" value="22" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>Opacity</span><input type="range" id="sl-tk-op" min="0.2" max="1" step="0.05" value="0.9" oninput="applyVisualsLocally()"></div>
         </div>
       </div>
-      <div class="slider-group">
-        <span class="section-title">Target Box Layout Settings (Local Preview)</span>
-        <div class="slider-container"><span>Box Size</span><input type="range" id="sl-tgt-scale" min="0.5" max="2" step="0.05" value="1" oninput="applyVisualsLocally()"></div>
-        <div class="slider-container"><span>Label Font</span><input type="range" id="sl-f-tgt-lbl" min="8" max="24" value="13" oninput="applyVisualsLocally()"></div>
-        <div class="slider-container"><span>Number Font</span><input type="range" id="sl-f-tgt-val" min="15" max="60" value="30" oninput="applyVisualsLocally()"></div>
-      </div>
     </div>
-
-    <div class="collapsible-header" onclick="togglePanel('panel-lu')">
-      3. Playing 11 Lineup Controls <span id="panel-lu-icon">▼</span>
-    </div>
-    <div class="collapsible-content" id="panel-lu">
-      <div class="ctrl-row" style="justify-content: flex-start; padding-left: 10px;">
-        <button class="ctrl-btn special" onclick="toggleLineupsVisibility()" id="btn-toggle-lu">Show Lineups</button>
-        <label style="font-size: 12px; font-weight: bold; margin-left: 20px; display: flex; align-items: center; gap: 6px;">
-          <input type="checkbox" id="ctrl-lu-logo-show" checked onchange="applyVisualsLocally(); syncVisuals();"> Show Logos in Header
-        </label>
-      </div>
-      <div class="ctrl-row" style="align-items: flex-start; gap: 20px; border-bottom: none;">
-        <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
-          <span class="section-title">Home Playing 11 (Syncs on click away)</span>
-          <textarea class="lineup-input" id="ctrl-h-lineup" onblur="syncTexts()"></textarea>
-        </div>
-        <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
-          <span class="section-title">Away Playing 11 (Syncs on click away)</span>
-          <textarea class="lineup-input" id="ctrl-a-lineup" onblur="syncTexts()"></textarea>
-        </div>
-      </div>
-      <div class="slider-group">
-        <span class="section-title">Lineup Layout Settings (Local Preview)</span>
-        <div class="slider-container"><span>Text Color</span><input type="color" id="ctrl-lu-txt-color" value="#ffffff" oninput="applyVisualsLocally()"></div>
-        <div class="slider-container"><span>Panel Width</span><input type="range" id="sl-lu-w" min="150" max="400" value="260" oninput="applyVisualsLocally()"></div>
-        <div class="slider-container"><span>Font Size</span><input type="range" id="sl-lu-f" min="10" max="30" value="16" oninput="applyVisualsLocally()"></div>
-        <div class="slider-container"><span>BG Opacity</span><input type="range" id="sl-lu-op" min="0.2" max="1" step="0.05" value="0.85" oninput="applyVisualsLocally()"></div>
-        <div class="slider-container"><span>Logo Size</span><input type="range" id="sl-lu-logo-size" min="15" max="80" value="30" oninput="applyVisualsLocally()"></div>
-      </div>
-    </div>
-
-    <div class="collapsible-header" onclick="togglePanel('panel-tk')">
-      4. Bottom Ticker Controls <span id="panel-tk-icon">▼</span>
-    </div>
-    <div class="collapsible-content" id="panel-tk">
-      <div class="ctrl-row" style="justify-content: flex-start; gap: 20px; padding-left: 10px;">
-        <label style="font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="ctrl-tk-show" checked onchange="applyVisualsLocally(); syncVisuals();"> Enable Ticker</label>
-        <label style="font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="ctrl-tk-scroll" checked onchange="applyVisualsLocally(); syncVisuals();"> Scroll Animation</label>
-        <label style="font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="ctrl-tk-grad" checked onchange="applyVisualsLocally(); syncVisuals();"> Use Gradient</label>
-      </div>
-      <div class="ctrl-row" style="gap: 16px; border-bottom: none;">
-        <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 6px;">
-          <span class="section-title">Ticker Message (Press Enter to Sync)</span>
-          <input type="text" class="auto-text" id="ctrl-tk-text" value="Welcome to Sports Unplugged India! Please Like and Subscribe to the channel." style="width: 100%; font-size: 15px;" onkeydown="if(event.key === 'Enter') { this.blur(); syncTexts(); }" onblur="syncTexts()">
-        </div>
-      </div>
-      <div class="slider-group">
-        <span class="section-title">Ticker Layout Settings (Local Preview)</span>
-        <div class="slider-container"><span>Text C</span><input type="color" id="ctrl-tk-txt-c" value="#ffffff" oninput="applyVisualsLocally()"></div>
-        <div class="slider-container"><span>BG C1</span><input type="color" id="ctrl-tk-c1" value="#1a202c" oninput="applyVisualsLocally()"></div>
-        <div class="slider-container"><span>BG C2</span><input type="color" id="ctrl-tk-c2" value="#2d3748" oninput="applyVisualsLocally()"></div>
-        <div class="slider-container"><span>Bar Height</span><input type="range" id="sl-tk-h" min="20" max="100" value="40" oninput="applyVisualsLocally()"></div>
-        <div class="slider-container"><span>Font Size</span><input type="range" id="sl-tk-f" min="12" max="60" value="22" oninput="applyVisualsLocally()"></div>
-        <div class="slider-container"><span>Opacity</span><input type="range" id="sl-tk-op" min="0.2" max="1" step="0.05" value="0.9" oninput="applyVisualsLocally()"></div>
-      </div>
-    </div>
-
   </div>
 
   <script>
-    // Accordion Logic
+    // --- Layout Storage System ---
+    let savedLayouts = {};
+    let currentLayoutName = "Default";
+
+    function initStorage() {
+      const stored = localStorage.getItem('suiSavedLayouts');
+      if (stored) {
+        savedLayouts = JSON.parse(stored);
+      } else {
+        // Build initial default layout
+        savedLayouts["Default"] = getCurrentLayoutState();
+        localStorage.setItem('suiSavedLayouts', JSON.stringify(savedLayouts));
+      }
+
+      const lastLoaded = localStorage.getItem('suiLastLoadedLayout');
+      if (lastLoaded && savedLayouts[lastLoaded]) {
+        loadLayoutState(lastLoaded);
+      } else {
+        loadLayoutState("Default");
+      }
+    }
+
+    function saveToStorage() {
+      localStorage.setItem('suiSavedLayouts', JSON.stringify(savedLayouts));
+    }
+
+    function getCurrentLayoutState() {
+      return {
+        tournamentName, likeTargetVal, subTargetVal, hName, aName, hC1, hC2, aC1, aC2, hLogo, aLogo, hLineupStr, aLineupStr,
+        tkText, isTkVis, isTkScroll, useTkGrad, tkC1, tkC2, tkTxtC, vTkH, vTkF, vTkOp,
+        isScoreboardVisible, isLineupsVisible, useGradient, showLuLogo, sbTxtColor, luTxtColor,
+        vSbScale, vTgtScale, vLogoSize, vFTeam, vFScore, vFTime, vFTourney, vFTgtLbl, vFTgtVal,
+        vLuWidth, vLuFont, vLuOpacity, vLuLogoSize
+      };
+    }
+
+    function loadLayoutState(name) {
+      const layout = savedLayouts[name];
+      if (!layout) return;
+      currentLayoutName = name;
+      localStorage.setItem('suiLastLoadedLayout', name);
+      document.getElementById('current-layout-badge').textContent = `Layout: ${name}`;
+
+      // Assign all vars (fallback to current if undefined in older saves)
+      tournamentName = layout.tournamentName !== undefined ? layout.tournamentName : tournamentName;
+      likeTargetVal = layout.likeTargetVal !== undefined ? layout.likeTargetVal : likeTargetVal;
+      subTargetVal = layout.subTargetVal !== undefined ? layout.subTargetVal : subTargetVal;
+      hName = layout.hName !== undefined ? layout.hName : hName; aName = layout.aName !== undefined ? layout.aName : aName;
+      hC1 = layout.hC1 !== undefined ? layout.hC1 : hC1; hC2 = layout.hC2 !== undefined ? layout.hC2 : hC2;
+      aC1 = layout.aC1 !== undefined ? layout.aC1 : aC1; aC2 = layout.aC2 !== undefined ? layout.aC2 : aC2;
+      hLogo = layout.hLogo !== undefined ? layout.hLogo : hLogo; aLogo = layout.aLogo !== undefined ? layout.aLogo : aLogo;
+      hLineupStr = layout.hLineupStr !== undefined ? layout.hLineupStr : hLineupStr; aLineupStr = layout.aLineupStr !== undefined ? layout.aLineupStr : aLineupStr;
+      
+      tkText = layout.tkText !== undefined ? layout.tkText : tkText; isTkVis = layout.isTkVis !== undefined ? layout.isTkVis : isTkVis;
+      isTkScroll = layout.isTkScroll !== undefined ? layout.isTkScroll : isTkScroll; useTkGrad = layout.useTkGrad !== undefined ? layout.useTkGrad : useTkGrad;
+      tkC1 = layout.tkC1 !== undefined ? layout.tkC1 : tkC1; tkC2 = layout.tkC2 !== undefined ? layout.tkC2 : tkC2; tkTxtC = layout.tkTxtC !== undefined ? layout.tkTxtC : tkTxtC;
+      vTkH = layout.vTkH !== undefined ? layout.vTkH : vTkH; vTkF = layout.vTkF !== undefined ? layout.vTkF : vTkF; vTkOp = layout.vTkOp !== undefined ? layout.vTkOp : vTkOp;
+      
+      isScoreboardVisible = layout.isScoreboardVisible !== undefined ? layout.isScoreboardVisible : isScoreboardVisible;
+      isLineupsVisible = layout.isLineupsVisible !== undefined ? layout.isLineupsVisible : isLineupsVisible;
+      useGradient = layout.useGradient !== undefined ? layout.useGradient : useGradient;
+      showLuLogo = layout.showLuLogo !== undefined ? layout.showLuLogo : showLuLogo;
+      sbTxtColor = layout.sbTxtColor !== undefined ? layout.sbTxtColor : sbTxtColor; luTxtColor = layout.luTxtColor !== undefined ? layout.luTxtColor : luTxtColor;
+      
+      vSbScale = layout.vSbScale !== undefined ? layout.vSbScale : vSbScale; vTgtScale = layout.vTgtScale !== undefined ? layout.vTgtScale : vTgtScale; vLogoSize = layout.vLogoSize !== undefined ? layout.vLogoSize : vLogoSize;
+      vFTeam = layout.vFTeam !== undefined ? layout.vFTeam : vFTeam; vFScore = layout.vFScore !== undefined ? layout.vFScore : vFScore; vFTime = layout.vFTime !== undefined ? layout.vFTime : vFTime;
+      vFTourney = layout.vFTourney !== undefined ? layout.vFTourney : vFTourney; vFTgtLbl = layout.vFTgtLbl !== undefined ? layout.vFTgtLbl : vFTgtLbl; vFTgtVal = layout.vFTgtVal !== undefined ? layout.vFTgtVal : vFTgtVal;
+      vLuWidth = layout.vLuWidth !== undefined ? layout.vLuWidth : vLuWidth; vLuFont = layout.vLuFont !== undefined ? layout.vLuFont : vLuFont; vLuOpacity = layout.vLuOpacity !== undefined ? layout.vLuOpacity : vLuOpacity; vLuLogoSize = layout.vLuLogoSize !== undefined ? layout.vLuLogoSize : vLuLogoSize;
+
+      syncInputsToVariables();
+      applyVisualsLocally();
+      broadcastState();
+    }
+
+    function saveLayout() {
+      savedLayouts[currentLayoutName] = getCurrentLayoutState();
+      saveToStorage();
+      alert(`Saved layout: ${currentLayoutName}`);
+    }
+
+    function saveLayoutAs() {
+      const name = prompt("Enter a name for this new layout:", "My Custom Layout");
+      if (name && name.trim() !== "") {
+        currentLayoutName = name.trim();
+        savedLayouts[currentLayoutName] = getCurrentLayoutState();
+        saveToStorage();
+        localStorage.setItem('suiLastLoadedLayout', currentLayoutName);
+        document.getElementById('current-layout-badge').textContent = `Layout: ${currentLayoutName}`;
+        alert(`Saved as: ${currentLayoutName}`);
+      }
+    }
+
+    // Modal Logic
+    function openLoadModal() {
+      document.getElementById('load-modal-bg').style.display = 'block';
+      document.getElementById('load-modal').style.display = 'block';
+      filterLayouts(); // Populates the list initially
+    }
+    function closeLoadModal() {
+      document.getElementById('load-modal-bg').style.display = 'none';
+      document.getElementById('load-modal').style.display = 'none';
+      document.getElementById('layout-search').value = "";
+    }
+    function filterLayouts() {
+      const query = document.getElementById('layout-search').value.toLowerCase();
+      const listEl = document.getElementById('layout-list');
+      listEl.innerHTML = "";
+      
+      Object.keys(savedLayouts).forEach(name => {
+        if (name.toLowerCase().includes(query)) {
+          const div = document.createElement('div');
+          div.className = 'layout-list-item';
+          div.innerHTML = `<span>${name}</span> <button class="ctrl-btn highlight" style="padding: 4px 10px;" onclick="executeLoad('${name}')">Load</button>`;
+          listEl.appendChild(div);
+        }
+      });
+    }
+    function executeLoad(name) {
+      loadLayoutState(name);
+      closeLoadModal();
+    }
+
+
+    // --- Accordion & Panel Logic ---
     function togglePanel(panelId) {
       const content = document.getElementById(panelId);
       const icon = document.getElementById(panelId + '-icon');
       if (content.classList.contains('active')) {
-        content.classList.remove('active');
-        icon.textContent = '▼';
+        content.classList.remove('active'); icon.textContent = '▼';
       } else {
-        content.classList.add('active');
-        icon.textContent = '▲';
+        content.classList.add('active'); icon.textContent = '▲';
+      }
+    }
+
+    function togglePanelBody() {
+      const body = document.getElementById('controls-body');
+      const btn = document.getElementById('btn-toggle-panel');
+      if (body.style.display === 'none') {
+        body.style.display = 'flex';
+        btn.textContent = 'Hide Panel';
+      } else {
+        body.style.display = 'none';
+        btn.textContent = 'Show Panel';
       }
     }
 
@@ -535,10 +706,6 @@
     const tkWrap = document.getElementById('ticker-wrapper');
     const tkBgEl = document.getElementById('ticker-bg');
     const tkTextEl = document.getElementById('ticker-text');
-
-    // Pre-fill local textareas
-    document.getElementById('ctrl-h-lineup').value = hLineupStr;
-    document.getElementById('ctrl-a-lineup').value = aLineupStr;
 
     // Hide controls if embedded in OBS/Restream
     const urlParams = new URLSearchParams(window.location.search);
@@ -618,19 +785,37 @@
         root.style.setProperty('--tk-h', vTkH + 'px'); root.style.setProperty('--tk-f', vTkF + 'px');
         root.style.setProperty('--tk-op', vTkOp); root.style.setProperty('--tk-txt-c', tkTxtC);
         
-        // Sync Inputs in Controller View (Display variables only)
+        // Sync Inputs in Controller View
         if (urlParams.get('view') !== 'overlay') {
-          document.getElementById('ctrl-tournament-name').value = tournamentName;
-          document.getElementById('ctrl-h-name').value = hName; document.getElementById('ctrl-a-name').value = aName;
-          document.getElementById('ctrl-like-tgt').value = likeTargetVal; document.getElementById('ctrl-sub-tgt').value = subTargetVal;
-          document.getElementById('ctrl-h-lineup').value = hLineupStr; document.getElementById('ctrl-a-lineup').value = aLineupStr;
-          document.getElementById('ctrl-tk-text').value = tkText;
+          syncInputsToVariables();
         }
 
         renderTime(); clearInterval(timerId);
         if (running) { timerId = setInterval(() => { secs++; renderTime(); }, 1000); }
       }
     });
+
+    function syncInputsToVariables() {
+      document.getElementById('ctrl-tournament-name').value = tournamentName;
+      document.getElementById('ctrl-h-name').value = hName; document.getElementById('ctrl-a-name').value = aName;
+      document.getElementById('ctrl-like-tgt').value = likeTargetVal; document.getElementById('ctrl-sub-tgt').value = subTargetVal;
+      document.getElementById('ctrl-h-lineup').value = hLineupStr; document.getElementById('ctrl-a-lineup').value = aLineupStr;
+      document.getElementById('ctrl-tk-text').value = tkText;
+      document.getElementById('ctrl-h-c1').value = hC1; document.getElementById('ctrl-h-c2').value = hC2;
+      document.getElementById('ctrl-a-c1').value = aC1; document.getElementById('ctrl-a-c2').value = aC2;
+      document.getElementById('ctrl-gradient').checked = useGradient; document.getElementById('ctrl-lu-logo-show').checked = showLuLogo;
+      document.getElementById('ctrl-sb-txt-color').value = sbTxtColor; document.getElementById('ctrl-lu-txt-color').value = luTxtColor;
+      document.getElementById('sl-sb-scale').value = vSbScale; document.getElementById('sl-tgt-scale').value = vTgtScale;
+      document.getElementById('sl-logo-size').value = vLogoSize; document.getElementById('sl-f-team').value = vFTeam;
+      document.getElementById('sl-f-score').value = vFScore; document.getElementById('sl-f-time').value = vFTime;
+      document.getElementById('sl-f-tgt-lbl').value = vFTgtLbl; document.getElementById('sl-f-tgt-val').value = vFTgtVal;
+      document.getElementById('sl-lu-w').value = vLuWidth; document.getElementById('sl-lu-f').value = vLuFont; 
+      document.getElementById('sl-lu-op').value = vLuOpacity; document.getElementById('sl-lu-logo-size').value = vLuLogoSize;
+      document.getElementById('ctrl-tk-show').checked = isTkVis; document.getElementById('ctrl-tk-scroll').checked = isTkScroll;
+      document.getElementById('ctrl-tk-grad').checked = useTkGrad; document.getElementById('ctrl-tk-c1').value = tkC1;
+      document.getElementById('ctrl-tk-c2').value = tkC2; document.getElementById('ctrl-tk-txt-c').value = tkTxtC;
+      document.getElementById('sl-tk-h').value = vTkH; document.getElementById('sl-tk-f').value = vTkF; document.getElementById('sl-tk-op').value = vTkOp;
+    }
 
     function broadcastState() {
       pubnub.publish({
@@ -687,7 +872,7 @@
       broadcastState();
     }
     
-    // --- Visual Settings (Local Preview & Global Sync) ---
+    // --- Visual Settings (Local Preview Only) ---
     function applyVisualsLocally() {
       const root = document.documentElement;
       // Main UI
@@ -769,11 +954,16 @@
           canvas.width = width; canvas.height = height; ctx.drawImage(img, 0, 0, width, height);
           const compressedDataUrl = canvas.toDataURL('image/webp', 0.8);
           if (team === 'home') hLogo = compressedDataUrl; else aLogo = compressedDataUrl;
-          broadcastState(); 
+          syncTexts(); 
         }; img.src = e.target.result;
       }; reader.readAsDataURL(file);
     }
-    function toggleControls() { document.getElementById('controls').style.display = 'none'; }
+
+    // Initialize the storage on startup
+    if (urlParams.get('view') !== 'overlay') {
+      initStorage();
+    }
   </script>
 </body>
 </html>
+
