@@ -379,6 +379,84 @@
     <iframe src="https://socialcounts.org/youtube-live-subscriber-count/UC6HP5_0MxNjZddNg9_t47gg/embed" allowtransparency="true" frameborder="0" scrolling="no"></iframe>
   </div>
 
+  <div id="manual-modal-bg" onclick="closeManualModal()" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 999;"></div>
+  <div id="manual-modal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #161b22; border: 2px solid #30363d; z-index: 1000; padding: 24px; border-radius: 8px; width: 850px; max-height: 85vh; overflow-y: auto; color: #fff; box-shadow: 0 20px 50px rgba(0,0,0,0.9); font-family: 'Montserrat', sans-serif;">
+    <h2 style="color: #ffd700; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #30363d; padding-bottom: 10px; margin-bottom: 20px;">Sports Unplugged India | Master User Manual</h2>
+    
+    <div style="line-height: 1.6; font-size: 14px;">
+      
+      <p style="margin-bottom: 20px; font-size: 15px;">Welcome to the <strong>Ultimate Broadcast Overlay</strong>. This highly customizable, real-time sports graphic suite runs entirely in your browser. Below is everything you need to operate it perfectly for your live streams.</p>
+
+      <h3 style="color: #4ade80; margin-top: 20px; border-bottom: 1px solid #30363d; padding-bottom: 5px;">I. System Setup & Views</h3>
+      <p style="margin-top: 10px;">The system works using a primary/secondary window structure connected via the cloud in real-time:</p>
+      <ul style="margin-left: 20px; margin-bottom: 15px; margin-top: 5px;">
+        <li><strong>Control Panel (Your Screen):</strong> Open the main HTML file normally in your web browser (Chrome recommended). This is where you click buttons, update scores, and style the layout.</li>
+        <li><strong>Live Overlay (Audience Screen):</strong> In OBS, vMix, or Streamlabs, add this HTML file as a <strong>Browser Source</strong>. Crucially, append <code>?view=overlay</code> to the end of the file path (e.g., <code>C:/path/to/index.html?view=overlay</code>). The massive control panel will automatically hide, leaving only the transparent broadcast graphics.</li>
+      </ul>
+
+      <h3 style="color: #4ade80; margin-top: 20px; border-bottom: 1px solid #30363d; padding-bottom: 5px;">II. Instant Updates vs. The SYNC Button</h3>
+      <p style="margin-top: 10px;">To prevent viewers from seeing you awkwardly drag sliders or change colors live on stream, the panel uses a dual-sync architecture:</p>
+      <ul style="margin-left: 20px; margin-bottom: 15px; margin-top: 5px;">
+        <li><strong>Instant Actions:</strong> Modifying the Score, pressing Play/Pause on the clock, adding Red Cards, clicking Penalty Bulbs, toggling element visibility (Show/Hide Scoreboard), and Auto-Extracting Image text. These send <strong>immediately</strong> to the stream.</li>
+        <li><strong>Draft Actions (Requires SYNC):</strong> Changing fonts, text size sliders, team names, background colors, scale, and gradient toggles. These will update <em>only on your local preview</em> so you can make them look perfect. When you are ready, you <strong>must click the yellow "SYNC LAYOUT TO STREAM" button</strong> at the top to push these visual changes to your audience.</li>
+      </ul>
+
+      <h3 style="color: #4ade80; margin-top: 20px; border-bottom: 1px solid #30363d; padding-bottom: 5px;">III. Core Control Panels</h3>
+      
+      <p style="margin-top: 15px; font-weight: bold; color: #93c5fd;">1. Scoreboard Controls</p>
+      <ul style="margin-left: 20px; margin-bottom: 15px;">
+        <li><strong>Clock Options:</strong> Standard play/pause. Use the reset buttons (0', 45', 90') to jump to standard half starts. Use <strong>Custom Time</strong> for precise overrides (Format: MM:SS). Click <strong>+ Injury</strong> to add stoppage time to the right of the clock. Click match phases (HT, FT, PEN) to replace the clock text entirely.</li>
+        <li><strong>Scores & Red Cards:</strong> Use the massive Score buttons and +/- Red Card buttons for instant updates.</li>
+        <li><strong>Memory List:</strong> When setting up a team, enter their name, assign colors, and click <strong>"Save to Memory"</strong>. Next time you type that team name, it will auto-complete.</li>
+        <li><strong>Visuals:</strong> Change backgrounds (Solid vs Split vs Gradient). Pick from 19 Google Fonts for the team names, score, and timer. Independently resize logos.</li>
+      </ul>
+
+      <p style="margin-top: 15px; font-weight: bold; color: #93c5fd;">2. Target Box Controls</p>
+      <ul style="margin-left: 20px; margin-bottom: 15px;">
+        <li>Controls the Like/Sub goal widget in the top right. (Note: The Subscriber counter box on the left is automated directly from YouTube).</li>
+        <li>You can type numbers in manually, customize the font type for the labels vs. numbers, and edit the two-tone gradient background.</li>
+      </ul>
+
+      <p style="margin-top: 15px; font-weight: bold; color: #93c5fd;">3. Playing 11 Lineup Controls</p>
+      <ul style="margin-left: 20px; margin-bottom: 15px;">
+        <li><strong>Auto-Extract Image (OCR):</strong> You no longer need to type lineups manually. Click this button, select a screenshot of the team sheet, and the built-in AI will read the image and paste the names into the box for you.</li>
+        <li>Use the visual layout sliders to change panel width, typography, opacity, and toggle whether the team logo is visible at the top of the lineup card.</li>
+      </ul>
+
+      <p style="margin-top: 15px; font-weight: bold; color: #93c5fd;">4. Bottom Ticker Controls</p>
+      <ul style="margin-left: 20px; margin-bottom: 15px;">
+        <li>Toggle the visibility, choose between a solid block or gradient background, and edit the text.</li>
+        <li><strong>Scroll Animation:</strong> Checking this makes the text continuously loop across the bottom of the screen. Unchecking it centers the text statically.</li>
+      </ul>
+
+      <p style="margin-top: 15px; font-weight: bold; color: #93c5fd;">5. Penalty Shootout Controls</p>
+      <ul style="margin-left: 20px; margin-bottom: 15px;">
+        <li>Click <strong>Enable Penalty Drop-down</strong> to reveal the penalty phase UI. This reveals a sleek shootout bar under the main scoreboard, brackets next to the main score, and a larger summary board at the bottom center.</li>
+        <li><strong>The Matrix:</strong> Add or remove bulbs based on how many shots are being taken (default is 5).</li>
+        <li><strong>Clicking Bulbs:</strong> Click a bulb to instantly cycle its state: <span style="color:#888;">Gray (Empty)</span> ➔ <span style="color:#4ade80;">Green (Scored)</span> ➔ <span style="color:#f87171;">Red (Missed)</span>. The score in brackets will calculate automatically.</li>
+      </ul>
+
+      <h3 style="color: #4ade80; margin-top: 20px; border-bottom: 1px solid #30363d; padding-bottom: 5px;">IV. Layout Management & Recovery</h3>
+      <ul style="margin-left: 20px; margin-bottom: 15px; margin-top: 10px;">
+        <li><strong>Undo/Redo System:</strong> Any visual change you make (sliders, dropdowns, colors) is tracked. If you mess up a layout visually, hit Undo to jump back a step.</li>
+        <li><strong>Save / Save As:</strong> Perfectly customized a layout for a specific league (e.g., ISL colors and fonts)? Hit "Save As", name it "ISL Preset", and it will be saved to your browser's local storage.</li>
+        <li><strong>Load:</strong> Use the Load menu to search for your saved presets and immediately swap out colors, fonts, and slider sizes in a single click.</li>
+      </ul>
+      
+      <h3 style="color: #4ade80; margin-top: 20px; border-bottom: 1px solid #30363d; padding-bottom: 5px;">V. UI Interaction Tips</h3>
+      <ul style="margin-left: 20px; margin-bottom: 15px; margin-top: 10px;">
+        <li><strong>Draggable Interface:</strong> Click and drag the top header ("MASTER CONTROL SUITE") to move the massive widget out of your way to check your stream preview beneath it.</li>
+        <li><strong>Minimize Panel:</strong> Click this button to collapse the widget entirely, keeping only the top header bar visible.</li>
+        <li><strong>Accordion Menus:</strong> Click any of the 5 section headers to collapse/expand them to keep your workspace tidy.</li>
+      </ul>
+
+    </div>
+    
+    <div style="display: flex; justify-content: flex-end; margin-top: 25px; border-top: 1px solid #30363d; padding-top: 15px;">
+      <button class="ctrl-btn highlight" onclick="closeManualModal()" style="font-size: 14px; padding: 8px 24px;">Got it, Close Manual</button>
+    </div>
+  </div>
+
   <div class="targets-wrapper" id="targets-wrapper">
     <div class="target-row">
       <span class="target-label">Like Target</span>
@@ -506,6 +584,7 @@
         <span class="layout-name-badge" id="current-layout-badge">Layout: Default</span>
       </div>
       <div style="display: flex; gap: 8px; pointer-events: auto;">
+        <button class="ctrl-btn special" onclick="openManualModal()" title="View User Manual">Manual</button>
         <button class="ctrl-btn" onclick="undoVisuals()" title="Undo last layout change">Undo</button>
         <button class="ctrl-btn" onclick="redoVisuals()" title="Redo last layout change">Redo</button>
         <button class="ctrl-btn sync-btn" onclick="syncVisuals()">SYNC LAYOUT TO STREAM</button>
