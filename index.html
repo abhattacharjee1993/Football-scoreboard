@@ -1073,7 +1073,9 @@
         // Apply DOM
         hEl.textContent = hScore; aEl.textContent = aScore; likeEl.textContent = likeTargetVal; subEl.textContent = subTargetVal;
         tNameEl.textContent = tournamentName; hNameDisplay.textContent = hName; aNameDisplay.textContent = aName;
-        hLogoDisplay.src = hLogo; aLogoDisplay.src = aLogo; hLuLogoDisplay.src = hLogo; aLuLogoDisplay.src = aLogo;
+        hLogoDisplay.src = hLogo; hLogoDisplay.style.display = hLogo ? 'block' : 'none';
+        aLogoDisplay.src = aLogo; aLogoDisplay.style.display = aLogo ? 'block' : 'none';
+        hLuLogoDisplay.src = hLogo; aLuLogoDisplay.src = aLogo;
         tLogoDisplay.src = tLogo; tLogoDisplay.style.display = tLogo ? 'block' : 'none';
         
         hLuHeaderText.textContent = hName; aLuHeaderText.textContent = aName; tkTextEl.textContent = tkText;
@@ -1082,7 +1084,8 @@
 
         // Apply Large Penalty Board DOM
         document.getElementById('large-pen-h-name').textContent = hName; document.getElementById('large-pen-a-name').textContent = aName;
-        document.getElementById('large-pen-h-logo').src = hLogo; document.getElementById('large-pen-a-logo').src = aLogo;
+        document.getElementById('large-pen-h-logo').src = hLogo; document.getElementById('large-pen-h-logo').style.display = hLogo ? 'block' : 'none';
+        document.getElementById('large-pen-a-logo').src = aLogo; document.getElementById('large-pen-a-logo').style.display = aLogo ? 'block' : 'none';
 
         hBg.style.background = useGradient ? `linear-gradient(135deg, ${hC1} 50%, ${hC2} 50%)` : hC1;
         aBg.style.background = useGradient ? `linear-gradient(135deg, ${aC1} 50%, ${aC2} 50%)` : aC1;
@@ -1435,7 +1438,9 @@
       root.style.setProperty('--lu-logo-size-a', document.getElementById('sl-lu-logo-size-a').value + 'px');
       root.style.setProperty('--pen-logo-size-h', document.getElementById('sl-pen-logo-size-h').value + 'px');
       root.style.setProperty('--pen-logo-size-a', document.getElementById('sl-pen-logo-size-a').value + 'px');
-      
+      root.style.setProperty('--pen-board-scale', document.getElementById('sl-pen-board-scale').value);
+      root.style.setProperty('--pen-board-txt', document.getElementById('sl-pen-board-txt').value + 'px');
+
       // Update variables locally so they don't reset on the next broadcast (e.g. bulb click)
       vPenBoardScale = document.getElementById('sl-pen-board-scale').value;
       vPenBoardTxt = document.getElementById('sl-pen-board-txt').value;
