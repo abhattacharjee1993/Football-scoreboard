@@ -153,7 +153,7 @@
       display: inline-flex; align-items: center; background: rgba(12, 14, 18, 0.95);
       border-radius: 0 0 8px 8px; border: 2px solid rgba(255, 255, 255, 0.18);
       box-shadow: 0 8px 24px rgba(0,0,0,0.85); overflow: hidden; height: 64px; width: fit-content; white-space: nowrap;
-      z-index: 5; transition: border-radius 0.3s;
+      z-index: 5; transition: border-radius 0.3s, background 0.3s;
     }
     .scoreboard-wrap.has-penalties { border-radius: 0; border-bottom-color: transparent; }
 
@@ -314,7 +314,7 @@
     }
     .team-details { display: flex; flex-direction: column; gap: 8px; width: 100%; }
     .team-details input[type="text"] { padding: 8px; border-radius: 4px; border: 1px solid #555; background: #222; color: #fff; font-family: 'Montserrat', sans-serif; font-weight: bold; width: 100%; font-size: 14px; }
-    .team-details input[type="file"] { font-size: 11px; color: #aaa; }
+    .team-details input[type="file"] { font-size: 11px; color: #aaa; width: 75px; }
     .color-row { display: flex; gap: 12px; align-items: center; }
     .color-row input[type="color"] { border: none; width: 32px; height: 32px; cursor: pointer; background: transparent; }
 
@@ -365,7 +365,7 @@
     <iframe src="https://socialcounts.org/youtube-live-subscriber-count/UC6HP5_0MxNjZddNg9_t47gg/embed" allowtransparency="true" frameborder="0" scrolling="no"></iframe>
   </div>
 
-  <div class="targets-wrapper">
+  <div class="targets-wrapper" id="targets-wrapper">
     <div class="target-row">
       <span class="target-label">Like Target</span>
       <span class="target-value" id="like-target-display">25</span>
@@ -490,10 +490,11 @@
               <input type="checkbox" id="ctrl-gradient" checked onchange="applyVisualsLocally()"> Use Gradients (Split Colors)
             </label>
           </div>
-          <div style="display: flex; align-items: center; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 4px;">
             <span style="font-size: 12px; font-weight: bold;">Tournament:</span>
             <input type="file" accept="image/*" id="ctrl-t-logo" style="width: 75px; font-size: 10px; color: #aaa;" onchange="processLogo(event, 'tourney')" title="Tournament Logo">
-            <input type="text" class="auto-text" id="ctrl-tournament-name" value="CFL 26-27" style="width: 150px;" onkeydown="if(event.key === 'Enter') { this.blur(); }" onblur="syncTexts()">
+            <button class="ctrl-btn warning" style="padding: 2px 6px; font-size: 10px;" onclick="removeLogo('tourney')" title="Remove Logo">X</button>
+            <input type="text" class="auto-text" id="ctrl-tournament-name" value="CFL 26-27" style="width: 150px; margin-left:4px;" onkeydown="if(event.key === 'Enter') { this.blur(); }" onblur="syncTexts()">
           </div>
         </div>
 
@@ -538,6 +539,7 @@
                 <input type="color" id="ctrl-h-c1" value="#7c1830" title="Primary Color" oninput="applyVisualsLocally()">
                 <input type="color" id="ctrl-h-c2" value="#005a36" title="Secondary Color" oninput="applyVisualsLocally()">
                 <input type="file" accept="image/*" id="ctrl-h-logo" onchange="processLogo(event, 'home')">
+                <button class="ctrl-btn warning" style="padding: 2px 6px; font-size: 10px;" onclick="removeLogo('home')" title="Remove Logo">X</button>
               </div>
             </div>
           </div>
@@ -549,6 +551,7 @@
                 <input type="color" id="ctrl-a-c1" value="#d31122" title="Primary Color" oninput="applyVisualsLocally()">
                 <input type="color" id="ctrl-a-c2" value="#f6b200" title="Secondary Color" oninput="applyVisualsLocally()">
                 <input type="file" accept="image/*" id="ctrl-a-logo" onchange="processLogo(event, 'away')">
+                <button class="ctrl-btn warning" style="padding: 2px 6px; font-size: 10px;" onclick="removeLogo('away')" title="Remove Logo">X</button>
               </div>
             </div>
           </div>
@@ -556,6 +559,9 @@
 
         <div class="slider-group">
           <span class="section-title">Scoreboard Layout Settings (Local Preview)</span>
+          <div class="slider-container"><span>SB Use Grad</span><input type="checkbox" id="ctrl-sb-grad" onchange="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>SB BG C1</span><input type="color" id="ctrl-sb-bg-c1" value="#0c0e12" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>SB BG C2</span><input type="color" id="ctrl-sb-bg-c2" value="#1a1a1a" oninput="applyVisualsLocally()"></div>
           <div class="slider-container"><span>Text Color</span><input type="color" id="ctrl-sb-txt-color" value="#ffffff" oninput="applyVisualsLocally()"></div>
           <div class="slider-container"><span>Overall Size</span><input type="range" id="sl-sb-scale" min="0.5" max="2" step="0.05" value="1" oninput="applyVisualsLocally()"></div>
           <div class="slider-container"><span>Tourney Font</span><input type="range" id="sl-f-tourney" min="8" max="30" value="12" oninput="applyVisualsLocally()"></div>
@@ -585,6 +591,9 @@
         </div>
         <div class="slider-group">
           <span class="section-title">Target Box Layout Settings (Local Preview)</span>
+          <div class="slider-container"><span>Use Grad</span><input type="checkbox" id="ctrl-tgt-grad" checked onchange="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>BG C1</span><input type="color" id="ctrl-tgt-c1" value="#2c3e50" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>BG C2</span><input type="color" id="ctrl-tgt-c2" value="#636e72" oninput="applyVisualsLocally()"></div>
           <div class="slider-container"><span>Box Size</span><input type="range" id="sl-tgt-scale" min="0.5" max="2" step="0.05" value="1" oninput="applyVisualsLocally()"></div>
           <div class="slider-container"><span>Label Font</span><input type="range" id="sl-f-tgt-lbl" min="8" max="24" value="13" oninput="applyVisualsLocally()"></div>
           <div class="slider-container"><span>Number Font</span><input type="range" id="sl-f-tgt-val" min="15" max="60" value="30" oninput="applyVisualsLocally()"></div>
@@ -766,7 +775,8 @@
         vSbScale, vTgtScale, vLogoSizeH, vLogoSizeA, vFTeam, vFScore, vFTime, vFTourney, vTourneyLogoSize, vFTgtLbl, vFTgtVal,
         vLuWidth, vLuFont, vLuOpacity, vLuLogoSizeH, vLuLogoSizeA,
         isPenVis, hPens, aPens, hRed, aRed,
-        vPenBoardScale, vPenBoardTxt, vPenLogoSizeH, vPenLogoSizeA
+        vPenBoardScale, vPenBoardTxt, vPenLogoSizeH, vPenLogoSizeA,
+        tgtUseGrad, tgtBgC1, tgtBgC2, sbUseGrad, sbBgC1, sbBgC2
       };
     }
 
@@ -789,7 +799,7 @@
 
       tkText = layout.tkText !== undefined ? layout.tkText : tkText; isTkVis = layout.isTkVis !== undefined ? layout.isTkVis : isTkVis;
       isTkScroll = layout.isTkScroll !== undefined ? layout.isTkScroll : isTkScroll; useTkGrad = layout.useTkGrad !== undefined ? layout.useTkGrad : useTkGrad;
-      tkC1 = layout.tkC1 !== undefined ? layout.tkC1 : tkC1; tkC2 = layout.tkC2 !== undefined ? layout.tkC2 : tkC2; tkTxtC = layout.tkTxtC !== undefined ? layout.tkTxtC : tkTxtC;
+      tkC1 = layout.tkC1 !== undefined ? layout.tkC1 : tkC1; tkC2 = layout.tkC2 !== undefined ? tkC2 : tkC2; tkTxtC = layout.tkTxtC !== undefined ? layout.tkTxtC : tkTxtC;
       vTkH = layout.vTkH !== undefined ? layout.vTkH : vTkH; vTkF = layout.vTkF !== undefined ? layout.vTkF : vTkF; vTkOp = layout.vTkOp !== undefined ? layout.vTkOp : vTkOp;
 
       isScoreboardVisible = layout.isScoreboardVisible !== undefined ? layout.isScoreboardVisible : isScoreboardVisible;
@@ -817,6 +827,13 @@
       vPenBoardTxt = layout.vPenBoardTxt !== undefined ? layout.vPenBoardTxt : vPenBoardTxt;
       vPenLogoSizeH = layout.vPenLogoSizeH !== undefined ? layout.vPenLogoSizeH : vPenLogoSizeH;
       vPenLogoSizeA = layout.vPenLogoSizeA !== undefined ? layout.vPenLogoSizeA : vPenLogoSizeA;
+      
+      tgtUseGrad = layout.tgtUseGrad !== undefined ? layout.tgtUseGrad : tgtUseGrad;
+      tgtBgC1 = layout.tgtBgC1 !== undefined ? layout.tgtBgC1 : tgtBgC1;
+      tgtBgC2 = layout.tgtBgC2 !== undefined ? layout.tgtBgC2 : tgtBgC2;
+      sbUseGrad = layout.sbUseGrad !== undefined ? layout.sbUseGrad : sbUseGrad;
+      sbBgC1 = layout.sbBgC1 !== undefined ? layout.sbBgC1 : sbBgC1;
+      sbBgC2 = layout.sbBgC2 !== undefined ? layout.sbBgC2 : sbBgC2;
 
       syncInputsToVariables();
       applyVisualsLocally();
@@ -906,6 +923,10 @@
     let vFTeam = 17, vFScore = 44, vFTime = 34, vFTourney = 12, vTourneyLogoSize = 20, vFTgtLbl = 13, vFTgtVal = 30;
     let vLuWidth = 260, vLuFont = 16, vLuOpacity = 0.85, vLuLogoSizeH = 30, vLuLogoSizeA = 30;
 
+    // Background Color Variables
+    let tgtUseGrad = true, tgtBgC1 = "#2c3e50", tgtBgC2 = "#636e72";
+    let sbUseGrad = false, sbBgC1 = "#0c0e12", sbBgC2 = "#1a1a1a";
+
     // Penalty & Red Card variables
     let hRed = 0, aRed = 0;
     let isPenVis = false;
@@ -973,6 +994,13 @@
         hRed = data.hRed !== undefined ? data.hRed : hRed;
         aRed = data.aRed !== undefined ? data.aRed : aRed;
 
+        tgtUseGrad = data.tgtUseGrad !== undefined ? data.tgtUseGrad : tgtUseGrad;
+        tgtBgC1 = data.tgtBgC1 !== undefined ? data.tgtBgC1 : tgtBgC1;
+        tgtBgC2 = data.tgtBgC2 !== undefined ? data.tgtBgC2 : tgtBgC2;
+        sbUseGrad = data.sbUseGrad !== undefined ? data.sbUseGrad : sbUseGrad;
+        sbBgC1 = data.sbBgC1 !== undefined ? data.sbBgC1 : sbBgC1;
+        sbBgC2 = data.sbBgC2 !== undefined ? data.sbBgC2 : sbBgC2;
+
         // Apply DOM
         hEl.textContent = hScore; aEl.textContent = aScore; likeEl.textContent = likeTargetVal; subEl.textContent = subTargetVal;
         tNameEl.textContent = tournamentName; hNameDisplay.textContent = hName; aNameDisplay.textContent = aName;
@@ -993,6 +1021,12 @@
         aLuBg.style.background = useGradient ? `linear-gradient(135deg, ${aC1} 50%, ${aC2} 50%)` : aC1;
         hLuLogoDisplay.style.display = showLuLogo ? 'block' : 'none'; aLuLogoDisplay.style.display = showLuLogo ? 'block' : 'none';
         tkBgEl.style.background = useTkGrad ? `linear-gradient(90deg, ${tkC1} 0%, ${tkC2} 100%)` : tkC1;
+        
+        const tgtWrapObj = document.getElementById('targets-wrapper');
+        tgtWrapObj.style.background = tgtUseGrad ? `linear-gradient(135deg, ${tgtBgC1} 0%, ${tgtBgC2} 100%)` : tgtBgC1;
+        const sbWrapObj = document.getElementById('sb-wrap-element');
+        sbWrapObj.style.background = sbUseGrad ? `linear-gradient(135deg, ${sbBgC1} 0%, ${sbBgC2} 100%)` : sbBgC1;
+        
         tkWrap.style.display = isTkVis ? 'flex' : 'none'; tkTextEl.className = isTkScroll ? 'ticker-text scrolling' : 'ticker-text static';
         scoreboardMaster.style.display = isScoreboardVisible ? 'flex' : 'none'; btnToggleSb.textContent = isScoreboardVisible ? 'Hide Scoreboard' : 'Show Scoreboard';
         luLeft.style.display = isLineupsVisible ? 'flex' : 'none'; luRight.style.display = isLineupsVisible ? 'flex' : 'none'; btnToggleLu.textContent = isLineupsVisible ? 'Hide Lineups' : 'Show Lineups';
@@ -1056,6 +1090,13 @@
       document.getElementById('sl-pen-board-scale').value = vPenBoardScale; document.getElementById('sl-pen-board-txt').value = vPenBoardTxt;
       document.getElementById('sl-pen-logo-size-h').value = vPenLogoSizeH; document.getElementById('sl-pen-logo-size-a').value = vPenLogoSizeA;
 
+      document.getElementById('ctrl-tgt-grad').checked = tgtUseGrad;
+      document.getElementById('ctrl-tgt-c1').value = tgtBgC1;
+      document.getElementById('ctrl-tgt-c2').value = tgtBgC2;
+      document.getElementById('ctrl-sb-grad').checked = sbUseGrad;
+      document.getElementById('ctrl-sb-bg-c1').value = sbBgC1;
+      document.getElementById('ctrl-sb-bg-c2').value = sbBgC2;
+
       document.getElementById('ctrl-h-red').textContent = hRed; document.getElementById('ctrl-a-red').textContent = aRed;
 
       document.getElementById('ctrl-pen-h-name').textContent = hName + " Penalties";
@@ -1075,7 +1116,8 @@
           isScoreboardVisible, isLineupsVisible, useGradient, showLuLogo, sbTxtColor, luTxtColor,
           vSbScale, vTgtScale, vLogoSizeH, vLogoSizeA, vFTeam, vFScore, vFTime, vFTourney, vTourneyLogoSize, vFTgtLbl, vFTgtVal, 
           vLuWidth, vLuFont, vLuOpacity, vLuLogoSizeH, vLuLogoSizeA,
-          isPenVis, hPens, aPens, vPenBoardScale, vPenBoardTxt, vPenLogoSizeH, vPenLogoSizeA, hRed, aRed
+          isPenVis, hPens, aPens, vPenBoardScale, vPenBoardTxt, vPenLogoSizeH, vPenLogoSizeA, hRed, aRed,
+          tgtUseGrad, tgtBgC1, tgtBgC2, sbUseGrad, sbBgC1, sbBgC2
         }
       });
     }
@@ -1171,6 +1213,17 @@
       }
     }
 
+    function removeLogo(team) {
+      if (team === 'home') {
+        hLogo = ""; document.getElementById('ctrl-h-logo').value = "";
+      } else if (team === 'away') {
+        aLogo = ""; document.getElementById('ctrl-a-logo').value = "";
+      } else if (team === 'tourney') {
+        tLogo = ""; document.getElementById('ctrl-t-logo').value = "";
+      }
+      syncTexts(); 
+    }
+
     // --- Strict Sync on Enter/Blur for Text Fields ---
     let textSyncTimer;
     function syncTexts() {
@@ -1222,7 +1275,8 @@
       'sl-tgt-scale', 'sl-f-tgt-lbl', 'sl-f-tgt-val',
       'ctrl-lu-logo-show', 'ctrl-lu-txt-color', 'sl-lu-w', 'sl-lu-f', 'sl-lu-op', 'sl-lu-logo-size', 'sl-lu-logo-size-h', 'sl-lu-logo-size-a',
       'ctrl-tk-show', 'ctrl-tk-scroll', 'ctrl-tk-grad', 'ctrl-tk-txt-c', 'ctrl-tk-c1', 'ctrl-tk-c2', 'sl-tk-h', 'sl-tk-f', 'sl-tk-op',
-      'sl-pen-board-scale', 'sl-pen-board-txt', 'sl-pen-logo-size', 'sl-pen-logo-size-h', 'sl-pen-logo-size-a'
+      'sl-pen-board-scale', 'sl-pen-board-txt', 'sl-pen-logo-size', 'sl-pen-logo-size-h', 'sl-pen-logo-size-a',
+      'ctrl-tgt-grad', 'ctrl-tgt-c1', 'ctrl-tgt-c2', 'ctrl-sb-grad', 'ctrl-sb-bg-c1', 'ctrl-sb-bg-c2'
     ];
 
     function getVisualDOMState() {
@@ -1305,9 +1359,6 @@
       root.style.setProperty('--pen-logo-size-h', document.getElementById('sl-pen-logo-size-h').value + 'px');
       root.style.setProperty('--pen-logo-size-a', document.getElementById('sl-pen-logo-size-a').value + 'px');
       
-      root.style.setProperty('--pen-board-scale', document.getElementById('sl-pen-board-scale').value);
-      root.style.setProperty('--pen-board-txt', document.getElementById('sl-pen-board-txt').value + 'px');
-      
       // Update variables locally so they don't reset on the next broadcast (e.g. bulb click)
       vPenBoardScale = document.getElementById('sl-pen-board-scale').value;
       vPenBoardTxt = document.getElementById('sl-pen-board-txt').value;
@@ -1359,6 +1410,19 @@
       tkWrap.style.display = tkVis ? 'flex' : 'none';
       tkTextEl.className = tkScr ? 'ticker-text scrolling' : 'ticker-text static';
       tkBgEl.style.background = tkGrad ? `linear-gradient(90deg, ${tC1} 0%, ${tC2} 100%)` : tC1;
+
+      // Handle New Scoreboard & Target Box Backgrounds locally
+      const tgtWrapObj = document.getElementById('targets-wrapper');
+      const tgtGradChecked = document.getElementById('ctrl-tgt-grad').checked;
+      const tgtC1 = document.getElementById('ctrl-tgt-c1').value;
+      const tgtC2 = document.getElementById('ctrl-tgt-c2').value;
+      tgtWrapObj.style.background = tgtGradChecked ? `linear-gradient(135deg, ${tgtC1} 0%, ${tgtC2} 100%)` : tgtC1;
+
+      const sbWrapObj = document.getElementById('sb-wrap-element');
+      const sbGradChecked = document.getElementById('ctrl-sb-grad').checked;
+      const sbC1 = document.getElementById('ctrl-sb-bg-c1').value;
+      const sbC2 = document.getElementById('ctrl-sb-bg-c2').value;
+      sbWrapObj.style.background = sbGradChecked ? `linear-gradient(135deg, ${sbC1} 0%, ${sbC2} 100%)` : sbC1;
     }
 
     // Explicit Layout Synchronization Button
@@ -1387,6 +1451,13 @@
       
       vPenBoardScale = document.getElementById('sl-pen-board-scale').value;
       vPenBoardTxt = document.getElementById('sl-pen-board-txt').value;
+
+      tgtUseGrad = document.getElementById('ctrl-tgt-grad').checked;
+      tgtBgC1 = document.getElementById('ctrl-tgt-c1').value;
+      tgtBgC2 = document.getElementById('ctrl-tgt-c2').value;
+      sbUseGrad = document.getElementById('ctrl-sb-grad').checked;
+      sbBgC1 = document.getElementById('ctrl-sb-bg-c1').value;
+      sbBgC2 = document.getElementById('ctrl-sb-bg-c2').value;
 
       broadcastState();
     }
