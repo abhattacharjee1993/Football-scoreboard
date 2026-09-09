@@ -12,11 +12,14 @@
       --sb-scale: 1;
       --target-scale: 1;
       --logo-size: 55px;
+      --logo-size-h: 55px;
+      --logo-size-a: 55px;
 
       --f-team: 17px;
       --f-score: 44px;
       --f-time: 34px;
       --f-tourney: 12px;
+      --tourney-logo-size: 20px;
       --f-tgt-label: 13px;
       --f-tgt-val: 30px;
 
@@ -27,6 +30,8 @@
       --lu-f: 16px;
       --lu-bg-op: 0.85;
       --lu-logo-size: 30px;
+      --lu-logo-size-h: 30px;
+      --lu-logo-size-a: 30px;
 
       /* Ticker Variables */
       --tk-h: 40px;
@@ -37,6 +42,9 @@
       /* New Penalty Board Variables */
       --pen-board-scale: 1;
       --pen-board-txt: 16px;
+      --pen-logo-size: 35px;
+      --pen-logo-size-h: 35px;
+      --pen-logo-size-a: 35px;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
@@ -48,6 +56,11 @@
       width: 100vw;
       height: 100vh;
       position: relative;
+    }
+
+    /* Prevents Broken Images from showing */
+    img[src=""], img:not([src]) {
+      display: none !important;
     }
 
     /* Subscriber Count Widget */
@@ -99,10 +112,13 @@
       text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid rgba(255,255,255,0.2);
     }
     .lineup-logo {
-      width: var(--lu-logo-size); height: var(--lu-logo-size); object-fit: contain;
+      object-fit: contain;
       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6)); border-radius: 50%;
       transition: width 0.2s, height 0.2s;
     }
+    #home-lu-logo { width: var(--lu-logo-size-h); height: var(--lu-logo-size-h); }
+    #away-lu-logo { width: var(--lu-logo-size-a); height: var(--lu-logo-size-a); }
+
     .lineup-list {
       display: flex; flex-direction: column; padding: 12px 20px; gap: 8px;
     }
@@ -120,12 +136,19 @@
       transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.3s;
     }
     .tournament-top-bar {
-      background: #111; color: var(--sb-txt); padding: 4px 10px; font-size: var(--f-tourney);
+      background: #111; color: var(--sb-txt); padding: 6px 10px; font-size: var(--f-tourney);
       font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
       border: 2px solid rgba(255, 255, 255, 0.18); border-bottom: none; border-radius: 8px 8px 0 0;
       box-shadow: 0 -4px 12px rgba(0,0,0,0.6); z-index: 10; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-      text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: font-size 0.2s, color 0.2s;
+      display: flex; justify-content: center; align-items: center; gap: 8px; height: auto;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: font-size 0.2s, color 0.2s;
     }
+    .tourney-logo {
+      width: var(--tourney-logo-size); height: var(--tourney-logo-size);
+      object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
+      transition: width 0.2s, height 0.2s;
+    }
+
     .scoreboard-wrap {
       display: inline-flex; align-items: center; background: rgba(12, 14, 18, 0.95);
       border-radius: 0 0 8px 8px; border: 2px solid rgba(255, 255, 255, 0.18);
@@ -144,9 +167,12 @@
     .red-card { width: 8px; height: 12px; background: #ef4444; border-radius: 2px; box-shadow: 0 0 3px rgba(0,0,0,0.8); }
 
     .team-logo {
-      width: var(--logo-size); height: var(--logo-size); object-fit: contain;
+      object-fit: contain;
       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6)); border-radius: 50%; transition: width 0.2s, height 0.2s;
     }
+    #home-logo-display { width: var(--logo-size-h); height: var(--logo-size-h); }
+    #away-logo-display { width: var(--logo-size-a); height: var(--logo-size-a); }
+
     .team-abbr {
       color: var(--sb-txt); font-size: var(--f-team); letter-spacing: 0.8px; text-transform: uppercase;
       white-space: nowrap; text-shadow: 1px 1px 3px rgba(0,0,0,0.9); transition: font-size 0.2s, color 0.2s;
@@ -199,7 +225,10 @@
       font-family: 'Montserrat', sans-serif; font-size: var(--pen-board-txt); font-weight: 800; 
       text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
     }
-    .large-pen-logo { width: 35px; height: 35px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
+    .large-pen-logo { object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); transition: width 0.2s, height 0.2s; }
+    #large-pen-h-logo { width: var(--pen-logo-size-h); height: var(--pen-logo-size-h); }
+    #large-pen-a-logo { width: var(--pen-logo-size-a); height: var(--pen-logo-size-a); }
+
     .large-pen-bulbs { display: flex; gap: 10px; }
     .l-pen-bulb { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #888; background: #ddd; box-shadow: inset 0 0 3px rgba(0,0,0,0.2); transition: background 0.2s; }
     .l-pen-bulb.scored { background: #22c55e; border-color: #16a34a; box-shadow: 0 0 5px #22c55e; }
@@ -229,7 +258,7 @@
     .controller-panel {
       position: absolute; top: 120px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column;
       background: rgba(16, 20, 26, 0.95); padding: 20px; border-radius: 12px; border: 2px solid #333; width: 950px;
-      color: #fff; max-height: calc(100vh - 140px); overflow-y: auto; z-index: 100; box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+      color: #fff; max-height: calc(100vh - 140px); z-index: 100; box-shadow: 0 20px 50px rgba(0,0,0,0.9);
       transition: width 0.3s ease;
     }
     .controls-body {
@@ -351,7 +380,7 @@
     <div class="lineup-bg" id="home-lineup-bg"></div>
     <div class="lineup-content">
       <div class="lineup-header">
-        <img class="lineup-logo" id="home-lu-logo" src="mbsg.webp" alt="Home Logo">
+        <img class="lineup-logo" id="home-lu-logo" src="mbsg.webp" alt="Home Logo" onerror="this.style.display='none'">
         <span id="home-lineup-header-text">Mohun Bagan SG</span>
       </div>
       <div class="lineup-list" id="home-lineup-list"></div>
@@ -363,18 +392,21 @@
     <div class="lineup-content">
       <div class="lineup-header">
         <span id="away-lineup-header-text">East Bengal</span>
-        <img class="lineup-logo" id="away-lu-logo" src="ebfc.png" alt="Away Logo">
+        <img class="lineup-logo" id="away-lu-logo" src="ebfc.png" alt="Away Logo" onerror="this.style.display='none'">
       </div>
       <div class="lineup-list" id="away-lineup-list"></div>
     </div>
   </div>
 
   <div class="scoreboard-master" id="scoreboard-master">
-    <div class="tournament-top-bar" id="tournament-name-display">CFL 26-27</div>
+    <div class="tournament-top-bar" id="tournament-bar-display">
+      <img class="tourney-logo" id="tourney-logo-display" style="display:none;" onerror="this.style.display='none'">
+      <span id="tournament-name-display">CFL 26-27</span>
+    </div>
     <div class="scoreboard-wrap" id="sb-wrap-element">
       <div class="team-cell" id="home-bg">
         <div class="red-cards home" id="home-red-cards"></div>
-        <img class="team-logo" id="home-logo-display" src="mbsg.webp" alt="Home">
+        <img class="team-logo" id="home-logo-display" src="mbsg.webp" alt="Home" onerror="this.style.display='none'">
         <span class="team-abbr" id="home-name-display">Mohun Bagan SG</span>
       </div>
       <div class="score-digit">
@@ -387,7 +419,7 @@
       </div>
       <div class="team-cell" id="away-bg">
         <span class="team-abbr" id="away-name-display">East Bengal</span>
-        <img class="team-logo" id="away-logo-display" src="ebfc.png" alt="Away">
+        <img class="team-logo" id="away-logo-display" src="ebfc.png" alt="Away" onerror="this.style.display='none'">
         <div class="red-cards" id="away-red-cards"></div>
       </div>
       <div class="timer-cell">
@@ -406,14 +438,14 @@
   <div class="large-penalty-board" id="large-penalty-board">
     <div class="large-pen-row">
       <div class="large-pen-team">
-        <img class="large-pen-logo" id="large-pen-h-logo" src="mbsg.webp">
+        <img class="large-pen-logo" id="large-pen-h-logo" src="mbsg.webp" onerror="this.style.display='none'">
         <span id="large-pen-h-name">Mohun Bagan SG</span>
       </div>
       <div class="large-pen-bulbs" id="large-pen-h-bulbs"></div>
     </div>
     <div class="large-pen-row">
       <div class="large-pen-team">
-        <img class="large-pen-logo" id="large-pen-a-logo" src="ebfc.png">
+        <img class="large-pen-logo" id="large-pen-a-logo" src="ebfc.png" onerror="this.style.display='none'">
         <span id="large-pen-a-name">East Bengal</span>
       </div>
       <div class="large-pen-bulbs" id="large-pen-a-bulbs"></div>
@@ -434,7 +466,9 @@
         <span style="font-weight: 800; font-size: 18px; color: #fff; letter-spacing: 1px;">MASTER CONTROL SUITE</span>
         <span class="layout-name-badge" id="current-layout-badge">Layout: Default</span>
       </div>
-      <div style="display: flex; gap: 8px;">
+      <div style="display: flex; gap: 8px; pointer-events: auto;">
+        <button class="ctrl-btn" onclick="undoVisuals()" title="Undo last layout change">Undo</button>
+        <button class="ctrl-btn" onclick="redoVisuals()" title="Redo last layout change">Redo</button>
         <button class="ctrl-btn sync-btn" onclick="syncVisuals()">SYNC LAYOUT TO STREAM</button>
         <button class="ctrl-btn" onclick="saveLayout()">Save</button>
         <button class="ctrl-btn" onclick="saveLayoutAs()">Save As</button>
@@ -458,7 +492,8 @@
           </div>
           <div style="display: flex; align-items: center; gap: 8px;">
             <span style="font-size: 12px; font-weight: bold;">Tournament:</span>
-            <input type="text" class="auto-text" id="ctrl-tournament-name" value="CFL 26-27" style="width: 200px;" onkeydown="if(event.key === 'Enter') { this.blur(); }" onblur="syncTexts()">
+            <input type="file" accept="image/*" id="ctrl-t-logo" style="width: 75px; font-size: 10px; color: #aaa;" onchange="processLogo(event, 'tourney')" title="Tournament Logo">
+            <input type="text" class="auto-text" id="ctrl-tournament-name" value="CFL 26-27" style="width: 150px;" onkeydown="if(event.key === 'Enter') { this.blur(); }" onblur="syncTexts()">
           </div>
         </div>
 
@@ -523,7 +558,11 @@
           <span class="section-title">Scoreboard Layout Settings (Local Preview)</span>
           <div class="slider-container"><span>Text Color</span><input type="color" id="ctrl-sb-txt-color" value="#ffffff" oninput="applyVisualsLocally()"></div>
           <div class="slider-container"><span>Overall Size</span><input type="range" id="sl-sb-scale" min="0.5" max="2" step="0.05" value="1" oninput="applyVisualsLocally()"></div>
-          <div class="slider-container"><span>Logo Size</span><input type="range" id="sl-logo-size" min="20" max="100" value="55" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>Tourney Font</span><input type="range" id="sl-f-tourney" min="8" max="30" value="12" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>Tourney Logo</span><input type="range" id="sl-tourney-logo-size" min="10" max="60" value="20" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>Logo Size (Both)</span><input type="range" id="sl-logo-size" min="20" max="100" value="55" oninput="syncBothLogos('sb')"></div>
+          <div class="slider-container"><span>Home Logo Size</span><input type="range" id="sl-logo-size-h" min="20" max="100" value="55" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>Away Logo Size</span><input type="range" id="sl-logo-size-a" min="20" max="100" value="55" oninput="applyVisualsLocally()"></div>
           <div class="slider-container"><span>Team Font</span><input type="range" id="sl-f-team" min="10" max="40" value="17" oninput="applyVisualsLocally()"></div>
           <div class="slider-container"><span>Score Font</span><input type="range" id="sl-f-score" min="20" max="80" value="44" oninput="applyVisualsLocally()"></div>
           <div class="slider-container"><span>Time Font</span><input type="range" id="sl-f-time" min="15" max="60" value="34" oninput="applyVisualsLocally()"></div>
@@ -592,7 +631,9 @@
           <div class="slider-container"><span>Panel Width</span><input type="range" id="sl-lu-w" min="150" max="400" value="260" oninput="applyVisualsLocally()"></div>
           <div class="slider-container"><span>Font Size</span><input type="range" id="sl-lu-f" min="10" max="30" value="16" oninput="applyVisualsLocally()"></div>
           <div class="slider-container"><span>BG Opacity</span><input type="range" id="sl-lu-op" min="0.2" max="1" step="0.05" value="0.85" oninput="applyVisualsLocally()"></div>
-          <div class="slider-container"><span>Logo Size</span><input type="range" id="sl-lu-logo-size" min="15" max="80" value="30" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>Logo Size (Both)</span><input type="range" id="sl-lu-logo-size" min="15" max="80" value="30" oninput="syncBothLogos('lu')"></div>
+          <div class="slider-container"><span>Home Logo Size</span><input type="range" id="sl-lu-logo-size-h" min="15" max="80" value="30" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>Away Logo Size</span><input type="range" id="sl-lu-logo-size-a" min="15" max="80" value="30" oninput="applyVisualsLocally()"></div>
         </div>
       </div>
 
@@ -649,6 +690,9 @@
           <span class="section-title">Large Penalty Board Layout (Local Preview)</span>
           <div class="slider-container"><span>Panel Size</span><input type="range" id="sl-pen-board-scale" min="0.5" max="2" step="0.05" value="1" oninput="applyVisualsLocally()"></div>
           <div class="slider-container"><span>Text Size</span><input type="range" id="sl-pen-board-txt" min="10" max="30" value="16" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>Logo Size (Both)</span><input type="range" id="sl-pen-logo-size" min="15" max="100" value="35" oninput="syncBothLogos('pen')"></div>
+          <div class="slider-container"><span>Home Logo Size</span><input type="range" id="sl-pen-logo-size-h" min="15" max="100" value="35" oninput="applyVisualsLocally()"></div>
+          <div class="slider-container"><span>Away Logo Size</span><input type="range" id="sl-pen-logo-size-a" min="15" max="100" value="35" oninput="applyVisualsLocally()"></div>
         </div>
       </div>
 
@@ -708,19 +752,21 @@
       const lastLoaded = localStorage.getItem('suiLastLoadedLayout');
       if (lastLoaded && savedLayouts[lastLoaded]) loadLayoutState(lastLoaded);
       else loadLayoutState("Default");
+      
+      initHistory(); // Initialize the Undo/Redo tracking
     }
 
     function saveToStorage() { localStorage.setItem('suiSavedLayouts', JSON.stringify(savedLayouts)); }
 
     function getCurrentLayoutState() {
       return {
-        tournamentName, likeTargetVal, subTargetVal, hName, aName, hC1, hC2, aC1, aC2, hLogo, aLogo, hLineupStr, aLineupStr,
+        tournamentName, likeTargetVal, subTargetVal, hName, aName, hC1, hC2, aC1, aC2, hLogo, aLogo, tLogo, hLineupStr, aLineupStr,
         tkText, isTkVis, isTkScroll, useTkGrad, tkC1, tkC2, tkTxtC, vTkH, vTkF, vTkOp,
         isScoreboardVisible, isLineupsVisible, useGradient, showLuLogo, sbTxtColor, luTxtColor,
-        vSbScale, vTgtScale, vLogoSize, vFTeam, vFScore, vFTime, vFTourney, vFTgtLbl, vFTgtVal,
-        vLuWidth, vLuFont, vLuOpacity, vLuLogoSize,
+        vSbScale, vTgtScale, vLogoSizeH, vLogoSizeA, vFTeam, vFScore, vFTime, vFTourney, vTourneyLogoSize, vFTgtLbl, vFTgtVal,
+        vLuWidth, vLuFont, vLuOpacity, vLuLogoSizeH, vLuLogoSizeA,
         isPenVis, hPens, aPens, hRed, aRed,
-        vPenBoardScale, vPenBoardTxt
+        vPenBoardScale, vPenBoardTxt, vPenLogoSizeH, vPenLogoSizeA
       };
     }
 
@@ -738,6 +784,7 @@
       hC1 = layout.hC1 !== undefined ? layout.hC1 : hC1; hC2 = layout.hC2 !== undefined ? layout.hC2 : hC2;
       aC1 = layout.aC1 !== undefined ? layout.aC1 : aC1; aC2 = layout.aC2 !== undefined ? layout.aC2 : aC2;
       hLogo = layout.hLogo !== undefined ? layout.hLogo : hLogo; aLogo = layout.aLogo !== undefined ? layout.aLogo : aLogo;
+      tLogo = layout.tLogo !== undefined ? layout.tLogo : tLogo;
       hLineupStr = layout.hLineupStr !== undefined ? layout.hLineupStr : hLineupStr; aLineupStr = layout.aLineupStr !== undefined ? layout.aLineupStr : aLineupStr;
 
       tkText = layout.tkText !== undefined ? layout.tkText : tkText; isTkVis = layout.isTkVis !== undefined ? layout.isTkVis : isTkVis;
@@ -751,10 +798,13 @@
       showLuLogo = layout.showLuLogo !== undefined ? layout.showLuLogo : showLuLogo;
       sbTxtColor = layout.sbTxtColor !== undefined ? layout.sbTxtColor : sbTxtColor; luTxtColor = layout.luTxtColor !== undefined ? layout.luTxtColor : luTxtColor;
 
-      vSbScale = layout.vSbScale !== undefined ? layout.vSbScale : vSbScale; vTgtScale = layout.vTgtScale !== undefined ? layout.vTgtScale : vTgtScale; vLogoSize = layout.vLogoSize !== undefined ? layout.vLogoSize : vLogoSize;
+      vSbScale = layout.vSbScale !== undefined ? layout.vSbScale : vSbScale; vTgtScale = layout.vTgtScale !== undefined ? layout.vTgtScale : vTgtScale; 
+      vLogoSizeH = layout.vLogoSizeH !== undefined ? layout.vLogoSizeH : vLogoSizeH; vLogoSizeA = layout.vLogoSizeA !== undefined ? layout.vLogoSizeA : vLogoSizeA;
       vFTeam = layout.vFTeam !== undefined ? layout.vFTeam : vFTeam; vFScore = layout.vFScore !== undefined ? layout.vFScore : vFScore; vFTime = layout.vFTime !== undefined ? layout.vFTime : vFTime;
-      vFTourney = layout.vFTourney !== undefined ? layout.vFTourney : vFTourney; vFTgtLbl = layout.vFTgtLbl !== undefined ? layout.vFTgtLbl : vFTgtLbl; vFTgtVal = layout.vFTgtVal !== undefined ? layout.vFTgtVal : vFTgtVal;
-      vLuWidth = layout.vLuWidth !== undefined ? layout.vLuWidth : vLuWidth; vLuFont = layout.vLuFont !== undefined ? layout.vLuFont : vLuFont; vLuOpacity = layout.vLuOpacity !== undefined ? layout.vLuOpacity : vLuOpacity; vLuLogoSize = layout.vLuLogoSize !== undefined ? layout.vLuLogoSize : vLuLogoSize;
+      vFTourney = layout.vFTourney !== undefined ? layout.vFTourney : vFTourney; vTourneyLogoSize = layout.vTourneyLogoSize !== undefined ? layout.vTourneyLogoSize : vTourneyLogoSize;
+      vFTgtLbl = layout.vFTgtLbl !== undefined ? layout.vFTgtLbl : vFTgtLbl; vFTgtVal = layout.vFTgtVal !== undefined ? layout.vFTgtVal : vFTgtVal;
+      vLuWidth = layout.vLuWidth !== undefined ? layout.vLuWidth : vLuWidth; vLuFont = layout.vLuFont !== undefined ? layout.vLuFont : vLuFont; vLuOpacity = layout.vLuOpacity !== undefined ? layout.vLuOpacity : vLuOpacity; 
+      vLuLogoSizeH = layout.vLuLogoSizeH !== undefined ? layout.vLuLogoSizeH : vLuLogoSizeH; vLuLogoSizeA = layout.vLuLogoSizeA !== undefined ? layout.vLuLogoSizeA : vLuLogoSizeA;
 
       isPenVis = layout.isPenVis !== undefined ? layout.isPenVis : isPenVis;
       hPens = layout.hPens !== undefined ? layout.hPens : hPens;
@@ -765,12 +815,16 @@
       
       vPenBoardScale = layout.vPenBoardScale !== undefined ? layout.vPenBoardScale : vPenBoardScale;
       vPenBoardTxt = layout.vPenBoardTxt !== undefined ? layout.vPenBoardTxt : vPenBoardTxt;
+      vPenLogoSizeH = layout.vPenLogoSizeH !== undefined ? layout.vPenLogoSizeH : vPenLogoSizeH;
+      vPenLogoSizeA = layout.vPenLogoSizeA !== undefined ? layout.vPenLogoSizeA : vPenLogoSizeA;
 
       syncInputsToVariables();
       applyVisualsLocally();
       renderPenaltiesLocal();
       renderRedCards();
       broadcastState();
+      
+      initHistory(); // Reset visual history when a new layout is loaded
     }
 
     function saveLayout() {
@@ -840,28 +894,28 @@
     let hScore = 0, aScore = 0, secs = 0, timerId = null, running = false;
     let tournamentName = "CFL 26-27"; let likeTargetVal = "25", subTargetVal = "900"; let matchStatus = ""; let injuryTime = "";
     let hName = "Mohun Bagan SG", aName = "East Bengal"; let hC1 = "#7c1830", hC2 = "#005a36", aC1 = "#d31122", aC2 = "#f6b200";
-    let hLogo = "mbsg.webp", aLogo = "ebfc.png";
+    let hLogo = "mbsg.webp", aLogo = "ebfc.png", tLogo = "";
     let hLineupStr = "Vishal (GK)\nAsish\nAlberto\nSubhasish\nListon\nThapa\nApuia\nSahal\nCummings\nPetratos\nStewart";
     let aLineupStr = "Gill (GK)\nRakte\nAnwar\nYuste\nNishu\nJeakson\nSaul\nNandhakha\nCleiton\nMahesh\nDiamantakos";
     let tkText = "Welcome to Sports Unplugged India! Please Like and Subscribe to the channel.";
     let isTkVis = true, isTkScroll = true, useTkGrad = true; let tkC1 = "#1a202c", tkC2 = "#2d3748", tkTxtC = "#ffffff";
     let vTkH = 40, vTkF = 22, vTkOp = 0.9;
     let isScoreboardVisible = true; let isLineupsVisible = false; let useGradient = true; let showLuLogo = true;
-    let sbTxtColor = "#ffffff", luTxtColor = "#ffffff"; let vSbScale = 1, vTgtScale = 1, vLogoSize = 55;
-    let vFTeam = 17, vFScore = 44, vFTime = 34, vFTourney = 12, vFTgtLbl = 13, vFTgtVal = 30;
-    let vLuWidth = 260, vLuFont = 16, vLuOpacity = 0.85, vLuLogoSize = 30;
+    let sbTxtColor = "#ffffff", luTxtColor = "#ffffff"; let vSbScale = 1, vTgtScale = 1;
+    let vLogoSizeH = 55, vLogoSizeA = 55;
+    let vFTeam = 17, vFScore = 44, vFTime = 34, vFTourney = 12, vTourneyLogoSize = 20, vFTgtLbl = 13, vFTgtVal = 30;
+    let vLuWidth = 260, vLuFont = 16, vLuOpacity = 0.85, vLuLogoSizeH = 30, vLuLogoSizeA = 30;
 
-    // Red Cards State
+    // Penalty & Red Card variables
     let hRed = 0, aRed = 0;
-
-    // Penalty variables
     let isPenVis = false;
     let hPens = [0,0,0,0,0], aPens = [0,0,0,0,0]; // 0=empty, 1=scored, 2=missed
-    let vPenBoardScale = 1, vPenBoardTxt = 16;
+    let vPenBoardScale = 1, vPenBoardTxt = 16, vPenLogoSizeH = 35, vPenLogoSizeA = 35;
 
     // DOM Elements
     const hEl = document.getElementById('home-score'); const aEl = document.getElementById('away-score');
     const tEl = document.getElementById('timer'); const tNameEl = document.getElementById('tournament-name-display');
+    const tLogoDisplay = document.getElementById('tourney-logo-display');
     const likeEl = document.getElementById('like-target-display'); const subEl = document.getElementById('sub-target-display');
     const hNameDisplay = document.getElementById('home-name-display'); const aNameDisplay = document.getElementById('away-name-display');
     const hBg = document.getElementById('home-bg'); const aBg = document.getElementById('away-bg');
@@ -891,7 +945,8 @@
         matchStatus = data.matchStatus !== undefined ? data.matchStatus : matchStatus; injuryTime = data.injuryTime !== undefined ? data.injuryTime : injuryTime;
         tournamentName = data.tournamentName || tournamentName; likeTargetVal = data.likeTargetVal || likeTargetVal; subTargetVal = data.subTargetVal || subTargetVal;
         hName = data.hName || hName; aName = data.aName || aName; hC1 = data.hC1 || hC1; hC2 = data.hC2 || hC2; aC1 = data.aC1 || aC1; aC2 = data.aC2 || aC2;
-        hLogo = data.hLogo || hLogo; aLogo = data.aLogo || aLogo; hLineupStr = data.hLineupStr || hLineupStr; aLineupStr = data.aLineupStr || aLineupStr;
+        hLogo = data.hLogo !== undefined ? data.hLogo : hLogo; aLogo = data.aLogo !== undefined ? data.aLogo : aLogo; tLogo = data.tLogo !== undefined ? data.tLogo : tLogo;
+        hLineupStr = data.hLineupStr || hLineupStr; aLineupStr = data.aLineupStr || aLineupStr;
         tkText = data.tkText || tkText; isTkVis = data.isTkVis !== undefined ? data.isTkVis : isTkVis; isTkScroll = data.isTkScroll !== undefined ? data.isTkScroll : isTkScroll; 
         useTkGrad = data.useTkGrad !== undefined ? data.useTkGrad : useTkGrad; tkC1 = data.tkC1 || tkC1; tkC2 = data.tkC2 || tkC2; tkTxtC = data.tkTxtC || tkTxtC;
         vTkH = data.vTkH || vTkH; vTkF = data.vTkF || vTkF; vTkOp = data.vTkOp || vTkOp;
@@ -899,16 +954,21 @@
         isLineupsVisible = data.isLineupsVisible !== undefined ? data.isLineupsVisible : isLineupsVisible;
         useGradient = data.useGradient !== undefined ? data.useGradient : useGradient; showLuLogo = data.showLuLogo !== undefined ? data.showLuLogo : showLuLogo;
         sbTxtColor = data.sbTxtColor || sbTxtColor; luTxtColor = data.luTxtColor || luTxtColor;
-        vSbScale = data.vSbScale || vSbScale; vTgtScale = data.vTgtScale || vTgtScale; vLogoSize = data.vLogoSize || vLogoSize;
+        vSbScale = data.vSbScale || vSbScale; vTgtScale = data.vTgtScale || vTgtScale; 
+        vLogoSizeH = data.vLogoSizeH !== undefined ? data.vLogoSizeH : vLogoSizeH; vLogoSizeA = data.vLogoSizeA !== undefined ? data.vLogoSizeA : vLogoSizeA;
         vFTeam = data.vFTeam || vFTeam; vFScore = data.vFScore || vFScore; vFTime = data.vFTime || vFTime; 
-        vFTourney = data.vFTourney || vFTourney; vFTgtLbl = data.vFTgtLbl || vFTgtLbl; vFTgtVal = data.vFTgtVal || vFTgtVal;
-        vLuWidth = data.vLuWidth || vLuWidth; vLuFont = data.vLuFont || vLuFont; vLuOpacity = data.vLuOpacity || vLuOpacity; vLuLogoSize = data.vLuLogoSize || vLuLogoSize;
+        vFTourney = data.vFTourney || vFTourney; vTourneyLogoSize = data.vTourneyLogoSize !== undefined ? data.vTourneyLogoSize : vTourneyLogoSize;
+        vFTgtLbl = data.vFTgtLbl || vFTgtLbl; vFTgtVal = data.vFTgtVal || vFTgtVal;
+        vLuWidth = data.vLuWidth || vLuWidth; vLuFont = data.vLuFont || vLuFont; vLuOpacity = data.vLuOpacity || vLuOpacity; 
+        vLuLogoSizeH = data.vLuLogoSizeH !== undefined ? data.vLuLogoSizeH : vLuLogoSizeH; vLuLogoSizeA = data.vLuLogoSizeA !== undefined ? data.vLuLogoSizeA : vLuLogoSizeA;
 
         isPenVis = data.isPenVis !== undefined ? data.isPenVis : isPenVis;
         hPens = data.hPens !== undefined ? data.hPens : hPens;
         aPens = data.aPens !== undefined ? data.aPens : aPens;
         vPenBoardScale = data.vPenBoardScale !== undefined ? data.vPenBoardScale : vPenBoardScale;
         vPenBoardTxt = data.vPenBoardTxt !== undefined ? data.vPenBoardTxt : vPenBoardTxt;
+        vPenLogoSizeH = data.vPenLogoSizeH !== undefined ? data.vPenLogoSizeH : vPenLogoSizeH;
+        vPenLogoSizeA = data.vPenLogoSizeA !== undefined ? data.vPenLogoSizeA : vPenLogoSizeA;
         
         hRed = data.hRed !== undefined ? data.hRed : hRed;
         aRed = data.aRed !== undefined ? data.aRed : aRed;
@@ -917,6 +977,8 @@
         hEl.textContent = hScore; aEl.textContent = aScore; likeEl.textContent = likeTargetVal; subEl.textContent = subTargetVal;
         tNameEl.textContent = tournamentName; hNameDisplay.textContent = hName; aNameDisplay.textContent = aName;
         hLogoDisplay.src = hLogo; aLogoDisplay.src = aLogo; hLuLogoDisplay.src = hLogo; aLuLogoDisplay.src = aLogo;
+        tLogoDisplay.src = tLogo; tLogoDisplay.style.display = tLogo ? 'block' : 'none';
+        
         hLuHeaderText.textContent = hName; aLuHeaderText.textContent = aName; tkTextEl.textContent = tkText;
         hLuList.innerHTML = hLineupStr.split('\n').filter(p => p.trim()).map(p => `<div class="lineup-player">${p}</div>`).join('');
         aLuList.innerHTML = aLineupStr.split('\n').filter(p => p.trim()).map(p => `<div class="lineup-player">${p}</div>`).join('');
@@ -942,15 +1004,19 @@
         const root = document.documentElement;
         root.style.setProperty('--sb-txt', sbTxtColor); root.style.setProperty('--lu-txt', luTxtColor);
         root.style.setProperty('--sb-scale', vSbScale); root.style.setProperty('--target-scale', vTgtScale);
-        root.style.setProperty('--logo-size', vLogoSize + 'px'); root.style.setProperty('--f-team', vFTeam + 'px');
+        root.style.setProperty('--f-team', vFTeam + 'px');
         root.style.setProperty('--f-score', vFScore + 'px'); root.style.setProperty('--f-time', vFTime + 'px');
-        root.style.setProperty('--f-tourney', Math.floor(vFTime * 0.35) + 'px'); 
+        root.style.setProperty('--f-tourney', vFTourney + 'px'); root.style.setProperty('--tourney-logo-size', vTourneyLogoSize + 'px');
         root.style.setProperty('--f-tgt-label', vFTgtLbl + 'px'); root.style.setProperty('--f-tgt-val', vFTgtVal + 'px');
         root.style.setProperty('--lu-w', vLuWidth + 'px'); root.style.setProperty('--lu-f', vLuFont + 'px');
-        root.style.setProperty('--lu-bg-op', vLuOpacity); root.style.setProperty('--lu-logo-size', vLuLogoSize + 'px');
+        root.style.setProperty('--lu-bg-op', vLuOpacity); 
         root.style.setProperty('--tk-h', vTkH + 'px'); root.style.setProperty('--tk-f', vTkF + 'px');
         root.style.setProperty('--tk-op', vTkOp); root.style.setProperty('--tk-txt-c', tkTxtC);
+        
+        root.style.setProperty('--logo-size-h', vLogoSizeH + 'px'); root.style.setProperty('--logo-size-a', vLogoSizeA + 'px');
+        root.style.setProperty('--lu-logo-size-h', vLuLogoSizeH + 'px'); root.style.setProperty('--lu-logo-size-a', vLuLogoSizeA + 'px');
         root.style.setProperty('--pen-board-scale', vPenBoardScale); root.style.setProperty('--pen-board-txt', vPenBoardTxt + 'px');
+        root.style.setProperty('--pen-logo-size-h', vPenLogoSizeH + 'px'); root.style.setProperty('--pen-logo-size-a', vPenLogoSizeA + 'px');
         
         if (urlParams.get('view') !== 'overlay') { 
           syncInputsToVariables();
@@ -973,11 +1039,14 @@
       document.getElementById('ctrl-sb-txt-color').value = sbTxtColor; document.getElementById('ctrl-lu-txt-color').value = luTxtColor;
       
       document.getElementById('sl-sb-scale').value = vSbScale; document.getElementById('sl-tgt-scale').value = vTgtScale;
-      document.getElementById('sl-logo-size').value = vLogoSize; document.getElementById('sl-f-team').value = vFTeam;
-      document.getElementById('sl-f-score').value = vFScore; document.getElementById('sl-f-time').value = vFTime;
+      
+      document.getElementById('sl-logo-size-h').value = vLogoSizeH; document.getElementById('sl-logo-size-a').value = vLogoSizeA;
+      document.getElementById('sl-f-team').value = vFTeam; document.getElementById('sl-f-score').value = vFScore; document.getElementById('sl-f-time').value = vFTime;
+      document.getElementById('sl-f-tourney').value = vFTourney; document.getElementById('sl-tourney-logo-size').value = vTourneyLogoSize;
       document.getElementById('sl-f-tgt-lbl').value = vFTgtLbl; document.getElementById('sl-f-tgt-val').value = vFTgtVal;
       document.getElementById('sl-lu-w').value = vLuWidth; document.getElementById('sl-lu-f').value = vLuFont; 
-      document.getElementById('sl-lu-op').value = vLuOpacity; document.getElementById('sl-lu-logo-size').value = vLuLogoSize;
+      document.getElementById('sl-lu-op').value = vLuOpacity; 
+      document.getElementById('sl-lu-logo-size-h').value = vLuLogoSizeH; document.getElementById('sl-lu-logo-size-a').value = vLuLogoSizeA;
       
       document.getElementById('ctrl-tk-show').checked = isTkVis; document.getElementById('ctrl-tk-scroll').checked = isTkScroll;
       document.getElementById('ctrl-tk-grad').checked = useTkGrad; document.getElementById('ctrl-tk-c1').value = tkC1;
@@ -985,11 +1054,14 @@
       document.getElementById('sl-tk-h').value = vTkH; document.getElementById('sl-tk-f').value = vTkF; document.getElementById('sl-tk-op').value = vTkOp;
       
       document.getElementById('sl-pen-board-scale').value = vPenBoardScale; document.getElementById('sl-pen-board-txt').value = vPenBoardTxt;
+      document.getElementById('sl-pen-logo-size-h').value = vPenLogoSizeH; document.getElementById('sl-pen-logo-size-a').value = vPenLogoSizeA;
 
       document.getElementById('ctrl-h-red').textContent = hRed; document.getElementById('ctrl-a-red').textContent = aRed;
 
       document.getElementById('ctrl-pen-h-name').textContent = hName + " Penalties";
       document.getElementById('ctrl-pen-a-name').textContent = aName + " Penalties";
+      
+      renderRedCards();
       renderPenaltiesLocal();
     }
 
@@ -998,11 +1070,12 @@
         channel: 'kolkata_derby_live_stream_channel',
         message: { 
           hScore, aScore, secs, running, matchStatus, injuryTime, tournamentName,
-          likeTargetVal, subTargetVal, hName, aName, hC1, hC2, aC1, aC2, hLogo, aLogo, hLineupStr, aLineupStr,
+          likeTargetVal, subTargetVal, hName, aName, hC1, hC2, aC1, aC2, hLogo, aLogo, tLogo, hLineupStr, aLineupStr,
           tkText, isTkVis, isTkScroll, useTkGrad, tkC1, tkC2, tkTxtC, vTkH, vTkF, vTkOp,
           isScoreboardVisible, isLineupsVisible, useGradient, showLuLogo, sbTxtColor, luTxtColor,
-          vSbScale, vTgtScale, vLogoSize, vFTeam, vFScore, vFTime, vFTourney, vFTgtLbl, vFTgtVal, vLuWidth, vLuFont, vLuOpacity, vLuLogoSize,
-          isPenVis, hPens, aPens, vPenBoardScale, vPenBoardTxt, hRed, aRed
+          vSbScale, vTgtScale, vLogoSizeH, vLogoSizeA, vFTeam, vFScore, vFTime, vFTourney, vTourneyLogoSize, vFTgtLbl, vFTgtVal, 
+          vLuWidth, vLuFont, vLuOpacity, vLuLogoSizeH, vLuLogoSizeA,
+          isPenVis, hPens, aPens, vPenBoardScale, vPenBoardTxt, vPenLogoSizeH, vPenLogoSizeA, hRed, aRed
         }
       });
     }
@@ -1119,6 +1192,94 @@
       }, 200); 
     }
     
+    // --- Linked Logo Sliders Logic ---
+    function syncBothLogos(panel) {
+      if (panel === 'sb') {
+        const val = document.getElementById('sl-logo-size').value;
+        document.getElementById('sl-logo-size-h').value = val;
+        document.getElementById('sl-logo-size-a').value = val;
+      } else if (panel === 'lu') {
+        const val = document.getElementById('sl-lu-logo-size').value;
+        document.getElementById('sl-lu-logo-size-h').value = val;
+        document.getElementById('sl-lu-logo-size-a').value = val;
+      } else if (panel === 'pen') {
+        const val = document.getElementById('sl-pen-logo-size').value;
+        document.getElementById('sl-pen-logo-size-h').value = val;
+        document.getElementById('sl-pen-logo-size-a').value = val;
+      }
+      applyVisualsLocally();
+    }
+    
+    // --- Visual History Engine for Undo/Redo ---
+    let undoStack = [];
+    let redoStack = [];
+    let currentVisualState = {};
+    
+    const visualInputIds = [
+      'ctrl-gradient', 'ctrl-h-c1', 'ctrl-h-c2', 'ctrl-a-c1', 'ctrl-a-c2',
+      'ctrl-sb-txt-color', 'sl-sb-scale', 'sl-logo-size', 'sl-logo-size-h', 'sl-logo-size-a', 'sl-f-team', 'sl-f-score', 'sl-f-time',
+      'sl-f-tourney', 'sl-tourney-logo-size',
+      'sl-tgt-scale', 'sl-f-tgt-lbl', 'sl-f-tgt-val',
+      'ctrl-lu-logo-show', 'ctrl-lu-txt-color', 'sl-lu-w', 'sl-lu-f', 'sl-lu-op', 'sl-lu-logo-size', 'sl-lu-logo-size-h', 'sl-lu-logo-size-a',
+      'ctrl-tk-show', 'ctrl-tk-scroll', 'ctrl-tk-grad', 'ctrl-tk-txt-c', 'ctrl-tk-c1', 'ctrl-tk-c2', 'sl-tk-h', 'sl-tk-f', 'sl-tk-op',
+      'sl-pen-board-scale', 'sl-pen-board-txt', 'sl-pen-logo-size', 'sl-pen-logo-size-h', 'sl-pen-logo-size-a'
+    ];
+
+    function getVisualDOMState() {
+      let state = {};
+      visualInputIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          if (el.type === 'checkbox') state[id] = el.checked;
+          else state[id] = el.value;
+        }
+      });
+      return state;
+    }
+
+    function setVisualDOMState(state) {
+      visualInputIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && state[id] !== undefined) {
+          if (el.type === 'checkbox') el.checked = state[id];
+          else el.value = state[id];
+        }
+      });
+      applyVisualsLocally();
+    }
+
+    function initHistory() {
+      undoStack = []; redoStack = [];
+      currentVisualState = getVisualDOMState();
+      
+      visualInputIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.addEventListener('change', () => {
+            undoStack.push(currentVisualState);
+            currentVisualState = getVisualDOMState();
+            redoStack = []; // clear redo on new action
+          });
+        }
+      });
+    }
+
+    function undoVisuals() {
+      if (undoStack.length > 0) {
+        redoStack.push(currentVisualState);
+        currentVisualState = undoStack.pop();
+        setVisualDOMState(currentVisualState);
+      }
+    }
+
+    function redoVisuals() {
+      if (redoStack.length > 0) {
+        undoStack.push(currentVisualState);
+        currentVisualState = redoStack.pop();
+        setVisualDOMState(currentVisualState);
+      }
+    }
+
     // --- Visual Settings (Local Preview Only) ---
     function applyVisualsLocally() {
       const root = document.documentElement;
@@ -1126,17 +1287,23 @@
       root.style.setProperty('--lu-txt', document.getElementById('ctrl-lu-txt-color').value);
       root.style.setProperty('--sb-scale', document.getElementById('sl-sb-scale').value);
       root.style.setProperty('--target-scale', document.getElementById('sl-tgt-scale').value);
-      root.style.setProperty('--logo-size', document.getElementById('sl-logo-size').value + 'px');
       root.style.setProperty('--f-team', document.getElementById('sl-f-team').value + 'px');
       root.style.setProperty('--f-score', document.getElementById('sl-f-score').value + 'px');
       root.style.setProperty('--f-time', document.getElementById('sl-f-time').value + 'px');
-      root.style.setProperty('--f-tourney', Math.floor(document.getElementById('sl-f-time').value * 0.35) + 'px');
+      root.style.setProperty('--f-tourney', document.getElementById('sl-f-tourney').value + 'px');
+      root.style.setProperty('--tourney-logo-size', document.getElementById('sl-tourney-logo-size').value + 'px');
       root.style.setProperty('--f-tgt-label', document.getElementById('sl-f-tgt-lbl').value + 'px');
       root.style.setProperty('--f-tgt-val', document.getElementById('sl-f-tgt-val').value + 'px');
       root.style.setProperty('--lu-w', document.getElementById('sl-lu-w').value + 'px');
       root.style.setProperty('--lu-f', document.getElementById('sl-lu-f').value + 'px');
       root.style.setProperty('--lu-bg-op', document.getElementById('sl-lu-op').value);
-      root.style.setProperty('--lu-logo-size', document.getElementById('sl-lu-logo-size').value + 'px');
+      
+      root.style.setProperty('--logo-size-h', document.getElementById('sl-logo-size-h').value + 'px');
+      root.style.setProperty('--logo-size-a', document.getElementById('sl-logo-size-a').value + 'px');
+      root.style.setProperty('--lu-logo-size-h', document.getElementById('sl-lu-logo-size-h').value + 'px');
+      root.style.setProperty('--lu-logo-size-a', document.getElementById('sl-lu-logo-size-a').value + 'px');
+      root.style.setProperty('--pen-logo-size-h', document.getElementById('sl-pen-logo-size-h').value + 'px');
+      root.style.setProperty('--pen-logo-size-a', document.getElementById('sl-pen-logo-size-a').value + 'px');
       
       root.style.setProperty('--pen-board-scale', document.getElementById('sl-pen-board-scale').value);
       root.style.setProperty('--pen-board-txt', document.getElementById('sl-pen-board-txt').value + 'px');
@@ -1146,17 +1313,24 @@
       vPenBoardTxt = document.getElementById('sl-pen-board-txt').value;
       vSbScale = document.getElementById('sl-sb-scale').value; 
       vTgtScale = document.getElementById('sl-tgt-scale').value;
-      vLogoSize = document.getElementById('sl-logo-size').value; 
+      
+      vLogoSizeH = document.getElementById('sl-logo-size-h').value; 
+      vLogoSizeA = document.getElementById('sl-logo-size-a').value; 
+      vLuLogoSizeH = document.getElementById('sl-lu-logo-size-h').value; 
+      vLuLogoSizeA = document.getElementById('sl-lu-logo-size-a').value; 
+      vPenLogoSizeH = document.getElementById('sl-pen-logo-size-h').value; 
+      vPenLogoSizeA = document.getElementById('sl-pen-logo-size-a').value; 
+      
       vFTeam = document.getElementById('sl-f-team').value;
       vFScore = document.getElementById('sl-f-score').value; 
       vFTime = document.getElementById('sl-f-time').value;
-      vFTourney = Math.floor(vFTime * 0.35); 
+      vFTourney = document.getElementById('sl-f-tourney').value;
+      vTourneyLogoSize = document.getElementById('sl-tourney-logo-size').value;
       vFTgtLbl = document.getElementById('sl-f-tgt-lbl').value; 
       vFTgtVal = document.getElementById('sl-f-tgt-val').value;
       vLuWidth = document.getElementById('sl-lu-w').value; 
       vLuFont = document.getElementById('sl-lu-f').value; 
       vLuOpacity = document.getElementById('sl-lu-op').value; 
-      vLuLogoSize = document.getElementById('sl-lu-logo-size').value;
       vTkH = document.getElementById('sl-tk-h').value; 
       vTkF = document.getElementById('sl-tk-f').value; 
       vTkOp = document.getElementById('sl-tk-op').value;
@@ -1194,11 +1368,17 @@
       hC1 = document.getElementById('ctrl-h-c1').value; hC2 = document.getElementById('ctrl-h-c2').value;
       aC1 = document.getElementById('ctrl-a-c1').value; aC2 = document.getElementById('ctrl-a-c2').value;
       vSbScale = document.getElementById('sl-sb-scale').value; vTgtScale = document.getElementById('sl-tgt-scale').value;
-      vLogoSize = document.getElementById('sl-logo-size').value; vFTeam = document.getElementById('sl-f-team').value;
+      
+      vLogoSizeH = document.getElementById('sl-logo-size-h').value; vLogoSizeA = document.getElementById('sl-logo-size-a').value;
+      vLuLogoSizeH = document.getElementById('sl-lu-logo-size-h').value; vLuLogoSizeA = document.getElementById('sl-lu-logo-size-a').value;
+      vPenLogoSizeH = document.getElementById('sl-pen-logo-size-h').value; vPenLogoSizeA = document.getElementById('sl-pen-logo-size-a').value;
+      
+      vFTeam = document.getElementById('sl-f-team').value;
       vFScore = document.getElementById('sl-f-score').value; vFTime = document.getElementById('sl-f-time').value;
-      vFTourney = Math.floor(vFTime * 0.35); vFTgtLbl = document.getElementById('sl-f-tgt-lbl').value; vFTgtVal = document.getElementById('sl-f-tgt-val').value;
+      vFTourney = document.getElementById('sl-f-tourney').value; vTourneyLogoSize = document.getElementById('sl-tourney-logo-size').value;
+      vFTgtLbl = document.getElementById('sl-f-tgt-lbl').value; vFTgtVal = document.getElementById('sl-f-tgt-val').value;
       vLuWidth = document.getElementById('sl-lu-w').value; vLuFont = document.getElementById('sl-lu-f').value; 
-      vLuOpacity = document.getElementById('sl-lu-op').value; vLuLogoSize = document.getElementById('sl-lu-logo-size').value;
+      vLuOpacity = document.getElementById('sl-lu-op').value; 
       
       isTkVis = document.getElementById('ctrl-tk-show').checked; isTkScroll = document.getElementById('ctrl-tk-scroll').checked;
       useTkGrad = document.getElementById('ctrl-tk-grad').checked; tkTxtC = document.getElementById('ctrl-tk-txt-c').value;
@@ -1224,7 +1404,9 @@
           else { if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; } }
           canvas.width = width; canvas.height = height; ctx.drawImage(img, 0, 0, width, height);
           const compressedDataUrl = canvas.toDataURL('image/webp', 0.8);
-          if (team === 'home') hLogo = compressedDataUrl; else aLogo = compressedDataUrl;
+          if (team === 'home') hLogo = compressedDataUrl; 
+          else if (team === 'away') aLogo = compressedDataUrl;
+          else if (team === 'tourney') tLogo = compressedDataUrl;
           syncTexts(); 
         }; img.src = e.target.result;
       }; reader.readAsDataURL(file);
@@ -1267,6 +1449,7 @@
     // Initialize the storage on startup
     if (urlParams.get('view') !== 'overlay') {
       initStorage();
+      window.onload = initHistory; // Trigger history tracking after init
     }
   </script>
 </body>
