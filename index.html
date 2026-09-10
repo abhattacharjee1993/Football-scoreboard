@@ -55,6 +55,11 @@
       --pen-logo-size: 35px;
       --pen-logo-size-h: 35px;
       --pen-logo-size-a: 35px;
+
+      /* LSS Variables */
+      --lss-scale: 1; --lss-x: 50%; --lss-y: 20%; 
+      --lss-bg: linear-gradient(90deg, #ff0000 0%, #cc0000 100%); 
+      --lss-txt: #ffffff;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
@@ -104,7 +109,9 @@
       display: flex; flex-direction: column; border-radius: 8px; overflow: hidden;
       border: 2px solid rgba(255, 255, 255, 0.25); box-shadow: 0 8px 24px rgba(0,0,0,0.85);
       transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.3s;
+      cursor: grab;
     }
+    .lineup-wrapper:active { cursor: grabbing; }
     .lineup-wrapper.left { left: 20px; }
     .lineup-wrapper.right { right: 20px; }
 
@@ -265,6 +272,16 @@
     .ticker-text.static { display: block; width: 100%; text-align: center; padding-left: 0; animation: none; }
     @keyframes ticker-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
+    /* LSS WIDGET */
+    .lss-wrapper { position: absolute; left: var(--lss-x); top: var(--lss-y); transform: translate(-50%, -50%) scale(var(--lss-scale)); background: var(--lss-bg); border-radius: 30px; padding: 12px 30px; color: var(--lss-txt); font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.3); display: flex; gap: 15px; align-items: center; z-index: 90; cursor: grab; }
+    .lss-wrapper:active { cursor: grabbing; }
+    .lss-icon { font-size: 24px; }
+    .lss-animated { animation: lss-pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1); }
+    @keyframes lss-pulse { 0%, 100% { transform: translate(-50%, -50%) scale(var(--lss-scale)); } 50% { transform: translate(-50%, -50%) scale(calc(var(--lss-scale) * 1.05)); } }
+
+    /* Drag Hint Overlay */
+    #drag-hint { position: absolute; left: 50%; top: 10%; transform: translateX(-50%); background: rgba(234, 179, 8, 0.9); color: #000; padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 900; display: none; pointer-events: none; z-index: 10000; box-shadow: 0 5px 15px rgba(0,0,0,0.5); text-transform: uppercase; }
+
     /* --- BROADCAST CONTROLLER SUITE GUI --- */
     .controller-panel {
       position: absolute; top: 120px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column;
@@ -362,6 +379,8 @@
   </style>
 </head>
 <body>
+  
+  <div id="drag-hint">DRAGGING ELEMENT...</div>
 
   <datalist id="saved-teams-list"></datalist>
 
@@ -549,6 +568,10 @@
     <div class="ticker-content">
       <span class="ticker-text scrolling" id="ticker-text">Welcome to Sports Unplugged India! Please Like and Subscribe to the channel.</span>
     </div>
+  </div>
+
+  <div class="lss-wrapper lss-animated" id="lss-widget">
+    <span class="lss-icon">👍</span> LIKE &nbsp;|&nbsp; <span class="lss-icon">🔗</span> SHARE &nbsp;|&nbsp; <span class="lss-icon">🔔</span> SUBSCRIBE
   </div>
 
   <!-- Reusable Font Options Snippet -->
@@ -830,6 +853,25 @@
         4. Bottom Ticker Controls <span id="panel-tk-icon">▼</span>
       </div>
       <div class="collapsible-content" id="panel-tk">
+        
+        <!-- NEW LSS BLOCK STARTS HERE -->
+        <div class="sub-panel">
+          <span class="section-title">Like / Share / Subscribe</span>
+          <div class="ctrl-row" style="margin-bottom:12px;">
+            <label style="font-weight:bold;"><input type="checkbox" id="lss-vis" onchange="applyVisualsLocally()" checked> Show</label>
+            <label style="font-weight:bold; margin-left:15px;"><input type="checkbox" id="lss-anim" onchange="applyVisualsLocally()" checked> Pulsing Animation</label>
+          </div>
+          <div class="slider-group">
+            <div class="slider-container"><span>Scale</span><input type="range" id="lss-scale" min="0.3" max="2" step="0.05" value="1" oninput="applyVisualsLocally()"></div>
+            <div class="slider-container"><span>Text C</span><input type="color" id="lss-txt-c" value="#ffffff" oninput="applyVisualsLocally()"></div>
+            <div class="slider-container"><span>BG Style</span><select id="lss-style" class="font-select" onchange="applyVisualsLocally()"><option value="solid">Solid</option><option value="split">Split</option><option value="gradient" selected>Grad</option></select></div>
+            <div class="slider-container"><span>BG C1</span><input type="color" id="lss-c1" value="#ff0000" oninput="applyVisualsLocally()"></div>
+            <div class="slider-container"><span>BG C2</span><input type="color" id="lss-c2" value="#cc0000" oninput="applyVisualsLocally()"></div>
+            <span style="color:#eab308; font-size:12px; font-weight:bold; margin-left:auto;">* Drag widget to move</span>
+          </div>
+        </div>
+        <!-- NEW LSS BLOCK ENDS HERE -->
+
         <div class="ctrl-row" style="justify-content: flex-start; gap: 20px; padding-left: 10px;">
           <label style="font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="ctrl-tk-show" checked onchange="applyVisualsLocally()"> Enable Ticker</label>
           <label style="font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="ctrl-tk-scroll" checked onchange="applyVisualsLocally()"> Scroll Animation</label>
@@ -912,41 +954,64 @@
     document.getElementById('ctrl-ff-tk').value = "'Montserrat', sans-serif";
     document.getElementById('ctrl-ff-pen').value = "'Montserrat', sans-serif";
 
-    // --- Draggable Control Panel Logic ---
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('view') === 'overlay') { 
+        document.getElementById('controls').style.display = 'none'; 
+        document.getElementById('drag-hint').style.display = 'none'; 
+    }
+
+    // --- Unified Drag Engine ---
+    let isDraggingEl = null, isDraggingPanel = false;
+    let sX, sY, iL, iT;
     const dragHeader = document.querySelector('.ctrl-master-header');
     const ctrlPanel = document.getElementById('controls');
-    let isDragging = false, startX, startY, initialLeft, initialTop;
 
     dragHeader.addEventListener('mousedown', function(e) {
       if (e.target.closest('button') || e.target.closest('input') || e.target.closest('span.layout-name-badge')) return;
-      isDragging = true;
+      isDraggingPanel = true;
       const rect = ctrlPanel.getBoundingClientRect();
       if (ctrlPanel.style.transform !== 'none' && ctrlPanel.style.transform !== '') {
         ctrlPanel.style.left = rect.left + 'px';
         ctrlPanel.style.top = rect.top + 'px';
         ctrlPanel.style.transform = 'none';
       }
-      startX = e.clientX;
-      startY = e.clientY;
-      initialLeft = parseFloat(ctrlPanel.style.left) || rect.left;
-      initialTop = parseFloat(ctrlPanel.style.top) || rect.top;
-      document.addEventListener('mousemove', onMouseMove);
-      document.addEventListener('mouseup', onMouseUp);
+      sX = e.clientX; sY = e.clientY;
+      iL = parseFloat(ctrlPanel.style.left) || rect.left;
+      iT = parseFloat(ctrlPanel.style.top) || rect.top;
     });
 
-    function onMouseMove(e) {
-      if (!isDragging) return;
-      const dx = e.clientX - startX;
-      const dy = e.clientY - startY;
-      ctrlPanel.style.left = (initialLeft + dx) + 'px';
-      ctrlPanel.style.top = (initialTop + dy) + 'px';
+    function attachDraggable(el, updateCallback) {
+      if(el.dataset.dragAttached) return;
+      el.dataset.dragAttached = "true";
+      el.addEventListener('mousedown', (e) => {
+        if(urlParams.get('view') === 'overlay' || e.button !== 0) return;
+        isDraggingEl = { el, updateCallback };
+        document.getElementById('drag-hint').style.display = 'block';
+      });
     }
 
-    function onMouseUp() {
-      isDragging = false;
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
-    }
+    document.addEventListener('mousemove', (e) => {
+      if(isDraggingPanel) {
+        ctrlPanel.style.left = (iL + e.clientX - sX) + 'px'; 
+        ctrlPanel.style.top = (iT + e.clientY - sY) + 'px';
+      }
+      if(isDraggingEl) {
+        const px = (e.clientX / window.innerWidth) * 100; 
+        const py = (e.clientY / window.innerHeight) * 100;
+        isDraggingEl.el.style.left = px + '%'; 
+        isDraggingEl.el.style.top = py + '%';
+        if(isDraggingEl.updateCallback) isDraggingEl.updateCallback(px, py);
+      }
+    });
+
+    document.addEventListener('mouseup', () => {
+      isDraggingPanel = false;
+      if(isDraggingEl) { 
+        isDraggingEl = null; 
+        document.getElementById('drag-hint').style.display = 'none'; 
+        broadcastState(); 
+      }
+    });
 
     // --- Layout Storage System ---
     let savedLayouts = {};
@@ -980,7 +1045,8 @@
         isPenVis, hPens, aPens, hRed, aRed,
         vPenBoardScale, vPenBoardTxt, vPenLogoSizeH, vPenLogoSizeA,
         tgtUseGrad, tgtBgC1, tgtBgC2, sbUseGrad, sbBgC1, sbBgC2, tbUseGrad, tbBgC1, tbBgC2,
-        vFfTeam, vFfScore, vFfTime, vFfTourney, vFfTgtLbl, vFfTgtVal, vFfLu, vFfTk, vFfPen
+        vFfTeam, vFfScore, vFfTime, vFfTourney, vFfTgtLbl, vFfTgtVal, vFfLu, vFfTk, vFfPen,
+        lssVis, lssAnim, lssScale, lssTxtC, lssStyle, lssC1, lssC2
       };
     }
 
@@ -1047,6 +1113,14 @@
       vFfTgtLbl = layout.vFfTgtLbl || "'Montserrat', sans-serif"; vFfTgtVal = layout.vFfTgtVal || "'Teko', sans-serif";
       vFfLu = layout.vFfLu || "'Montserrat', sans-serif"; vFfTk = layout.vFfTk || "'Montserrat', sans-serif";
       vFfPen = layout.vFfPen || "'Montserrat', sans-serif";
+
+      lssVis = layout.lssVis !== undefined ? layout.lssVis : lssVis;
+      lssAnim = layout.lssAnim !== undefined ? layout.lssAnim : lssAnim;
+      lssScale = layout.lssScale !== undefined ? layout.lssScale : lssScale;
+      lssTxtC = layout.lssTxtC !== undefined ? layout.lssTxtC : lssTxtC;
+      lssStyle = layout.lssStyle !== undefined ? layout.lssStyle : lssStyle;
+      lssC1 = layout.lssC1 !== undefined ? layout.lssC1 : lssC1;
+      lssC2 = layout.lssC2 !== undefined ? layout.lssC2 : lssC2;
 
       syncInputsToVariables();
       applyVisualsLocally();
@@ -1155,6 +1229,10 @@
     let hPens = [0,0,0,0,0], aPens = [0,0,0,0,0]; 
     let vPenBoardScale = 1, vPenBoardTxt = 16, vPenLogoSizeH = 35, vPenLogoSizeA = 35;
 
+    let lssVis = true, lssAnim = true, lssScale = 1, lssTxtC = "#ffffff", lssStyle = "gradient", lssC1 = "#ff0000", lssC2 = "#cc0000";
+    let lssX = 50, lssY = 20;
+    let luLeftX = null, luLeftY = null, luRightX = null, luRightY = null;
+
     // DOM Elements
     const hEl = document.getElementById('home-score'); const aEl = document.getElementById('away-score');
     const tEl = document.getElementById('timer'); const tNameEl = document.getElementById('tournament-name-display');
@@ -1173,8 +1251,6 @@
     const tkWrap = document.getElementById('ticker-wrapper'); const tkBgEl = document.getElementById('ticker-bg'); const tkTextEl = document.getElementById('ticker-text');
     const hRedEl = document.getElementById('home-red-cards'); const aRedEl = document.getElementById('away-red-cards');
 
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('view') === 'overlay') { document.getElementById('controls').style.display = 'none'; }
 
     // PubNub Engine
     const pubnub = new PubNub({ publishKey: 'demo', subscribeKey: 'demo', userId: 'derby_' + Math.random().toString(36).substring(2, 9) });
@@ -1231,6 +1307,14 @@
         tbUseGrad = data.tbUseGrad !== undefined ? data.tbUseGrad : tbUseGrad;
         tbBgC1 = data.tbBgC1 !== undefined ? data.tbBgC1 : tbBgC1;
         tbBgC2 = data.tbBgC2 !== undefined ? data.tbBgC2 : tbBgC2;
+
+        lssVis = data.lssVis !== undefined ? data.lssVis : lssVis;
+        lssAnim = data.lssAnim !== undefined ? data.lssAnim : lssAnim;
+        lssScale = data.lssScale !== undefined ? data.lssScale : lssScale;
+        lssTxtC = data.lssTxtC !== undefined ? data.lssTxtC : lssTxtC;
+        lssStyle = data.lssStyle !== undefined ? data.lssStyle : lssStyle;
+        lssC1 = data.lssC1 !== undefined ? data.lssC1 : lssC1;
+        lssC2 = data.lssC2 !== undefined ? data.lssC2 : lssC2;
 
         // Apply DOM
         hEl.textContent = hScore; aEl.textContent = aScore; likeEl.textContent = likeTargetVal; subEl.textContent = subTargetVal;
@@ -1294,6 +1378,24 @@
         root.style.setProperty('--pen-board-scale', vPenBoardScale); root.style.setProperty('--ff-pen', vFfPen); root.style.setProperty('--pen-board-txt', vPenBoardTxt + 'px');
         root.style.setProperty('--pen-logo-size-h', vPenLogoSizeH + 'px'); root.style.setProperty('--pen-logo-size-a', vPenLogoSizeA + 'px');
         
+        root.style.setProperty('--lss-scale', lssScale);
+        root.style.setProperty('--lss-txt', lssTxtC);
+        const lssBgSync = lssStyle === 'split' ? `linear-gradient(90deg, ${lssC1} 50%, ${lssC2} 50%)` : (lssStyle === 'gradient' ? `linear-gradient(90deg, ${lssC1} 0%, ${lssC2} 100%)` : lssC1);
+        root.style.setProperty('--lss-bg', lssBgSync);
+
+        const lssWidgetSync = document.getElementById('lss-widget');
+        if (lssWidgetSync) {
+            lssWidgetSync.style.display = lssVis ? 'flex' : 'none';
+            lssWidgetSync.className = lssAnim ? 'lss-wrapper lss-animated' : 'lss-wrapper';
+        }
+
+        // Draggable Placements
+        if (data.luLeftX !== undefined) { luLeft.style.left = data.luLeftX + '%'; luLeft.style.top = data.luLeftY + '%'; }
+        if (data.luRightX !== undefined) { luRight.style.right = 'auto'; luRight.style.left = data.luRightX + '%'; luRight.style.top = data.luRightY + '%'; }
+        if (data.lssX !== undefined) {
+          if(lssWidgetSync){ lssWidgetSync.style.left = data.lssX + '%'; lssWidgetSync.style.top = data.lssY + '%'; }
+        }
+
         if (urlParams.get('view') !== 'overlay') { 
           syncInputsToVariables();
           document.getElementById('btn-toggle-pen').textContent = isPenVis ? 'Disable Penalty Drop-down' : 'Enable Penalty Drop-down';
@@ -1351,6 +1453,16 @@
       document.getElementById('ctrl-pen-h-name').textContent = hName + " Penalties";
       document.getElementById('ctrl-pen-a-name').textContent = aName + " Penalties";
       
+      if (document.getElementById('lss-vis')) {
+        document.getElementById('lss-vis').checked = lssVis;
+        document.getElementById('lss-anim').checked = lssAnim;
+        document.getElementById('lss-scale').value = lssScale;
+        document.getElementById('lss-txt-c').value = lssTxtC;
+        document.getElementById('lss-style').value = lssStyle;
+        document.getElementById('lss-c1').value = lssC1;
+        document.getElementById('lss-c2').value = lssC2;
+      }
+
       renderRedCards();
       renderPenaltiesLocal();
     }
@@ -1367,7 +1479,9 @@
           vLuWidth, vLuFont, vLuOpacity, vLuLogoSizeH, vLuLogoSizeA,
           isPenVis, hPens, aPens, vPenBoardScale, vPenBoardTxt, vPenLogoSizeH, vPenLogoSizeA, hRed, aRed,
           tgtUseGrad, tgtBgC1, tgtBgC2, sbUseGrad, sbBgC1, sbBgC2, tbUseGrad, tbBgC1, tbBgC2,
-          vFfTeam, vFfScore, vFfTime, vFfTourney, vFfTgtLbl, vFfTgtVal, vFfLu, vFfTk, vFfPen
+          vFfTeam, vFfScore, vFfTime, vFfTourney, vFfTgtLbl, vFfTgtVal, vFfLu, vFfTk, vFfPen,
+          lssVis, lssAnim, lssScale, lssTxtC, lssStyle, lssC1, lssC2,
+          luLeftX, luLeftY, luRightX, luRightY, lssX, lssY
         }
       });
     }
@@ -1528,7 +1642,8 @@
       'ctrl-tk-show', 'ctrl-tk-scroll', 'ctrl-tk-grad', 'ctrl-tk-txt-c', 'ctrl-tk-c1', 'ctrl-tk-c2', 'sl-tk-h', 'ctrl-ff-tk', 'sl-tk-f', 'sl-tk-op',
       'sl-pen-board-scale', 'ctrl-ff-pen', 'sl-pen-board-txt', 'sl-pen-logo-size', 'sl-pen-logo-size-h', 'sl-pen-logo-size-a',
       'ctrl-tgt-grad', 'ctrl-tgt-c1', 'ctrl-tgt-c2', 'ctrl-sb-grad', 'ctrl-sb-bg-c1', 'ctrl-sb-bg-c2',
-      'ctrl-tb-grad', 'ctrl-tb-bg-c1', 'ctrl-tb-bg-c2'
+      'ctrl-tb-grad', 'ctrl-tb-bg-c1', 'ctrl-tb-bg-c2',
+      'lss-vis', 'lss-anim', 'lss-scale', 'lss-txt-c', 'lss-style', 'lss-c1', 'lss-c2'
     ];
 
     function getVisualDOMState() {
@@ -1661,8 +1776,8 @@
       hLuBg.style.background = localBgStyle === 'split' ? `linear-gradient(135deg, ${hc1} 50%, ${hc2} 50%)` : (localBgStyle === 'gradient' ? `linear-gradient(135deg, ${hc1} 0%, ${hc2} 100%)` : hc1);
       aLuBg.style.background = localBgStyle === 'split' ? `linear-gradient(135deg, ${ac1} 50%, ${ac2} 50%)` : (localBgStyle === 'gradient' ? `linear-gradient(135deg, ${ac1} 0%, ${ac2} 100%)` : ac1);
       
-      const logoChecked = document.getElementById('ctrl-lu-logo-show').checked;
-      hLuLogoDisplay.style.display = logoChecked ? 'block' : 'none'; aLuLogoDisplay.style.display = logoChecked ? 'block' : 'none';
+      showLuLogo = document.getElementById('ctrl-lu-logo-show').checked;
+      hLuLogoDisplay.style.display = showLuLogo ? 'block' : 'none'; aLuLogoDisplay.style.display = showLuLogo ? 'block' : 'none';
 
       root.style.setProperty('--tk-h', document.getElementById('sl-tk-h').value + 'px');
       root.style.setProperty('--ff-tk', document.getElementById('ctrl-ff-tk').value);
@@ -1697,6 +1812,28 @@
       const tbC1 = document.getElementById('ctrl-tb-bg-c1').value;
       const tbC2 = document.getElementById('ctrl-tb-bg-c2').value;
       tbWrapObj.style.background = tbGradChecked ? `linear-gradient(135deg, ${tbC1} 0%, ${tbC2} 100%)` : tbC1;
+      
+// LSS Widget Local Apply
+      if (document.getElementById('lss-vis')) {
+        lssVis = document.getElementById('lss-vis').checked;
+        lssAnim = document.getElementById('lss-anim').checked;
+        lssStyle = document.getElementById('lss-style').value;
+        lssC1 = document.getElementById('lss-c1').value;
+        lssC2 = document.getElementById('lss-c2').value;
+        lssScale = document.getElementById('lss-scale').value;
+        lssTxtC = document.getElementById('lss-txt-c').value;
+        
+        root.style.setProperty('--lss-scale', lssScale);
+        root.style.setProperty('--lss-txt', lssTxtC);
+        const lssBg = lssStyle === 'split' ? `linear-gradient(90deg, ${lssC1} 50%, ${lssC2} 50%)` : (lssStyle === 'gradient' ? `linear-gradient(90deg, ${lssC1} 0%, ${lssC2} 100%)` : lssC1);
+        root.style.setProperty('--lss-bg', lssBg);
+
+        const lssWidget = document.getElementById('lss-widget');
+        if (lssWidget) {
+          lssWidget.style.display = lssVis ? 'flex' : 'none';
+          lssWidget.className = lssAnim ? 'lss-wrapper lss-animated' : 'lss-wrapper';
+        }
+      }
     }
 
     // Explicit Layout Synchronization Button
@@ -1743,6 +1880,16 @@
       tbUseGrad = document.getElementById('ctrl-tb-grad').checked;
       tbBgC1 = document.getElementById('ctrl-tb-bg-c1').value;
       tbBgC2 = document.getElementById('ctrl-tb-bg-c2').value;
+
+      if (document.getElementById('lss-vis')) {
+        lssVis = document.getElementById('lss-vis').checked;
+        lssAnim = document.getElementById('lss-anim').checked;
+        lssScale = document.getElementById('lss-scale').value;
+        lssTxtC = document.getElementById('lss-txt-c').value;
+        lssStyle = document.getElementById('lss-style').value;
+        lssC1 = document.getElementById('lss-c1').value;
+        lssC2 = document.getElementById('lss-c2').value;
+      }
 
       broadcastState();
     }
@@ -1805,7 +1952,16 @@
     // Initialize the storage on startup
     if (urlParams.get('view') !== 'overlay') {
       initStorage();
-      window.onload = initHistory;
+      window.onload = function() {
+        initHistory();
+        // Attach drag engine to visual widgets
+        attachDraggable(document.getElementById('lineup-left'), (x, y) => { luLeftX = x; luLeftY = y; });
+        attachDraggable(document.getElementById('lineup-right'), (x, y) => { 
+           document.getElementById('lineup-right').style.right = 'auto'; 
+           luRightX = x; luRightY = y; 
+        });
+        attachDraggable(document.getElementById('lss-widget'), (x, y) => { lssX = x; lssY = y; });
+      };
     }
   </script>
 </body>
