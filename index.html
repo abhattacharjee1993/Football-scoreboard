@@ -845,7 +845,14 @@
           <div class="slider-container"><span>Text Color</span><input type="color" id="ctrl-lu-txt-color" value="#ffffff" oninput="applyVisualsLocally()"></div>
           <div class="slider-container"><span>Panel Width</span><input type="range" id="sl-lu-w" min="150" max="400" value="260" oninput="applyVisualsLocally()"></div>
           <div class="slider-container"><span>BG Opacity</span><input type="range" id="sl-lu-op" min="0.2" max="1" step="0.05" value="0.85" oninput="applyVisualsLocally()"></div>
-          
+          <div class="slider-container" style="border-left: 1px solid #444; padding-left: 15px;">
+            <span>BG Style</span>
+            <select id="ctrl-lu-bg-style" class="font-select" onchange="applyVisualsLocally()">
+              <option value="solid">Solid</option>
+              <option value="split" selected>Split</option>
+              <option value="gradient">Grad</option>
+            </select>
+          </div>
           <div class="slider-container">
             <span>Font Style & Size</span>
             <select id="ctrl-ff-lu" class="font-select" onchange="applyVisualsLocally()"><script>document.write(fontOptions);</script></select>
@@ -1048,7 +1055,7 @@
       return {
         tournamentName, likeTargetVal, subTargetVal, hName, aName, hC1, hC2, aC1, aC2, hLogo, aLogo, tLogo, hLineupStr, aLineupStr,
         tkText, isTkVis, isTkScroll, useTkGrad, tkC1, tkC2, tkTxtC, vTkH, vTkF, vTkOp,
-        isScoreboardVisible, isLineupsVisible, bgStyle, showLuLogo, sbTxtColor, luTxtColor,
+        isScoreboardVisible, isLineupsVisible, bgStyle, luBgStyle, showLuLogo, sbTxtColor, luTxtColor,
         vSbScale, vTgtScale, vLogoSizeH, vLogoSizeA, vFTeam, vFScore, vFTime, vFTourney, vTourneyLogoSize, vFTgtLbl, vFTgtVal,
         vLuWidth, vLuFont, vLuOpacity, vLuLogoSizeH, vLuLogoSizeA,
         isPenVis, hPens, aPens, hRed, aRed,
@@ -1084,6 +1091,7 @@
       isScoreboardVisible = layout.isScoreboardVisible !== undefined ? layout.isScoreboardVisible : isScoreboardVisible;
       isLineupsVisible = layout.isLineupsVisible !== undefined ? layout.isLineupsVisible : isLineupsVisible;
       bgStyle = layout.bgStyle || (layout.useGradient !== undefined ? (layout.useGradient ? 'split' : 'solid') : bgStyle);
+      luBgStyle = layout.luBgStyle || layout.bgStyle || luBgStyle;
       showLuLogo = layout.showLuLogo !== undefined ? layout.showLuLogo : showLuLogo;
       sbTxtColor = layout.sbTxtColor !== undefined ? layout.sbTxtColor : sbTxtColor; luTxtColor = layout.luTxtColor !== undefined ? layout.luTxtColor : luTxtColor;
 
@@ -1108,8 +1116,8 @@
       vPenLogoSizeA = layout.vPenLogoSizeA !== undefined ? layout.vPenLogoSizeA : vPenLogoSizeA;
 
       tgtUseGrad = layout.tgtUseGrad !== undefined ? layout.tgtUseGrad : tgtUseGrad;
-      tgtBgC1 = layout.tgtBgC1 !== undefined ? layout.tgtBgC1 : tgtBgC1;
-      tgtBgC2 = layout.tgtBgC2 !== undefined ? layout.tgtBgC2 : tgtBgC2;
+      tgtBgC1 = layout.tgtBgC1 !== undefined ? tgtBgC1 : tgtBgC1;
+      tgtBgC2 = layout.tgtBgC2 !== undefined ? tgtBgC2 : tgtBgC2;
       sbUseGrad = layout.sbUseGrad !== undefined ? layout.sbUseGrad : sbUseGrad;
       sbBgC1 = layout.sbBgC1 !== undefined ? layout.sbBgC1 : sbBgC1;
       sbBgC2 = layout.sbBgC2 !== undefined ? layout.sbBgC2 : sbBgC2;
@@ -1229,7 +1237,7 @@
     let tkText = "Welcome to Sports Unplugged India! Please Like and Subscribe to the channel.";
     let isTkVis = true, isTkScroll = true, useTkGrad = true; let tkC1 = "#1a202c", tkC2 = "#2d3748", tkTxtC = "#ffffff";
     let vTkH = 40, vTkF = 22, vTkOp = 0.9;
-    let isScoreboardVisible = true; let isLineupsVisible = false; let bgStyle = 'split'; let showLuLogo = true;
+    let isScoreboardVisible = true; let isLineupsVisible = false; let bgStyle = 'split'; let luBgStyle = 'split'; let showLuLogo = true;
     let sbTxtColor = "#ffffff", luTxtColor = "#ffffff"; let vSbScale = 1, vTgtScale = 1;
     let vLogoSizeH = 55, vLogoSizeA = 55;
     
@@ -1292,6 +1300,7 @@
         isScoreboardVisible = data.isScoreboardVisible !== undefined ? data.isScoreboardVisible : isScoreboardVisible;
         isLineupsVisible = data.isLineupsVisible !== undefined ? data.isLineupsVisible : isLineupsVisible;
         bgStyle = data.bgStyle || (data.useGradient !== undefined ? (data.useGradient ? 'split' : 'solid') : bgStyle);
+        luBgStyle = data.luBgStyle || (data.luBgStyle !== undefined ? data.luBgStyle : bgStyle);
         showLuLogo = data.showLuLogo !== undefined ? data.showLuLogo : showLuLogo;
         sbTxtColor = data.sbTxtColor || sbTxtColor; luTxtColor = data.luTxtColor || luTxtColor;
         
@@ -1355,8 +1364,8 @@
 
         hBg.style.background = bgStyle === 'split' ? `linear-gradient(135deg, ${hC1} 50%, ${hC2} 50%)` : (bgStyle === 'gradient' ? `linear-gradient(135deg, ${hC1} 0%, ${hC2} 100%)` : hC1);
         aBg.style.background = bgStyle === 'split' ? `linear-gradient(135deg, ${aC1} 50%, ${aC2} 50%)` : (bgStyle === 'gradient' ? `linear-gradient(135deg, ${aC1} 0%, ${aC2} 100%)` : aC1);
-        hLuBg.style.background = bgStyle === 'split' ? `linear-gradient(135deg, ${hC1} 50%, ${hC2} 50%)` : (bgStyle === 'gradient' ? `linear-gradient(135deg, ${hC1} 0%, ${hC2} 100%)` : hC1);
-        aLuBg.style.background = bgStyle === 'split' ? `linear-gradient(135deg, ${aC1} 50%, ${aC2} 50%)` : (bgStyle === 'gradient' ? `linear-gradient(135deg, ${aC1} 0%, ${aC2} 100%)` : aC1);
+        hLuBg.style.background = luBgStyle === 'split' ? `linear-gradient(135deg, ${hC1} 50%, ${hC2} 50%)` : (luBgStyle === 'gradient' ? `linear-gradient(135deg, ${hC1} 0%, ${hC2} 100%)` : hC1);
+        aLuBg.style.background = luBgStyle === 'split' ? `linear-gradient(135deg, ${aC1} 50%, ${aC2} 50%)` : (luBgStyle === 'gradient' ? `linear-gradient(135deg, ${aC1} 0%, ${aC2} 100%)` : aC1);
 
         hLuLogoDisplay.style.display = showLuLogo ? 'block' : 'none'; aLuLogoDisplay.style.display = showLuLogo ? 'block' : 'none';
         tkBgEl.style.background = useTkGrad ? `linear-gradient(90deg, ${tkC1} 0%, ${tkC2} 100%)` : tkC1;
@@ -1433,7 +1442,9 @@
       
       document.getElementById('ctrl-h-c1').value = hC1; document.getElementById('ctrl-h-c2').value = hC2;
       document.getElementById('ctrl-a-c1').value = aC1; document.getElementById('ctrl-a-c2').value = aC2;
-      document.getElementById('ctrl-bg-style').value = bgStyle; document.getElementById('ctrl-lu-logo-show').checked = showLuLogo;
+      document.getElementById('ctrl-bg-style').value = bgStyle; 
+      document.getElementById('ctrl-lu-bg-style').value = luBgStyle;
+      document.getElementById('ctrl-lu-logo-show').checked = showLuLogo;
       document.getElementById('ctrl-sb-txt-color').value = sbTxtColor; document.getElementById('ctrl-lu-txt-color').value = luTxtColor;
       
       document.getElementById('sl-sb-scale').value = vSbScale; document.getElementById('sl-tgt-scale').value = vTgtScale;
@@ -1494,7 +1505,7 @@
           hScore, aScore, secs, running, matchStatus, injuryTime, tournamentName,
           likeTargetVal, subTargetVal, hName, aName, hC1, hC2, aC1, aC2, hLogo, aLogo, tLogo, hLineupStr, aLineupStr,
           tkText, isTkVis, isTkScroll, useTkGrad, tkC1, tkC2, tkTxtC, vTkH, vTkF, vTkOp,
-          isScoreboardVisible, isLineupsVisible, bgStyle, showLuLogo, sbTxtColor, luTxtColor,
+          isScoreboardVisible, isLineupsVisible, bgStyle, luBgStyle, showLuLogo, sbTxtColor, luTxtColor,
           vSbScale, vTgtScale, vLogoSizeH, vLogoSizeA, vFTeam, vFScore, vFTime, vFTourney, vTourneyLogoSize, vFTgtLbl, vFTgtVal, 
           vLuWidth, vLuFont, vLuOpacity, vLuLogoSizeH, vLuLogoSizeA,
           isPenVis, hPens, aPens, vPenBoardScale, vPenBoardTxt, vPenLogoSizeH, vPenLogoSizeA, hRed, aRed,
@@ -1658,7 +1669,7 @@
       'ctrl-ff-team', 'sl-f-team', 'ctrl-ff-score', 'sl-f-score', 'ctrl-ff-time', 'sl-f-time',
       'ctrl-ff-tourney', 'sl-f-tourney', 'sl-tourney-logo-size',
       'sl-tgt-scale', 'ctrl-ff-tgt-lbl', 'sl-f-tgt-lbl', 'ctrl-ff-tgt-val', 'sl-f-tgt-val',
-      'ctrl-lu-logo-show', 'ctrl-lu-txt-color', 'sl-lu-w', 'ctrl-ff-lu', 'sl-lu-f', 'sl-lu-op', 'sl-lu-logo-size', 'sl-lu-logo-size-h', 'sl-lu-logo-size-a',
+      'ctrl-lu-logo-show', 'ctrl-lu-txt-color', 'sl-lu-w', 'ctrl-ff-lu', 'sl-lu-f', 'sl-lu-op', 'ctrl-lu-bg-style', 'sl-lu-logo-size', 'sl-lu-logo-size-h', 'sl-lu-logo-size-a',
       'ctrl-tk-show', 'ctrl-tk-scroll', 'ctrl-tk-grad', 'ctrl-tk-txt-c', 'ctrl-tk-c1', 'ctrl-tk-c2', 'sl-tk-h', 'ctrl-ff-tk', 'sl-tk-f', 'sl-tk-op',
       'sl-pen-board-scale', 'ctrl-ff-pen', 'sl-pen-board-txt', 'sl-pen-logo-size', 'sl-pen-logo-size-h', 'sl-pen-logo-size-a',
       'ctrl-tgt-grad', 'ctrl-tgt-c1', 'ctrl-tgt-c2', 'ctrl-sb-grad', 'ctrl-sb-bg-c1', 'ctrl-sb-bg-c2',
@@ -1788,13 +1799,14 @@
       vFfPen = document.getElementById('ctrl-ff-pen').value;
 
       const localBgStyle = document.getElementById('ctrl-bg-style').value;
+      const localLuBgStyle = document.getElementById('ctrl-lu-bg-style').value;
       const hc1 = document.getElementById('ctrl-h-c1').value; const hc2 = document.getElementById('ctrl-h-c2').value;
       const ac1 = document.getElementById('ctrl-a-c1').value; const ac2 = document.getElementById('ctrl-a-c2').value;
       
       hBg.style.background = localBgStyle === 'split' ? `linear-gradient(135deg, ${hc1} 50%, ${hc2} 50%)` : (localBgStyle === 'gradient' ? `linear-gradient(135deg, ${hc1} 0%, ${hc2} 100%)` : hc1);
       aBg.style.background = localBgStyle === 'split' ? `linear-gradient(135deg, ${ac1} 50%, ${ac2} 50%)` : (localBgStyle === 'gradient' ? `linear-gradient(135deg, ${ac1} 0%, ${ac2} 100%)` : ac1);
-      hLuBg.style.background = localBgStyle === 'split' ? `linear-gradient(135deg, ${hc1} 50%, ${hc2} 50%)` : (localBgStyle === 'gradient' ? `linear-gradient(135deg, ${hc1} 0%, ${hc2} 100%)` : hc1);
-      aLuBg.style.background = localBgStyle === 'split' ? `linear-gradient(135deg, ${ac1} 50%, ${ac2} 50%)` : (localBgStyle === 'gradient' ? `linear-gradient(135deg, ${ac1} 0%, ${ac2} 100%)` : ac1);
+      hLuBg.style.background = localLuBgStyle === 'split' ? `linear-gradient(135deg, ${hc1} 50%, ${hc2} 50%)` : (localLuBgStyle === 'gradient' ? `linear-gradient(135deg, ${hc1} 0%, ${hc2} 100%)` : hc1);
+      aLuBg.style.background = localLuBgStyle === 'split' ? `linear-gradient(135deg, ${ac1} 50%, ${ac2} 50%)` : (localLuBgStyle === 'gradient' ? `linear-gradient(135deg, ${ac1} 0%, ${ac2} 100%)` : ac1);
       
       showLuLogo = document.getElementById('ctrl-lu-logo-show').checked;
       hLuLogoDisplay.style.display = showLuLogo ? 'block' : 'none'; aLuLogoDisplay.style.display = showLuLogo ? 'block' : 'none';
@@ -1858,7 +1870,9 @@
 
     // Explicit Layout Synchronization Button
     function syncVisuals() {
-      bgStyle = document.getElementById('ctrl-bg-style').value; showLuLogo = document.getElementById('ctrl-lu-logo-show').checked;
+      bgStyle = document.getElementById('ctrl-bg-style').value; 
+      luBgStyle = document.getElementById('ctrl-lu-bg-style').value; 
+      showLuLogo = document.getElementById('ctrl-lu-logo-show').checked;
       sbTxtColor = document.getElementById('ctrl-sb-txt-color').value; luTxtColor = document.getElementById('ctrl-lu-txt-color').value;
       hC1 = document.getElementById('ctrl-h-c1').value; hC2 = document.getElementById('ctrl-h-c2').value;
       aC1 = document.getElementById('ctrl-a-c1').value; aC2 = document.getElementById('ctrl-a-c2').value;
