@@ -1116,8 +1116,8 @@
       vPenLogoSizeA = layout.vPenLogoSizeA !== undefined ? layout.vPenLogoSizeA : vPenLogoSizeA;
 
       tgtUseGrad = layout.tgtUseGrad !== undefined ? layout.tgtUseGrad : tgtUseGrad;
-      tgtBgC1 = layout.tgtBgC1 !== undefined ? tgtBgC1 : tgtBgC1;
-      tgtBgC2 = layout.tgtBgC2 !== undefined ? tgtBgC2 : tgtBgC2;
+      tgtBgC1 = layout.tgtBgC1 !== undefined ? layout.tgtBgC1 : tgtBgC1;
+      tgtBgC2 = layout.tgtBgC2 !== undefined ? layout.tgtBgC2 : tgtBgC2;
       sbUseGrad = layout.sbUseGrad !== undefined ? layout.sbUseGrad : sbUseGrad;
       sbBgC1 = layout.sbBgC1 !== undefined ? layout.sbBgC1 : sbBgC1;
       sbBgC2 = layout.sbBgC2 !== undefined ? layout.sbBgC2 : sbBgC2;
@@ -1798,15 +1798,15 @@
       vTkOp = document.getElementById('sl-tk-op').value;
       vFfPen = document.getElementById('ctrl-ff-pen').value;
 
-      const localBgStyle = document.getElementById('ctrl-bg-style').value;
-      const localLuBgStyle = document.getElementById('ctrl-lu-bg-style').value;
-      const hc1 = document.getElementById('ctrl-h-c1').value; const hc2 = document.getElementById('ctrl-h-c2').value;
-      const ac1 = document.getElementById('ctrl-a-c1').value; const ac2 = document.getElementById('ctrl-a-c2').value;
+      bgStyle = document.getElementById('ctrl-bg-style').value;
+      luBgStyle = document.getElementById('ctrl-lu-bg-style').value;
+      hC1 = document.getElementById('ctrl-h-c1').value; hC2 = document.getElementById('ctrl-h-c2').value;
+      aC1 = document.getElementById('ctrl-a-c1').value; aC2 = document.getElementById('ctrl-a-c2').value;
       
-      hBg.style.background = localBgStyle === 'split' ? `linear-gradient(135deg, ${hc1} 50%, ${hc2} 50%)` : (localBgStyle === 'gradient' ? `linear-gradient(135deg, ${hc1} 0%, ${hc2} 100%)` : hc1);
-      aBg.style.background = localBgStyle === 'split' ? `linear-gradient(135deg, ${ac1} 50%, ${ac2} 50%)` : (localBgStyle === 'gradient' ? `linear-gradient(135deg, ${ac1} 0%, ${ac2} 100%)` : ac1);
-      hLuBg.style.background = localLuBgStyle === 'split' ? `linear-gradient(135deg, ${hc1} 50%, ${hc2} 50%)` : (localLuBgStyle === 'gradient' ? `linear-gradient(135deg, ${hc1} 0%, ${hc2} 100%)` : hc1);
-      aLuBg.style.background = localLuBgStyle === 'split' ? `linear-gradient(135deg, ${ac1} 50%, ${ac2} 50%)` : (localLuBgStyle === 'gradient' ? `linear-gradient(135deg, ${ac1} 0%, ${ac2} 100%)` : ac1);
+      hBg.style.background = bgStyle === 'split' ? `linear-gradient(135deg, ${hC1} 50%, ${hC2} 50%)` : (bgStyle === 'gradient' ? `linear-gradient(135deg, ${hC1} 0%, ${hC2} 100%)` : hC1);
+      aBg.style.background = bgStyle === 'split' ? `linear-gradient(135deg, ${aC1} 50%, ${aC2} 50%)` : (bgStyle === 'gradient' ? `linear-gradient(135deg, ${aC1} 0%, ${aC2} 100%)` : aC1);
+      hLuBg.style.background = luBgStyle === 'split' ? `linear-gradient(135deg, ${hC1} 50%, ${hC2} 50%)` : (luBgStyle === 'gradient' ? `linear-gradient(135deg, ${hC1} 0%, ${hC2} 100%)` : hC1);
+      aLuBg.style.background = luBgStyle === 'split' ? `linear-gradient(135deg, ${aC1} 50%, ${aC2} 50%)` : (luBgStyle === 'gradient' ? `linear-gradient(135deg, ${aC1} 0%, ${aC2} 100%)` : aC1);
       
       showLuLogo = document.getElementById('ctrl-lu-logo-show').checked;
       hLuLogoDisplay.style.display = showLuLogo ? 'block' : 'none'; aLuLogoDisplay.style.display = showLuLogo ? 'block' : 'none';
@@ -1817,33 +1817,33 @@
       root.style.setProperty('--tk-op', document.getElementById('sl-tk-op').value);
       root.style.setProperty('--tk-txt-c', document.getElementById('ctrl-tk-txt-c').value);
 
-      const tkVis = document.getElementById('ctrl-tk-show').checked;
-      const tkScr = document.getElementById('ctrl-tk-scroll').checked;
-      const tkGrad = document.getElementById('ctrl-tk-grad').checked;
-      const tC1 = document.getElementById('ctrl-tk-c1').value; const tC2 = document.getElementById('ctrl-tk-c2').value;
+      isTkVis = document.getElementById('ctrl-tk-show').checked;
+      isTkScroll = document.getElementById('ctrl-tk-scroll').checked;
+      useTkGrad = document.getElementById('ctrl-tk-grad').checked;
+      tkC1 = document.getElementById('ctrl-tk-c1').value; tkC2 = document.getElementById('ctrl-tk-c2').value;
 
-      tkWrap.style.display = tkVis ? 'flex' : 'none';
-      tkTextEl.className = tkScr ? 'ticker-text scrolling' : 'ticker-text static';
-      tkBgEl.style.background = tkGrad ? `linear-gradient(90deg, ${tC1} 0%, ${tC2} 100%)` : tC1;
+      tkWrap.style.display = isTkVis ? 'flex' : 'none';
+      tkTextEl.className = isTkScroll ? 'ticker-text scrolling' : 'ticker-text static';
+      tkBgEl.style.background = useTkGrad ? `linear-gradient(90deg, ${tkC1} 0%, ${tkC2} 100%)` : tkC1;
 
       // Handle New Scoreboard, Target Box & Tourney BG locally
       const tgtWrapObj = document.getElementById('targets-wrapper');
-      const tgtGradChecked = document.getElementById('ctrl-tgt-grad').checked;
-      const tgtC1 = document.getElementById('ctrl-tgt-c1').value;
-      const tgtC2 = document.getElementById('ctrl-tgt-c2').value;
-      tgtWrapObj.style.background = tgtGradChecked ? `linear-gradient(135deg, ${tgtC1} 0%, ${tgtC2} 100%)` : tgtC1;
+      tgtUseGrad = document.getElementById('ctrl-tgt-grad').checked;
+      tgtBgC1 = document.getElementById('ctrl-tgt-c1').value;
+      tgtBgC2 = document.getElementById('ctrl-tgt-c2').value;
+      tgtWrapObj.style.background = tgtUseGrad ? `linear-gradient(135deg, ${tgtBgC1} 0%, ${tgtBgC2} 100%)` : tgtBgC1;
 
       const sbWrapObj = document.getElementById('sb-wrap-element');
-      const sbGradChecked = document.getElementById('ctrl-sb-grad').checked;
-      const sbC1 = document.getElementById('ctrl-sb-bg-c1').value;
-      const sbC2 = document.getElementById('ctrl-sb-bg-c2').value;
-      sbWrapObj.style.background = sbGradChecked ? `linear-gradient(135deg, ${sbC1} 0%, ${sbC2} 100%)` : sbC1;
+      sbUseGrad = document.getElementById('ctrl-sb-grad').checked;
+      sbBgC1 = document.getElementById('ctrl-sb-bg-c1').value;
+      sbBgC2 = document.getElementById('ctrl-sb-bg-c2').value;
+      sbWrapObj.style.background = sbUseGrad ? `linear-gradient(135deg, ${sbBgC1} 0%, ${sbBgC2} 100%)` : sbBgC1;
       
       const tbWrapObj = document.getElementById('tournament-bar-display');
-      const tbGradChecked = document.getElementById('ctrl-tb-grad').checked;
-      const tbC1 = document.getElementById('ctrl-tb-bg-c1').value;
-      const tbC2 = document.getElementById('ctrl-tb-bg-c2').value;
-      tbWrapObj.style.background = tbGradChecked ? `linear-gradient(135deg, ${tbC1} 0%, ${tbC2} 100%)` : tbC1;
+      tbUseGrad = document.getElementById('ctrl-tb-grad').checked;
+      tbBgC1 = document.getElementById('ctrl-tb-bg-c1').value;
+      tbBgC2 = document.getElementById('ctrl-tb-bg-c2').value;
+      tbWrapObj.style.background = tbUseGrad ? `linear-gradient(135deg, ${tbBgC1} 0%, ${tbBgC2} 100%)` : tbBgC1;
       
       // LSS Widget Local Apply
       if (document.getElementById('lss-vis')) {
