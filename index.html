@@ -382,8 +382,6 @@
   
   <div id="drag-hint">DRAGGING ELEMENT...</div>
 
-  <datalist id="saved-teams-list"></datalist>
-
   <div id="load-modal-bg" onclick="closeLoadModal()"></div>
   <div id="load-modal">
     <h3 style="margin-bottom: 15px; color: #ffd700; text-transform: uppercase; letter-spacing: 1px;">Load Layout</h3>
@@ -635,7 +633,15 @@
 
         <!-- SUB PANEL 1: Top Bar & Basic Visibility -->
         <div class="sub-panel">
-          <span class="section-title">Top Bar & Match Setup</span>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span class="section-title" style="margin:0; border:none; padding:0;">Top Bar & Match Setup</span>
+            <div>
+              <select id="load-tourney" class="font-select" onchange="if(this.value) { loadTourneyFromMemory(this.value); this.value=''; }" style="width:110px; font-size:10px;">
+                <option value="">Load Saved...</option>
+              </select>
+              <button class="ctrl-btn" style="padding:2px 8px; font-size:10px;" onclick="saveTourneyToMemory()">Save to Memory</button>
+            </div>
+          </div>
           <div class="ctrl-row" style="justify-content: space-between;">
             <div style="display: flex; gap: 8px; align-items: center;">
               <button class="ctrl-btn special" onclick="toggleScoreboardVisibility()" id="btn-toggle-sb">Hide Scoreboard</button>
@@ -649,7 +655,7 @@
               </label>
             </div>
             <div style="display: flex; align-items: center; gap: 6px;">
-              <span style="font-size: 12px; font-weight: bold;">Tournament Logo:</span>
+              <span style="font-size: 12px; font-weight: bold;">Tourney Logo:</span>
               <input type="file" accept="image/*" id="ctrl-t-logo" style="width: 75px; font-size: 10px; color: #aaa;" onchange="processLogo(event, 'tourney')">
               <button class="ctrl-btn warning" style="padding: 2px 6px; font-size: 10px;" onclick="removeLogo('tourney')">X</button>
               <input type="text" class="auto-text" id="ctrl-tournament-name" value="CFL 26-27" style="width: 150px; margin-left:4px;" onkeydown="if(event.key === 'Enter') { this.blur(); }" onblur="syncTexts()">
@@ -697,9 +703,14 @@
               <div class="team-details">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                   <span class="section-title" style="margin:0; border:none; padding:0;">Home Team</span>
-                  <button class="ctrl-btn" style="padding:2px 8px; font-size:10px;" onclick="saveTeamToMemory('home')">Save to Memory</button>
+                  <div>
+                    <select id="load-h-team" class="font-select" onchange="if(this.value) { loadTeamFromMemory('home', this.value); this.value=''; }" style="width:110px; font-size:10px;">
+                      <option value="">Load Saved...</option>
+                    </select>
+                    <button class="ctrl-btn" style="padding:2px 8px; font-size:10px;" onclick="saveTeamToMemory('home')">Save to Memory</button>
+                  </div>
                 </div>
-                <input type="text" id="ctrl-h-name" list="saved-teams-list" value="Mohun Bagan SG" placeholder="Team Name" onkeydown="if(event.key === 'Enter') { this.blur(); }" onblur="syncTexts()">
+                <input type="text" class="auto-text" id="ctrl-h-name" value="Mohun Bagan SG" placeholder="Team Name" onkeydown="if(event.key === 'Enter') { this.blur(); }" onblur="syncTexts()">
                 <div class="color-row">
                   <input type="color" id="ctrl-h-c1" value="#7c1830" title="Primary Color" oninput="applyVisualsLocally()">
                   <input type="color" id="ctrl-h-c2" value="#005a36" title="Secondary Color" oninput="applyVisualsLocally()">
@@ -712,9 +723,14 @@
               <div class="team-details">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                   <span class="section-title" style="margin:0; border:none; padding:0;">Away Team</span>
-                  <button class="ctrl-btn" style="padding:2px 8px; font-size:10px;" onclick="saveTeamToMemory('away')">Save to Memory</button>
+                  <div>
+                    <select id="load-a-team" class="font-select" onchange="if(this.value) { loadTeamFromMemory('away', this.value); this.value=''; }" style="width:110px; font-size:10px;">
+                      <option value="">Load Saved...</option>
+                    </select>
+                    <button class="ctrl-btn" style="padding:2px 8px; font-size:10px;" onclick="saveTeamToMemory('away')">Save to Memory</button>
+                  </div>
                 </div>
-                <input type="text" id="ctrl-a-name" list="saved-teams-list" value="East Bengal" placeholder="Team Name" onkeydown="if(event.key === 'Enter') { this.blur(); }" onblur="syncTexts()">
+                <input type="text" class="auto-text" id="ctrl-a-name" value="East Bengal" placeholder="Team Name" onkeydown="if(event.key === 'Enter') { this.blur(); }" onblur="syncTexts()">
                 <div class="color-row">
                   <input type="color" id="ctrl-a-c1" value="#d31122" title="Primary Color" oninput="applyVisualsLocally()">
                   <input type="color" id="ctrl-a-c2" value="#f6b200" title="Secondary Color" oninput="applyVisualsLocally()">
@@ -1029,6 +1045,132 @@
       }
     });
 
+    // --- Memory Systems ---
+    let savedTeams = {};
+    let savedTourneys = {};
+
+    function initMemorySystem() {
+      const storedTeams = localStorage.getItem('suiSavedTeams');
+      if (storedTeams) {
+        savedTeams = JSON.parse(storedTeams);
+        updateTeamDatalist();
+      }
+      
+      const storedTourneys = localStorage.getItem('suiSavedTourneys');
+      if (storedTourneys) {
+        savedTourneys = JSON.parse(storedTourneys);
+        updateTourneyDatalist();
+      }
+    }
+
+    function updateTeamDatalist() {
+      const hSelect = document.getElementById('load-h-team');
+      const aSelect = document.getElementById('load-a-team');
+      if (!hSelect || !aSelect) return;
+      
+      const optionsHTML = '<option value="">Load Saved...</option>' + 
+        Object.keys(savedTeams).map(t => `<option value="${t}">${t}</option>`).join('');
+        
+      hSelect.innerHTML = optionsHTML;
+      aSelect.innerHTML = optionsHTML;
+    }
+
+    function saveTeamToMemory(team) {
+      const prefix = team === 'home' ? 'h' : 'a';
+      const nameEl = document.getElementById(`ctrl-${prefix}-name`);
+      const name = nameEl.value.trim();
+      
+      if (!name) {
+        alert("Please enter a team name to save.");
+        return;
+      }
+      
+      const c1 = document.getElementById(`ctrl-${prefix}-c1`).value;
+      const c2 = document.getElementById(`ctrl-${prefix}-c2`).value;
+      const logo = team === 'home' ? hLogo : aLogo;
+
+      savedTeams[name] = { name, c1, c2, logo };
+      localStorage.setItem('suiSavedTeams', JSON.stringify(savedTeams));
+      updateTeamDatalist();
+      alert(`Saved ${name} (colors & logo) to memory!`);
+    }
+
+    function loadTeamFromMemory(team, name) {
+      if (savedTeams[name]) {
+        // Track the auto-change for the Undo system
+        undoStack.push(currentVisualState);
+        
+        const t = savedTeams[name];
+        
+        // Push the values into global variables & visually update immediately
+        if (team === 'home') {
+          hC1 = t.c1; hC2 = t.c2; hLogo = t.logo || ""; hName = t.name;
+          document.getElementById('ctrl-h-logo').value = ""; // Clear file path to avoid holding old file
+          document.getElementById('home-logo-display').src = hLogo;
+          document.getElementById('home-logo-display').style.display = hLogo ? 'block' : 'none';
+          document.getElementById('home-lu-logo').src = hLogo;
+        } else {
+          aC1 = t.c1; aC2 = t.c2; aLogo = t.logo || ""; aName = t.name;
+          document.getElementById('ctrl-a-logo').value = ""; 
+          document.getElementById('away-logo-display').src = aLogo;
+          document.getElementById('away-logo-display').style.display = aLogo ? 'block' : 'none';
+          document.getElementById('away-lu-logo').src = aLogo;
+        }
+        
+        syncInputsToVariables();
+        currentVisualState = getVisualDOMState();
+        redoStack = [];
+
+        applyVisualsLocally();
+        syncTexts(); // Publishes change over cloud so OBS instantly updates
+      }
+    }
+
+    function updateTourneyDatalist() {
+      const tSelect = document.getElementById('load-tourney');
+      if (!tSelect) return;
+      
+      tSelect.innerHTML = '<option value="">Load Saved...</option>' + 
+        Object.keys(savedTourneys).map(t => `<option value="${t}">${t}</option>`).join('');
+    }
+
+    function saveTourneyToMemory() {
+      const nameEl = document.getElementById('ctrl-tournament-name');
+      const name = nameEl.value.trim();
+      
+      if (!name) {
+        alert("Please enter a tournament name to save.");
+        return;
+      }
+      
+      savedTourneys[name] = { name, logo: tLogo };
+      localStorage.setItem('suiSavedTourneys', JSON.stringify(savedTourneys));
+      updateTourneyDatalist();
+      alert(`Saved ${name} (and logo) to memory!`);
+    }
+
+    function loadTourneyFromMemory(name) {
+      if (savedTourneys[name]) {
+        undoStack.push(currentVisualState);
+        const t = savedTourneys[name];
+        
+        tLogo = t.logo || "";
+        tournamentName = t.name;
+        
+        document.getElementById('ctrl-t-logo').value = ""; 
+        document.getElementById('tourney-logo-display').src = tLogo;
+        document.getElementById('tourney-logo-display').style.display = tLogo ? 'block' : 'none';
+        
+        syncInputsToVariables();
+        currentVisualState = getVisualDOMState();
+        redoStack = [];
+
+        applyVisualsLocally();
+        syncTexts(); 
+      }
+    }
+
+
     // --- Layout Storage System ---
     let savedLayouts = {};
     let currentLayoutName = "Default";
@@ -1085,7 +1227,7 @@
 
       tkText = layout.tkText !== undefined ? layout.tkText : tkText; isTkVis = layout.isTkVis !== undefined ? layout.isTkVis : isTkVis;
       isTkScroll = layout.isTkScroll !== undefined ? layout.isTkScroll : isTkScroll; useTkGrad = layout.useTkGrad !== undefined ? layout.useTkGrad : useTkGrad;
-      tkC1 = layout.tkC1 !== undefined ? layout.tkC1 : tkC1; tkC2 = layout.tkC2 !== undefined ? layout.tkC2 : tkC2; tkTxtC = layout.tkTxtC !== undefined ? layout.tkTxtC : tkTxtC;
+      tkC1 = layout.tkC1 !== undefined ? tkC1 : tkC1; tkC2 = layout.tkC2 !== undefined ? layout.tkC2 : tkC2; tkTxtC = layout.tkTxtC !== undefined ? layout.tkTxtC : tkTxtC;
       vTkH = layout.vTkH !== undefined ? layout.vTkH : vTkH; vTkF = layout.vTkF !== undefined ? layout.vTkF : vTkF; vTkOp = layout.vTkOp !== undefined ? layout.vTkOp : vTkOp;
 
       isScoreboardVisible = layout.isScoreboardVisible !== undefined ? layout.isScoreboardVisible : isScoreboardVisible;
@@ -1988,6 +2130,7 @@
       initStorage();
       window.onload = function() {
         initHistory();
+        initMemorySystem();
         // Attach drag engine to visual widgets
         attachDraggable(document.getElementById('lineup-left'), (x, y) => { luLeftX = x; luLeftY = y; });
         attachDraggable(document.getElementById('lineup-right'), (x, y) => { 
