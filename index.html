@@ -1012,9 +1012,10 @@
       iT = parseFloat(ctrlPanel.style.top) || rect.top;
     });
 
-    function attachDraggable(el, updateCallback) {
+function attachDraggable(el, updateCallback, originX = 'left') {
       if(el.dataset.dragAttached) return;
       el.dataset.dragAttached = "true";
+      el.dataset.originX = originX;
       el.addEventListener('mousedown', (e) => {
         if(urlParams.get('view') === 'overlay' || e.button !== 0) return;
         isDraggingEl = { el, updateCallback };
@@ -1028,11 +1029,20 @@
         ctrlPanel.style.top = (iT + e.clientY - sY) + 'px';
       }
       if(isDraggingEl) {
-        const px = (e.clientX / window.innerWidth) * 100; 
         const py = (e.clientY / window.innerHeight) * 100;
-        isDraggingEl.el.style.left = px + '%'; 
         isDraggingEl.el.style.top = py + '%';
-        if(isDraggingEl.updateCallback) isDraggingEl.updateCallback(px, py);
+
+        if (isDraggingEl.el.dataset.originX === 'right') {
+          const pxRight = ((window.innerWidth - e.clientX) / window.innerWidth) * 100;
+          isDraggingEl.el.style.left = 'auto';
+          isDraggingEl.el.style.right = pxRight + '%';
+          if(isDraggingEl.updateCallback) isDraggingEl.updateCallback(pxRight, py);
+        } else {
+          const px = (e.clientX / window.innerWidth) * 100;
+          isDraggingEl.el.style.right = 'auto';
+          isDraggingEl.el.style.left = px + '%';
+          if(isDraggingEl.updateCallback) isDraggingEl.updateCallback(px, py);
+        }
       }
     });
 
@@ -1563,7 +1573,7 @@
 
         // Draggable Placements
         if (data.luLeftX !== undefined) { luLeft.style.left = data.luLeftX + '%'; luLeft.style.top = data.luLeftY + '%'; }
-        if (data.luRightX !== undefined) { luRight.style.right = 'auto'; luRight.style.left = data.luRightX + '%'; luRight.style.top = data.luRightY + '%'; }
+        if (data.luRightX !== undefined && data.luRightX !== null) { luRight.style.left = 'auto'; luRight.style.right = data.luRightX + '%'; luRight.style.top = data.luRightY + '%'; }
         if (data.lssX !== undefined) {
           if(lssWidgetSync){ lssWidgetSync.style.left = data.lssX + '%'; lssWidgetSync.style.top = data.lssY + '%'; }
         }
@@ -2135,10 +2145,7 @@
         initMemorySystem();
         // Attach drag engine to visual widgets
         attachDraggable(document.getElementById('lineup-left'), (x, y) => { luLeftX = x; luLeftY = y; });
-        attachDraggable(document.getElementById('lineup-right'), (x, y) => { 
-           document.getElementById('lineup-right').style.right = 'auto'; 
-           luRightX = x; luRightY = y; 
-        });
+        attachDraggable(document.getElementById('lineup-right'), (x, y) => { luRightX = x; luRightY = y; }, 'right');
         attachDraggable(document.getElementById('lss-widget'), (x, y) => { lssX = x; lssY = y; });
       };
     }
