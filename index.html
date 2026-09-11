@@ -492,7 +492,7 @@
     </div>
   </div>
 
-  <div class="lineup-wrapper" id="lineup-left" style="display: none;">
+  <div class="lineup-wrapper left" id="lineup-left" style="display: none;">
     <div class="lineup-bg" id="home-lineup-bg"></div>
     <div class="lineup-content">
       <div class="lineup-header">
@@ -503,7 +503,7 @@
     </div>
   </div>
 
-  <div class="lineup-wrapper" id="lineup-right" style="display: none;">
+  <div class="lineup-wrapper right" id="lineup-right" style="display: none;">
     <div class="lineup-bg" id="away-lineup-bg"></div>
     <div class="lineup-content">
       <div class="lineup-header">
@@ -1010,9 +1010,10 @@
       iT = parseFloat(ctrlPanel.style.top) || rect.top;
     });
 
-    function attachDraggable(el, updateCallback) {
+    function attachDraggable(el, updateCallback, originX = 'left') {
       if(el.dataset.dragAttached) return;
       el.dataset.dragAttached = "true";
+      el.dataset.originX = originX;
       el.addEventListener('mousedown', (e) => {
         if(urlParams.get('view') === 'overlay' || e.button !== 0) return;
         isDraggingEl = { el, updateCallback };
@@ -1026,15 +1027,20 @@
         ctrlPanel.style.top = (iT + e.clientY - sY) + 'px';
       }
       if(isDraggingEl) {
-        // Calculate exact pixels from the center (X) and top (Y)
-        const offsetX = Math.round(e.clientX - (window.innerWidth / 2)); 
-        const py = Math.round(e.clientY);
-        
-        isDraggingEl.el.style.right = 'auto'; 
-        isDraggingEl.el.style.left = `calc(50% + ${offsetX}px)`; 
-        isDraggingEl.el.style.top = `${py}px`;
-        
-        if(isDraggingEl.updateCallback) isDraggingEl.updateCallback(offsetX, py);
+        const py = (e.clientY / window.innerHeight) * 100;
+        isDraggingEl.el.style.top = py + '%';
+
+        if (isDraggingEl.el.dataset.originX === 'right') {
+          const pxRight = ((window.innerWidth - e.clientX) / window.innerWidth) * 100;
+          isDraggingEl.el.style.left = 'auto';
+          isDraggingEl.el.style.right = pxRight + '%';
+          if(isDraggingEl.updateCallback) isDraggingEl.updateCallback(pxRight, py);
+        } else {
+          const px = (e.clientX / window.innerWidth) * 100;
+          isDraggingEl.el.style.right = 'auto';
+          isDraggingEl.el.style.left = px + '%';
+          if(isDraggingEl.updateCallback) isDraggingEl.updateCallback(px, py);
+        }
       }
     });
 
@@ -1298,9 +1304,9 @@
       const luLeftEl = document.getElementById('lineup-left');
       const luRightEl = document.getElementById('lineup-right');
       const lssWidgetEl = document.getElementById('lss-widget');
-      if (luLeftX !== null && luLeftEl) { luLeftEl.style.right = 'auto'; luLeftEl.style.left = `calc(50% + ${luLeftX}px)`; luLeftEl.style.top = `${luLeftY}px`; }
-      if (luRightX !== null && luRightEl) { luRightEl.style.right = 'auto'; luRightEl.style.left = `calc(50% + ${luRightX}px)`; luRightEl.style.top = `${luRightY}px`; }
-      if (lssX !== null && lssWidgetEl) { lssWidgetEl.style.right = 'auto'; lssWidgetEl.style.left = `calc(50% + ${lssX}px)`; lssWidgetEl.style.top = `${lssY}px`; }
+      if (luLeftX !== null && luLeftEl) { luLeftEl.style.left = luLeftX + '%'; luLeftEl.style.top = luLeftY + '%'; }
+      if (luRightX !== null && luRightEl) { luRightEl.style.left = 'auto'; luRightEl.style.right = luRightX + '%'; luRightEl.style.top = luRightY + '%'; }
+      if (lssX !== null && lssWidgetEl) { lssWidgetEl.style.left = lssX + '%'; lssWidgetEl.style.top = lssY + '%'; }
 
       broadcastState();
       
@@ -1578,15 +1584,11 @@
             lssWidgetSync.className = lssAnim ? 'lss-wrapper lss-animated' : 'lss-wrapper';
         }
 
-        // Draggable Placements (Center-Offset Math)
-        if (data.luLeftX !== undefined && data.luLeftX !== null) { 
-            luLeft.style.right = 'auto'; luLeft.style.left = `calc(50% + ${data.luLeftX}px)`; luLeft.style.top = `${data.luLeftY}px`; 
-        }
-        if (data.luRightX !== undefined && data.luRightX !== null) { 
-            luRight.style.right = 'auto'; luRight.style.left = `calc(50% + ${data.luRightX}px)`; luRight.style.top = `${data.luRightY}px`; 
-        }
-        if (data.lssX !== undefined && data.lssX !== null) {
-          if(lssWidgetSync){ lssWidgetSync.style.right = 'auto'; lssWidgetSync.style.left = `calc(50% + ${data.lssX}px)`; lssWidgetSync.style.top = `${data.lssY}px`; }
+        // Draggable Placements
+        if (data.luLeftX !== undefined) { luLeft.style.left = data.luLeftX + '%'; luLeft.style.top = data.luLeftY + '%'; }
+        if (data.luRightX !== undefined && data.luRightX !== null) { luRight.style.left = 'auto'; luRight.style.right = data.luRightX + '%'; luRight.style.top = data.luRightY + '%'; }
+        if (data.lssX !== undefined) {
+          if(lssWidgetSync){ lssWidgetSync.style.left = data.lssX + '%'; lssWidgetSync.style.top = data.lssY + '%'; }
         }
 
         if (urlParams.get('view') !== 'overlay') { 
@@ -2156,7 +2158,7 @@
         initMemorySystem();
         // Attach drag engine to visual widgets
         attachDraggable(document.getElementById('lineup-left'), (x, y) => { luLeftX = x; luLeftY = y; });
-        attachDraggable(document.getElementById('lineup-right'), (x, y) => { luRightX = x; luRightY = y; });
+        attachDraggable(document.getElementById('lineup-right'), (x, y) => { luRightX = x; luRightY = y; }, 'right');
         attachDraggable(document.getElementById('lss-widget'), (x, y) => { lssX = x; lssY = y; });
       };
     }
