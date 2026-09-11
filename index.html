@@ -1023,14 +1023,14 @@ function attachDraggable(el, updateCallback, originX = 'left') {
       });
     }
 
-    document.addEventListener('mousemove', (e) => {
+document.addEventListener('mousemove', (e) => {
       if(isDraggingPanel) {
         ctrlPanel.style.left = (iL + e.clientX - sX) + 'px'; 
         ctrlPanel.style.top = (iT + e.clientY - sY) + 'px';
       }
       if(isDraggingEl) {
-        const py = (e.clientY / window.innerHeight) * 100;
-        isDraggingEl.el.style.top = py + '%';
+        const py = e.clientY; // Exact pixels instead of percentage
+        isDraggingEl.el.style.top = py + 'px'; // Apply as px
 
         if (isDraggingEl.el.dataset.originX === 'right') {
           const pxRight = ((window.innerWidth - e.clientX) / window.innerWidth) * 100;
@@ -1572,10 +1572,10 @@ function attachDraggable(el, updateCallback, originX = 'left') {
         }
 
         // Draggable Placements
-        if (data.luLeftX !== undefined) { luLeft.style.left = data.luLeftX + '%'; luLeft.style.top = data.luLeftY + '%'; }
-        if (data.luRightX !== undefined && data.luRightX !== null) { luRight.style.left = 'auto'; luRight.style.right = data.luRightX + '%'; luRight.style.top = data.luRightY + '%'; }
-        if (data.lssX !== undefined) {
-          if(lssWidgetSync){ lssWidgetSync.style.left = data.lssX + '%'; lssWidgetSync.style.top = data.lssY + '%'; }
+        if (data.luLeftX !== undefined && data.luLeftX !== null) { luLeft.style.left = data.luLeftX + '%'; luLeft.style.top = data.luLeftY + 'px'; }
+        if (data.luRightX !== undefined && data.luRightX !== null) { luRight.style.left = 'auto'; luRight.style.right = data.luRightX + '%'; luRight.style.top = data.luRightY + 'px'; }
+        if (data.lssX !== undefined && data.lssX !== null) {
+          if(lssWidgetSync){ lssWidgetSync.style.left = data.lssX + '%'; lssWidgetSync.style.top = data.lssY + 'px'; }
         }
 
         if (urlParams.get('view') !== 'overlay') { 
