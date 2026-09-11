@@ -1204,9 +1204,7 @@
         vPenBoardScale, vPenBoardTxt, vPenLogoSizeH, vPenLogoSizeA,
         tgtUseGrad, tgtBgC1, tgtBgC2, sbUseGrad, sbBgC1, sbBgC2, tbUseGrad, tbBgC1, tbBgC2,
         vFfTeam, vFfScore, vFfTime, vFfTourney, vFfTgtLbl, vFfTgtVal, vFfLu, vFfTk, vFfPen,
-        lssVis, lssAnim, lssScale, lssTxtC, lssStyle, lssC1, lssC2,
-        luLeftX, luLeftY, luRightX, luRightY, lssX, lssY
-      };
+        lssVis, lssAnim, lssScale, lssTxtC, lssStyle, lssC1, lssC2
       };
     }
 
@@ -1282,13 +1280,6 @@
       lssStyle = layout.lssStyle !== undefined ? layout.lssStyle : lssStyle;
       lssC1 = layout.lssC1 !== undefined ? layout.lssC1 : lssC1;
       lssC2 = layout.lssC2 !== undefined ? layout.lssC2 : lssC2;
-
-      luLeftX = layout.luLeftX !== undefined ? layout.luLeftX : luLeftX;
-      luLeftY = layout.luLeftY !== undefined ? layout.luLeftY : luLeftY;
-      luRightX = layout.luRightX !== undefined ? layout.luRightX : luRightX;
-      luRightY = layout.luRightY !== undefined ? layout.luRightY : luRightY;
-      lssX = layout.lssX !== undefined ? layout.lssX : lssX;
-      lssY = layout.lssY !== undefined ? layout.lssY : lssY;
 
       syncInputsToVariables();
       applyVisualsLocally();
@@ -2016,14 +2007,8 @@
         if (lssWidget) {
           lssWidget.style.display = lssVis ? 'flex' : 'none';
           lssWidget.className = lssAnim ? 'lss-wrapper lss-animated' : 'lss-wrapper';
-          if (lssX !== null) { lssWidget.style.left = lssX + '%'; lssWidget.style.top = lssY + '%'; }
         }
       }
-
-      const luLeftEl = document.getElementById('lineup-left');
-      const luRightEl = document.getElementById('lineup-right');
-      if (luLeftX !== null && luLeftEl) { luLeftEl.style.left = luLeftX + '%'; luLeftEl.style.top = luLeftY + '%'; }
-      if (luRightX !== null && luRightEl) { luRightEl.style.right = 'auto'; luRightEl.style.left = luRightX + '%'; luRightEl.style.top = luRightY + '%'; }
     }
 
     // Explicit Layout Synchronization Button
