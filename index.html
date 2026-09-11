@@ -1227,7 +1227,7 @@
 
       tkText = layout.tkText !== undefined ? layout.tkText : tkText; isTkVis = layout.isTkVis !== undefined ? layout.isTkVis : isTkVis;
       isTkScroll = layout.isTkScroll !== undefined ? layout.isTkScroll : isTkScroll; useTkGrad = layout.useTkGrad !== undefined ? layout.useTkGrad : useTkGrad;
-      tkC1 = layout.tkC1 !== undefined ? tkC1 : tkC1; tkC2 = layout.tkC2 !== undefined ? layout.tkC2 : tkC2; tkTxtC = layout.tkTxtC !== undefined ? layout.tkTxtC : tkTxtC;
+      tkC1 = layout.tkC1 !== undefined ? layout.tkC1 : tkC1; tkC2 = layout.tkC2 !== undefined ? layout.tkC2 : tkC2; tkTxtC = layout.tkTxtC !== undefined ? layout.tkTxtC : tkTxtC;
       vTkH = layout.vTkH !== undefined ? layout.vTkH : vTkH; vTkF = layout.vTkF !== undefined ? layout.vTkF : vTkF; vTkOp = layout.vTkOp !== undefined ? layout.vTkOp : vTkOp;
 
       isScoreboardVisible = layout.isScoreboardVisible !== undefined ? layout.isScoreboardVisible : isScoreboardVisible;
@@ -1964,6 +1964,7 @@
       isTkScroll = document.getElementById('ctrl-tk-scroll').checked;
       useTkGrad = document.getElementById('ctrl-tk-grad').checked;
       tkC1 = document.getElementById('ctrl-tk-c1').value; tkC2 = document.getElementById('ctrl-tk-c2').value;
+      tkTxtC = document.getElementById('ctrl-tk-txt-c').value;
 
       tkWrap.style.display = isTkVis ? 'flex' : 'none';
       tkTextEl.className = isTkScroll ? 'ticker-text scrolling' : 'ticker-text static';
