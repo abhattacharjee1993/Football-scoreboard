@@ -1371,6 +1371,7 @@
 
     // Match & UI State Variables
     let hScore = 0, aScore = 0, secs = 0, timerId = null, running = false;
+    let localStartTime = 0, localBaseSecs = 0;
     let tournamentName = "CFL 26-27"; let likeTargetVal = "25", subTargetVal = "900"; let matchStatus = ""; let injuryTime = "";
     let hName = "Mohun Bagan SG", aName = "East Bengal"; let hC1 = "#7c1830", hC2 = "#005a36", aC1 = "#d31122", aC2 = "#f6b200";
     let hLogo = "mbsg.webp", aLogo = "ebfc.png", tLogo = "";
@@ -1571,7 +1572,7 @@
           syncInputsToVariables();
           document.getElementById('btn-toggle-pen').textContent = isPenVis ? 'Disable Penalty Drop-down' : 'Enable Penalty Drop-down';
         }
-        renderTime(); clearInterval(timerId); if (running) { timerId = setInterval(() => { secs++; renderTime(); }, 1000); }
+        renderTime(); clearInterval(timerId); if (running) { localBaseSecs = secs; localStartTime = Date.now(); timerId = setInterval(() => { secs = localBaseSecs + Math.floor((Date.now() - localStartTime) / 1000); renderTime(); }, 1000); }
       }
     });
 
@@ -1673,14 +1674,14 @@
       if(aRedEl) aRedEl.innerHTML = Array(aRed).fill('<div class="red-card"></div>').join('');
     }
 
-    function toggleClock() { running = !running; clearInterval(timerId); if (running) { timerId = setInterval(() => { secs++; renderTime(); }, 1000); } broadcastState(); }
-    function resetClock(startSec) { secs = startSec; renderTime(); broadcastState(); }
+    function toggleClock() { running = !running; clearInterval(timerId); if (running) { localBaseSecs = secs; localStartTime = Date.now(); timerId = setInterval(() => { secs = localBaseSecs + Math.floor((Date.now() - localStartTime) / 1000); renderTime(); }, 1000); } broadcastState(); }
+    function resetClock(startSec) { secs = startSec; localBaseSecs = startSec; localStartTime = Date.now(); renderTime(); broadcastState(); }
     function setManualTime() {
       const input = prompt("Enter time in MM:SS format:", "00:00");
       if (input) {
         const parts = input.split(':');
         if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
-          secs = (parseInt(parts[0], 10) * 60) + parseInt(parts[1], 10); matchStatus = ""; renderTime(); broadcastState(); 
+          secs = (parseInt(parts[0], 10) * 60) + parseInt(parts[1], 10); localBaseSecs = secs; localStartTime = Date.now(); matchStatus = ""; renderTime(); broadcastState(); 
         } else alert("Invalid format. Use MM:SS.");
       }
     }
