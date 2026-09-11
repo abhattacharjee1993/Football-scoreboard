@@ -1291,25 +1291,10 @@ function attachDraggable(el, updateCallback, originX = 'left') {
       lssC1 = layout.lssC1 !== undefined ? layout.lssC1 : lssC1;
       lssC2 = layout.lssC2 !== undefined ? layout.lssC2 : lssC2;
 
-      luLeftX = layout.luLeftX !== undefined ? layout.luLeftX : luLeftX;
-      luLeftY = layout.luLeftY !== undefined ? layout.luLeftY : luLeftY;
-      luRightX = layout.luRightX !== undefined ? layout.luRightX : luRightX;
-      luRightY = layout.luRightY !== undefined ? layout.luRightY : luRightY;
-      lssX = layout.lssX !== undefined ? layout.lssX : lssX;
-      lssY = layout.lssY !== undefined ? layout.lssY : lssY;
-
       syncInputsToVariables();
       applyVisualsLocally();
       renderPenaltiesLocal();
       renderRedCards();
-
-      const luLeftEl = document.getElementById('lineup-left');
-      const luRightEl = document.getElementById('lineup-right');
-      const lssWidgetEl = document.getElementById('lss-widget');
-      if (luLeftX !== null && luLeftEl) { luLeftEl.style.left = luLeftX + '%'; luLeftEl.style.top = luLeftY + '%'; }
-      if (luRightX !== null && luRightEl) { luRightEl.style.left = 'auto'; luRightEl.style.right = luRightX + '%'; luRightEl.style.top = luRightY + '%'; }
-      if (lssX !== null && lssWidgetEl) { lssWidgetEl.style.left = lssX + '%'; lssWidgetEl.style.top = lssY + '%'; }
-
       broadcastState();
       
       initHistory(); 
