@@ -112,8 +112,6 @@
       cursor: grab;
     }
     .lineup-wrapper:active { cursor: grabbing; }
-    .lineup-wrapper.left { left: 20px; }
-    .lineup-wrapper.right { right: 20px; }
 
     .lineup-bg {
       position: absolute; top: 0; left: 0; right: 0; bottom: 0;
@@ -273,7 +271,7 @@
     @keyframes ticker-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
     /* LSS WIDGET */
-    .lss-wrapper { position: absolute; left: var(--lss-x); top: var(--lss-y); transform: translate(-50%, -50%) scale(var(--lss-scale)); background: var(--lss-bg); border-radius: 30px; padding: 12px 30px; color: var(--lss-txt); font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.3); display: flex; gap: 15px; align-items: center; z-index: 90; cursor: grab; white-space: nowrap; width: max-content; flex-wrap: nowrap; }.lss-wrapper { position: absolute; left: var(--lss-x); top: var(--lss-y); transform: translate(-50%, -50%) scale(var(--lss-scale)); background: var(--lss-bg); border-radius: 30px; padding: 12px 30px; color: var(--lss-txt); font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.3); display: flex; gap: 15px; align-items: center; z-index: 90; cursor: grab; white-space: nowrap; width: max-content; flex-wrap: nowrap; }
+    .lss-wrapper { position: absolute; left: var(--lss-x); top: var(--lss-y); transform: translate(-50%, -50%) scale(var(--lss-scale)); background: var(--lss-bg); border-radius: 30px; padding: 12px 30px; color: var(--lss-txt); font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.3); display: flex; gap: 15px; align-items: center; z-index: 90; cursor: grab; white-space: nowrap; width: max-content; flex-wrap: nowrap; }
     .lss-wrapper:active { cursor: grabbing; }
     .lss-icon { font-size: 24px; }
     .lss-animated { animation: lss-pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1); }
@@ -1012,7 +1010,7 @@
       iT = parseFloat(ctrlPanel.style.top) || rect.top;
     });
 
-function attachDraggable(el, updateCallback, originX = 'left') {
+    function attachDraggable(el, updateCallback, originX = 'left') {
       if(el.dataset.dragAttached) return;
       el.dataset.dragAttached = "true";
       el.dataset.originX = originX;
@@ -1180,7 +1178,6 @@ function attachDraggable(el, updateCallback, originX = 'left') {
       }
     }
 
-
     // --- Layout Storage System ---
     let savedLayouts = {};
     let currentLayoutName = "Default";
@@ -1214,7 +1211,8 @@ function attachDraggable(el, updateCallback, originX = 'left') {
         vPenBoardScale, vPenBoardTxt, vPenLogoSizeH, vPenLogoSizeA,
         tgtUseGrad, tgtBgC1, tgtBgC2, sbUseGrad, sbBgC1, sbBgC2, tbUseGrad, tbBgC1, tbBgC2,
         vFfTeam, vFfScore, vFfTime, vFfTourney, vFfTgtLbl, vFfTgtVal, vFfLu, vFfTk, vFfPen,
-        lssVis, lssAnim, lssScale, lssTxtC, lssStyle, lssC1, lssC2
+        lssVis, lssAnim, lssScale, lssTxtC, lssStyle, lssC1, lssC2,
+        luLeftX, luLeftY, luRightX, luRightY, lssX, lssY
       };
     }
 
@@ -1291,10 +1289,25 @@ function attachDraggable(el, updateCallback, originX = 'left') {
       lssC1 = layout.lssC1 !== undefined ? layout.lssC1 : lssC1;
       lssC2 = layout.lssC2 !== undefined ? layout.lssC2 : lssC2;
 
+      luLeftX = layout.luLeftX !== undefined ? layout.luLeftX : luLeftX;
+      luLeftY = layout.luLeftY !== undefined ? layout.luLeftY : luLeftY;
+      luRightX = layout.luRightX !== undefined ? layout.luRightX : luRightX;
+      luRightY = layout.luRightY !== undefined ? layout.luRightY : luRightY;
+      lssX = layout.lssX !== undefined ? layout.lssX : lssX;
+      lssY = layout.lssY !== undefined ? layout.lssY : lssY;
+
       syncInputsToVariables();
       applyVisualsLocally();
       renderPenaltiesLocal();
       renderRedCards();
+
+      const luLeftEl = document.getElementById('lineup-left');
+      const luRightEl = document.getElementById('lineup-right');
+      const lssWidgetEl = document.getElementById('lss-widget');
+      if (luLeftX !== null && luLeftEl) { luLeftEl.style.left = luLeftX + '%'; luLeftEl.style.top = luLeftY + '%'; }
+      if (luRightX !== null && luRightEl) { luRightEl.style.left = 'auto'; luRightEl.style.right = luRightX + '%'; luRightEl.style.top = luRightY + '%'; }
+      if (lssX !== null && lssWidgetEl) { lssWidgetEl.style.left = lssX + '%'; lssWidgetEl.style.top = lssY + '%'; }
+
       broadcastState();
       
       initHistory(); 
@@ -1411,7 +1424,7 @@ function attachDraggable(el, updateCallback, originX = 'left') {
     let vPenBoardScale = 1, vPenBoardTxt = 16, vPenLogoSizeH = 35, vPenLogoSizeA = 35;
 
     let lssVis = true, lssAnim = true, lssScale = 1, lssTxtC = "#ffffff", lssStyle = "gradient", lssC1 = "#ff0000", lssC2 = "#cc0000";
-    let lssX = 50, lssY = 20;
+    let lssX = null, lssY = null;
     let luLeftX = null, luLeftY = null, luRightX = null, luRightY = null;
 
     // DOM Elements
