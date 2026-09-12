@@ -633,11 +633,12 @@
         <div class="sub-panel">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
             <span class="section-title" style="margin:0; border:none; padding:0;">Top Bar & Match Setup</span>
-            <div>
+          <div style="display:flex; gap: 4px;">
               <select id="load-tourney" class="font-select" onchange="if(this.value) { loadTourneyFromMemory(this.value); this.value=''; }" style="width:110px; font-size:10px;">
                 <option value="">Load Saved...</option>
               </select>
-              <button class="ctrl-btn" style="padding:2px 8px; font-size:10px;" onclick="saveTourneyToMemory()">Save to Memory</button>
+              <button class="ctrl-btn warning" style="padding:2px 8px; font-size:10px;" onclick="deleteTourneyFromMemory()" title="Load a tournament or type its name, then click Delete">Delete</button>
+              <button class="ctrl-btn" style="padding:2px 8px; font-size:10px;" onclick="saveTourneyToMemory()">Save</button>
             </div>
           </div>
           <div class="ctrl-row" style="justify-content: space-between;">
@@ -701,11 +702,12 @@
               <div class="team-details">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                   <span class="section-title" style="margin:0; border:none; padding:0;">Home Team</span>
-                  <div>
+                  <div style="display:flex; gap: 4px;">
                     <select id="load-h-team" class="font-select" onchange="if(this.value) { loadTeamFromMemory('home', this.value); this.value=''; }" style="width:110px; font-size:10px;">
                       <option value="">Load Saved...</option>
                     </select>
-                    <button class="ctrl-btn" style="padding:2px 8px; font-size:10px;" onclick="saveTeamToMemory('home')">Save to Memory</button>
+                    <button class="ctrl-btn warning" style="padding:2px 8px; font-size:10px;" onclick="deleteTeamFromMemory('home')" title="Load a team or type its name, then click Delete">Delete</button>
+                    <button class="ctrl-btn" style="padding:2px 8px; font-size:10px;" onclick="saveTeamToMemory('home')">Save</button>
                   </div>
                 </div>
                 <input type="text" class="auto-text" id="ctrl-h-name" value="Mohun Bagan SG" placeholder="Team Name" onkeydown="if(event.key === 'Enter') { this.blur(); }" onblur="syncTexts()">
@@ -721,11 +723,12 @@
               <div class="team-details">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                   <span class="section-title" style="margin:0; border:none; padding:0;">Away Team</span>
-                  <div>
+                  <div style="display:flex; gap: 4px;">
                     <select id="load-a-team" class="font-select" onchange="if(this.value) { loadTeamFromMemory('away', this.value); this.value=''; }" style="width:110px; font-size:10px;">
                       <option value="">Load Saved...</option>
                     </select>
-                    <button class="ctrl-btn" style="padding:2px 8px; font-size:10px;" onclick="saveTeamToMemory('away')">Save to Memory</button>
+                    <button class="ctrl-btn warning" style="padding:2px 8px; font-size:10px;" onclick="deleteTeamFromMemory('away')" title="Load a team or type its name, then click Delete">Delete</button>
+                    <button class="ctrl-btn" style="padding:2px 8px; font-size:10px;" onclick="saveTeamToMemory('away')">Save</button>
                   </div>
                 </div>
                 <input type="text" class="auto-text" id="ctrl-a-name" value="East Bengal" placeholder="Team Name" onkeydown="if(event.key === 'Enter') { this.blur(); }" onblur="syncTexts()">
@@ -1133,7 +1136,22 @@
         syncTexts(); // Publishes change over cloud so OBS instantly updates
       }
     }
-
+    
+    function deleteTeamFromMemory(team) {
+      const prefix = team === 'home' ? 'h' : 'a';
+      const name = document.getElementById(`ctrl-${prefix}-name`).value.trim();
+      
+      if (!name || !savedTeams[name]) {
+        alert(`No saved team found with the name "${name}". Please load it or type its exact name to delete.`);
+        return;
+      }
+      
+      if (confirm(`Are you sure you want to delete "${name}" from memory?`)) {
+        delete savedTeams[name];
+        localStorage.setItem('suiSavedTeams', JSON.stringify(savedTeams));
+        updateTeamDatalist();
+      }
+    }
     function updateTourneyDatalist() {
       const tSelect = document.getElementById('load-tourney');
       if (!tSelect) return;
@@ -1142,6 +1160,21 @@
         Object.keys(savedTourneys).map(t => `<option value="${t}">${t}</option>`).join('');
     }
 
+    function deleteTourneyFromMemory() {
+      const name = document.getElementById('ctrl-tournament-name').value.trim();
+      
+      if (!name || !savedTourneys[name]) {
+        alert(`No saved tournament found with the name "${name}". Please load it or type its exact name to delete.`);
+        return;
+      }
+      
+      if (confirm(`Are you sure you want to delete the tournament "${name}" from memory?`)) {
+        delete savedTourneys[name];
+        localStorage.setItem('suiSavedTourneys', JSON.stringify(savedTourneys));
+        updateTourneyDatalist();
+      }
+    }
+    
     function saveTourneyToMemory() {
       const nameEl = document.getElementById('ctrl-tournament-name');
       const name = nameEl.value.trim();
@@ -1357,18 +1390,36 @@
     function closeManualModal() {
       document.getElementById('manual-modal-bg').style.display = 'none'; document.getElementById('manual-modal').style.display = 'none';
     }
+
     function filterLayouts() {
       const query = document.getElementById('layout-search').value.toLowerCase();
       const listEl = document.getElementById('layout-list'); listEl.innerHTML = "";
       Object.keys(savedLayouts).forEach(name => {
         if (name.toLowerCase().includes(query)) {
           const div = document.createElement('div'); div.className = 'layout-list-item';
-          div.innerHTML = `<span>${name}</span> <button class="ctrl-btn highlight" style="padding: 4px 10px;" onclick="executeLoad('${name}')">Load</button>`;
+          let btns = `<button class="ctrl-btn highlight" style="padding: 4px 10px;" onclick="executeLoad('${name}')">Load</button>`;
+          if(name !== "Default") {
+             btns = `<button class="ctrl-btn warning" style="padding: 4px 10px; margin-right: 5px;" onclick="deleteLayout(event, '${name}')">Delete</button>` + btns;
+          }
+          div.innerHTML = `<span>${name}</span> <div>${btns}</div>`;
           listEl.appendChild(div);
         }
       });
     }
     function executeLoad(name) { loadLayoutState(name); closeLoadModal(); }
+    
+    function deleteLayout(e, name) {
+      e.stopPropagation();
+      if (confirm(`Are you sure you want to delete the layout "${name}"?`)) {
+        delete savedLayouts[name];
+        saveToStorage();
+        if (currentLayoutName === name) {
+          currentLayoutName = "Default";
+          document.getElementById('current-layout-badge').textContent = `Layout: Default`;
+        }
+        filterLayouts(); // Refresh the list instantly
+      }
+    }
 
     function togglePanel(panelId) {
       const content = document.getElementById(panelId); const icon = document.getElementById(panelId + '-icon');
