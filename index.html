@@ -611,11 +611,17 @@
         <span style="font-weight: 800; font-size: 18px; color: #fff; letter-spacing: 1px;">MASTER CONTROL SUITE</span>
         <span class="layout-name-badge" id="current-layout-badge">Layout: Default</span>
       </div>
-      <div style="display: flex; gap: 8px; pointer-events: auto;">
+    <div style="display: flex; gap: 8px; pointer-events: auto;">
         <button class="ctrl-btn special" onclick="openManualModal()" title="View User Manual">Manual</button>
         <button class="ctrl-btn" onclick="undoVisuals()" title="Undo last layout change">Undo</button>
         <button class="ctrl-btn" onclick="redoVisuals()" title="Redo last layout change">Redo</button>
         <button class="ctrl-btn sync-btn" onclick="syncVisuals()">SYNC LAYOUT TO STREAM</button>
+        
+        <!-- NEW BACKUP SYSTEM -->
+        <button class="ctrl-btn special" onclick="exportMemory()" title="Download a backup of all saves" style="background:#0284c7; border-color:#0369a1;">Export</button>
+        <button class="ctrl-btn special" onclick="document.getElementById('import-file').click()" title="Import a backup file" style="background:#0284c7; border-color:#0369a1;">Import</button>
+        <input type="file" id="import-file" style="display: none;" accept=".json" onchange="importMemory(event)">
+        
         <button class="ctrl-btn" onclick="saveLayout()">Save</button>
         <button class="ctrl-btn" onclick="saveLayoutAs()">Save As</button>
         <button class="ctrl-btn" onclick="openLoadModal()">Load</button>
@@ -1215,6 +1221,56 @@
     let savedLayouts = {};
     let currentLayoutName = "Default";
 
+    // --- Master Backup System (Export/Import) ---
+    function exportMemory() {
+      const exportData = {
+        teams: savedTeams,
+        tourneys: savedTourneys,
+        layouts: savedLayouts
+      };
+      
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
+      const downloadAnchorNode = document.createElement('a');
+      downloadAnchorNode.setAttribute("href", dataStr);
+      downloadAnchorNode.setAttribute("download", "sui-memory-backup.json");
+      document.body.appendChild(downloadAnchorNode); 
+      downloadAnchorNode.click();
+      downloadAnchorNode.remove();
+    }
+
+    function importMemory(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const importedData = JSON.parse(e.target.result);
+          
+          // Merge imported data with existing local data
+          if (importedData.teams) {
+            savedTeams = { ...savedTeams, ...importedData.teams };
+            localStorage.setItem('suiSavedTeams', JSON.stringify(savedTeams));
+            updateTeamDatalist();
+          }
+          if (importedData.tourneys) {
+            savedTourneys = { ...savedTourneys, ...importedData.tourneys };
+            localStorage.setItem('suiSavedTourneys', JSON.stringify(savedTourneys));
+            updateTourneyDatalist();
+          }
+          if (importedData.layouts) {
+            savedLayouts = { ...savedLayouts, ...importedData.layouts };
+            localStorage.setItem('suiSavedLayouts', JSON.stringify(savedLayouts));
+          }
+          
+          alert("All layouts, teams, and tournaments imported successfully!");
+          document.getElementById('import-file').value = ""; // Reset input so you can import the same file again if needed
+        } catch (error) {
+          alert("Invalid backup file. Ensure you are uploading the correct .json file.");
+        }
+      };
+      reader.readAsText(file);
+    }
     function initStorage() {
       const stored = localStorage.getItem('suiSavedLayouts');
       if (stored) {
