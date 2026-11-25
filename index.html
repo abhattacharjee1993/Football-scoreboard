@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <title>Sports Unplugged India | Ultimate Broadcast Overlay</title>
   <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Montserrat:wght@800&family=Roboto:wght@700&family=Bebas+Neue&family=Oswald:wght@700&family=Anton&family=Poppins:wght@700&family=Lato:wght@700&family=Open+Sans:wght@700&family=Raleway:wght@700&family=Ubuntu:wght@700&family=PT+Sans:wght@700&family=Merriweather:wght@700&family=Playfair+Display:wght@700&family=Rubik:wght@700&family=Work+Sans:wght@700&family=Nunito:wght@700&family=Fira+Sans:wght@700&family=Inter:wght@700&display=swap" rel="stylesheet">
+  
+  <!-- NEW: Explicitly import Noto Color Emoji so cloud rendering servers can display emojis -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap" rel="stylesheet">
+  
   <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.7.2.2.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <style>
@@ -273,7 +277,10 @@
     /* LSS WIDGET */
     .lss-wrapper { position: absolute; left: var(--lss-x); top: var(--lss-y); transform: translate(-50%, -50%) scale(var(--lss-scale)); background: var(--lss-bg); border-radius: 30px; padding: 12px 30px; color: var(--lss-txt); font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.3); display: flex; gap: 15px; align-items: center; z-index: 90; cursor: grab; white-space: nowrap; width: max-content; flex-wrap: nowrap; }
     .lss-wrapper:active { cursor: grabbing; }
-    .lss-icon { font-size: 24px; }
+    
+    /* FIX: Force Restream Cloud Servers to use the downloaded Noto Color Emoji font */
+    .lss-icon { font-size: 24px; font-family: "Noto Color Emoji", sans-serif; }
+    
     .lss-animated { animation: lss-pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1); }
     @keyframes lss-pulse { 0%, 100% { transform: translate(-50%, -50%) scale(var(--lss-scale)); } 50% { transform: translate(-50%, -50%) scale(calc(var(--lss-scale) * 1.05)); } }
 
